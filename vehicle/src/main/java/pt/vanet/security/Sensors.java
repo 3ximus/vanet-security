@@ -1,3 +1,4 @@
+package pt.vanet.security;
 
 public class Sensors {
 	private int[] position;

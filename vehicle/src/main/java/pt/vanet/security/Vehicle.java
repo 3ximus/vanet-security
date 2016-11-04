@@ -1,9 +1,14 @@
+package pt.vanet.security;
+
+import java.util.Map;
+
 public class Vehicle {
 	private String VIN;
 	private int[] position;
 	private int[] velocity;
+	
 	// TODO timestamp should be Date or Datetime object
-	private Map<int[], > vicinity;
+	private Map<int[], VehicleDTO> vicinity;
 	private Sensors sensors;
 
 	public Vehicle(String VIN) {
