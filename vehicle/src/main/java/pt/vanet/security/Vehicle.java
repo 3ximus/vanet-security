@@ -6,7 +6,7 @@ public class Vehicle {
 	private String VIN;
 	private int[] position;
 	private int[] velocity;
-	
+
 	// TODO timestamp should be Date or Datetime object
 	private Map<int[], VehicleDTO> vicinity;
 	private Sensors sensors;

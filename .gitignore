@@ -1,3 +1,7 @@
 ca/target/*
 rsu/target/*
 vehicle/target/*
+*/.classpath
+*/.project
+*/.settings
+*.log

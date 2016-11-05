@@ -11,5 +11,5 @@ public class VehicleDTO {
 		this.position = new int[] {x, y ,z};
 		this.velocity = new int[] {vx, vy ,vz};
 		this.timestamp = timestamp;
-	} 
+	}
 }

@@ -4,7 +4,7 @@ package pt.vanet.security;
  * Hello world!
  *
  */
-public class App 
+public class App
 {
     public static void main( String[] args )
     {
