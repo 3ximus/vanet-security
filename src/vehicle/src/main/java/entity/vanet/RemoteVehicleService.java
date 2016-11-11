@@ -1,6 +1,9 @@
-package pt.vanet.security;
+package entity.vanet;
 
-import vanet.RemoteVehicleInterface;
+import java.rmi.RemoteException;
+
+import remote.RemoteVehicleInterface;
+import remote.VehicleDTO;
 
 public class RemoteVehicleService implements RemoteVehicleInterface {
 

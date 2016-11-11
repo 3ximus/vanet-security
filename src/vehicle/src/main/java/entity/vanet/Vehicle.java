@@ -1,6 +1,7 @@
-package pt.vanet.security;
+package entity.vanet;
 
 import java.util.Map;
+import remote.VehicleDTO;
 
 public class Vehicle {
 	private String VIN;

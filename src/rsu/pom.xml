@@ -3,11 +3,10 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>pt.vanet.security</groupId>
+  <groupId>gateway</groupId>
   <artifactId>rsu</artifactId>
   <packaging>jar</packaging>
   <version>1.0-SNAPSHOT</version>
-
 
     <name>${project.artifactId}</name>
 
@@ -18,27 +17,34 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
 
-        <mainclass>pt.vanet.security.App</mainclass>
+        <mainclass>gateway.App</mainclass>
     </properties>
 
   <dependencies>
-	<!-- CA DEPENDENCY -->
+
         <dependency>
-            <groupId>pt.vanet.security</groupId>
-            <artifactId>ca</artifactId>
+          <groupId>remote</groupId>
+          <artifactId>remote-interfaces</artifactId>
+          <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>vanet</groupId>
+            <artifactId>vehicle-network</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
-    	<dependency>
-      		<groupId>junit</groupId>
-      		<artifactId>junit</artifactId>
-      		<version>3.8.1</version>
-      		<scope>test</scope>
-	</dependency>
-	<dependency>
-		<groupId>joda-time</groupId>
-	      	<artifactId>joda-time</artifactId>
-		<version>2.9.2</version>
-	</dependency>
+
+      <dependency>
+          <groupId>junit</groupId>
+          <artifactId>junit</artifactId>
+          <version>3.8.1</version>
+          <scope>test</scope>
+      </dependency>
+  <dependency>
+    <groupId>joda-time</groupId>
+          <artifactId>joda-time</artifactId>
+    <version>2.9.2</version>
+  </dependency>
   </dependencies>
 
     <build>
@@ -90,3 +96,4 @@
         </plugins>
     </build>
 </project>
+

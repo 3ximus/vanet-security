@@ -1,4 +1,4 @@
-package pt.vanet.security;
+package entity.vanet;
 
 /**
  * Hello world!

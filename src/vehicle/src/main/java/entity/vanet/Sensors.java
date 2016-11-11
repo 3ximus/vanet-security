@@ -1,4 +1,4 @@
-package pt.vanet.security;
+package entity.vanet;
 
 public class Sensors {
 	private int[] position;

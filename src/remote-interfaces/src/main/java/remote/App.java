@@ -1,4 +1,4 @@
-package vanet;
+package remote;
 
 /**
  * Hello world!
