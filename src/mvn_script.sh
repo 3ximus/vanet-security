@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # echo function $1 = type	(type 1 = err | 2 = suc | 3 = inf)
 #				$2 = operation

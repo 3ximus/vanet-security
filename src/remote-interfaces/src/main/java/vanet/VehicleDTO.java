@@ -1,4 +1,4 @@
-package pt.vanet.security;
+package vanet;
 
 import java.sql.Timestamp;
 

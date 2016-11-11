@@ -1,7 +1,5 @@
-ca/target/*
-rsu/target/*
-vehicle/target/*
-*/.classpath
-*/.project
-*/.settings
-*.log
+src/*/target/*
+src/*/.classpath
+src/*/.project
+src/*/.settings
+src/*.log

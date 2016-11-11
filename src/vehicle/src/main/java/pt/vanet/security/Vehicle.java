@@ -8,7 +8,7 @@ public class Vehicle {
 	private int[] velocity;
 
 	// TODO timestamp should be Date or Datetime object
-	private Map<int[], VehicleDTO> vicinity;
+	private Map<String, VehicleDTO> vicinity; // String is the pseudonim certificate
 	private Sensors sensors;
 
 	public Vehicle(String VIN) {
@@ -19,6 +19,12 @@ public class Vehicle {
 		this.sensors = new Sensors();
 		// TODO initiate thread to simulate sensors
 	}
+
+	// ---------
+	// GETTERS
+	// ---------
+	public int[] getPosition() { return this.position; }
+	public int[] getVelocity() { return this.velocity; }
 
 	public void beacon() {
 		// REMOTE CALL TO ANOTHER VEHICLE
