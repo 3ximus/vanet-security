@@ -12,11 +12,13 @@ Install everything with:
 ./mvn_script install
 ```
 
-Then just run every entity with:
+Then just run the desired entity with:
 
 ```
 ./mvn_script <entitiy>
 ```
+
+**Note**: To generate new certificates run `./gen-cert.sh <vehicle1> <vehicle2> ...` , new keys will also be generated for ca and rsu in the process
 
 ------------------------
 

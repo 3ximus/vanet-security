@@ -3,4 +3,5 @@
 */.project
 */.settings
 *.log
+*.lck
 .vscode
