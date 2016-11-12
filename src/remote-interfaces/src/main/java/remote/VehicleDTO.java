@@ -3,13 +3,13 @@ package remote;
 import java.sql.Timestamp;
 
 public class VehicleDTO {
-	private int[] position;
-	private int[] velocity;
+	private Vector2Df position;
+	private Vector2Df velocity;
 	private Timestamp timestamp;
 
-	public VehicleDTO(int x, int y, int z, int vx, int vy, int vz, Timestamp timestamp) {
-		this.position = new int[] {x, y ,z};
-		this.velocity = new int[] {vx, vy ,vz};
+	public VehicleDTO(Vector2Df pos, Vector2Df vel, Timestamp timestamp) {
+		this.position = pos;
+		this.velocity = vel;
 		this.timestamp = timestamp;
 	}
 }
