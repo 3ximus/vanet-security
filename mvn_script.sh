@@ -11,16 +11,20 @@ pretty_echo () {
 	[[ $1 = 1 ]] && exit
 }
 
-[[ $# -eq 0 || "$1" = "help" ]] && echo -e "Usage ./mvn_script  [ compile | install | <maven arguments> ]  <directory> \n
-	- For \033[4;29minstall\033[0m and \033[4;29mcompile\033[0m in case no more arguments are given
-		all directories will be compiled or installed.\n
+# Custom dirs
+dirs="remote-interfaces ca vehicle vehicle-network rsu"
+# dirs=$(find . -maxdepth 1 -type d -not -name '\.*' -not -name 'resources' -not -name 'target')
+
+[[ $# -eq 0 || "$1" = "help" || "$1" = "-help" || "$1" = "-h" ]] && echo -e "Usage ./mvn_script  [ compile | install | <maven arguments> ]  <directory> \n
+	- For \033[4;29minstall\033[0m, \033[4;29mcompile\033[0m and \033[4;29mclean\033[0m in case no more arguments are given
+		all directories ($dirs) will run given command
 	- If only the directory is given it runs \033[4;29mmvn clean compile exec:java\033[0m on it.\n" && exit
 
 echo -e "\n\t-- (╯°□°）╯︵ ┻━┻ --\n"
 
-if [ "$1" = "compile" -o "$1" = "install" ] && [ $# -eq 1 ]; then  # Compile or install all or specified source dir
-	[[ ! -z "$2" ]] && args=$2 || args=$(find . -maxdepth 1 -type d -not -name '\.*' -not -name 'target')
-	for i in $args; do
+if [ "$1" = "compile" -o "$1" = "install" -o "$1" = "clean" ] && [ $# -eq 1 ]; then  # Compile or install all or specified source dir
+	[[ ! -z "$2" ]] && dirs=$2 || 
+	for i in $dirs; do
 		pretty_echo 3 $1 $i 8 ;
 		cd $i && mvn $1 ;
 		[[ $? == 0 ]] && cd .. || pretty_echo 1 $1 $i 8

@@ -1,5 +1,5 @@
-src/*/target/*
-src/*/.classpath
-src/*/.project
-src/*/.settings
-src/*.log
+*/target/*
+*/.classpath
+*/.project
+*/.settings
+*.log

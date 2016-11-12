@@ -6,24 +6,16 @@
 
 ## Usage
 
-Install and Run Certificate Authority
+Install everything with:
 
 ```
-./mvn_script clean install ca
-./mvn_script ca
+./mvn_script install
 ```
 
-Install and run the Roadside Unit
+Then just run every entity with:
 
 ```
-./mvn_script clean install rsu
-./mvn_script rsu
-```
-
-Run vehicles (Simulates a new connected vehicle in the vanet)
-
-```
-./mvn_script vehicle
+./mvn_script <entitiy>
 ```
 
 ------------------------
