@@ -23,7 +23,7 @@ dirs="remote-interfaces ca vehicle vehicle-network rsu"
 echo -e "\n\t-- (╯°□°）╯︵ ┻━┻ --\n"
 
 if [ "$1" = "compile" -o "$1" = "install" -o "$1" = "clean" ] && [ $# -eq 1 ]; then  # Compile or install all or specified source dir
-	[[ ! -z "$2" ]] && dirs=$2 || 
+	[[ ! -z "$2" ]] && dirs=$2
 	for i in $dirs; do
 		pretty_echo 3 $1 $i 8 ;
 		cd $i && mvn $1 ;
