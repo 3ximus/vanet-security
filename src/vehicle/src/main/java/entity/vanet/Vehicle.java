@@ -12,7 +12,6 @@ public class Vehicle {
 	private String VIN;
 	private Vector2Df position;
 	private Vector2Df velocity;
-	private Engine engine;
 
 	// TODO timestamp should be Date or Datetime object
 	private Map<String, VehicleDTO> vicinity; // String is the pseudonim certificate
@@ -21,8 +20,6 @@ public class Vehicle {
 		this.VIN = VIN;
 		this.position = position;
 		this.velocity = velocity;
-
-		this.engine = new Engine(this);
 
 		// Run the engine on a timer
 		Timer timer = new Timer();
