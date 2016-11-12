@@ -15,11 +15,11 @@ public class RemoteVehicleService implements RemoteVehicleInterface {
 
 	}
 
-	public void receiveBeaconMessage(VehicleDTO beacon) throws RemoteException {
+	public void receiveBeaconMessage(VehicleDTO vehicleInfo) throws RemoteException {
 		// @TODO:
 		// 1. Check security requirements
 		// 2. Tell the sensors this information
-
+		vehicle.simulateSensors(vehicleInfo);
 	}
 
 }

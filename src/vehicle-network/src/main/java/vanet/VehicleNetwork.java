@@ -1,6 +1,8 @@
 package vanet;
 
+import entity.vanet.RemoteVehicleService;
 import entity.vanet.Vehicle;
+import remote.RemoteVehicleInterface;
 import remote.VehicleDTO;
 import java.util.ArrayList;
 
@@ -9,19 +11,20 @@ import java.util.ArrayList;
 */
 public class VehicleNetwork {
 
-	private ArrayList<Vehicle> network;
+	private ArrayList<RemoteVehicleInterface> network;
 
 	public VehicleNetwork() {
-		// FIXME NOT Vehicle, RemoteVehicleINterface instead
-		this.network = new ArrayList<Vehicle>();
-		// TODO Launch vehicle process
+		this.network = new ArrayList<RemoteVehicleInterface>();
+
+		// @TODO: Launch vehicle process
+		// @TODO: Have a way to add new vehicles and maybe even remove
 	}
 
-	public void simulateBeaconBroadcast(VehicleDTO vdto) {
-		// TODO:
-	}
 
 	public static void main( String[] args ) {
 		System.out.println( "Hello World!" );
-    }
+
+		VehicleNetwork vanet = new VehicleNetwork();
+		// @TODO: Lauch RemoteVehicleNetworkService
+	}
 }

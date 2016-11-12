@@ -37,8 +37,7 @@ public class VehicleApp {
         }
         System.out.println("[Vehicle] Started: " + vehicle);
 
-        // @TODO:
-        // 1. Lauch RemoteVehicleService
+        // @TODO: Lauch RemoteVehicleService
 
         try {
             System.out.println("[Vehicle] Press <enter> to kill the vehicle.");
@@ -49,5 +48,6 @@ public class VehicleApp {
         }
         System.out.println("");
         System.out.println("");
+        System.exit(0);
     }
 }
