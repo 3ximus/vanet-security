@@ -10,16 +10,16 @@ CA_CERTIFICATE_PASS="1ns3cur3"
 D_NAME="CN=VanetInc,OU=KaijuBanana,O=IST,L=Lisbon,S=Lisbon,C=PT"
 SUBJ="/CN=VanetInc/OU=KaijuBanana/O=IST/L=Lisbon/C=PT"
 KEYS_VALIDITY=90
-CA_FOLDER="ca/cert"
-STORE_FILE="$CA_FOLDER/ca-keystore.jks"
-CA_PEM_FILE="$CA_FOLDER/ca-certificate.pem.txt"
-CA_KEY_FILE="$CA_FOLDER/ca-key.pem.txt"
+CA_DIR="ca/cert"
+STORE_FILE="$CA_DIR/ca-keystore.jks"
+CA_PEM_FILE="$CA_DIR/ca-certificate.pem.txt"
+CA_KEY_FILE="$CA_DIR/ca-key.pem.txt"
 VEHICLE_DIR="vehicle/cert"
 RSU_DIR="rsu/cert"
 
 # generate CA Certificate
-mkdir -p $CA_FOLDER
-rm $CA_FOLDER/* # clean previous certificates
+mkdir -p "$CA_DIR/nodes"
+rm -r $CA_DIR/nodes/* $CA_DIR/*.{txt,srl} # clean previous certificates
 echo -e "\033[32mGenerating the CA certificate...\033[0m"
 openssl req -new -x509 -keyout $CA_KEY_FILE -out $CA_PEM_FILE -days $KEYS_VALIDITY -passout pass:$CA_CERTIFICATE_PASS -subj $SUBJ
 echo -e "CA Certificate generated.\n"
@@ -41,4 +41,7 @@ do
   keytool -import -keystore $server_kerystore_file -file $CA_PEM_FILE  -alias $CA_ALIAS -keypass $KEY_PASS -storepass $STORE_PASS -noprompt
   keytool -import -keystore $server_kerystore_file -file "$entity_dir/$entity_name.cer" -alias $entity_name -storepass $STORE_PASS -keypass $KEY_PASS
   rm "$entity_dir/$entity_name.csr"
+  echo "Copying certificate to $CA_DIR/$entity_name"
+  hashed_name=`md5sum $entity_dir/$entity_name.cer | awk '{ print $1 }'`_${entity_name}.cer
+  cp "$entity_dir/$entity_name.cer" "$CA_DIR/nodes/$hashed_name"
 done
