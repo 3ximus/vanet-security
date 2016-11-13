@@ -1,5 +1,6 @@
 package entity.vanet;
 
+import remote.RemoteVehicleInterface;
 import remote.Vector2Df;
 
 /**
@@ -8,11 +9,13 @@ import remote.Vector2Df;
  */
 public class VehicleApp {
     public static final String VEHICLE_ARGS_USAGE = "vehicle <VIN> <posX> <posY> <velX> <velY>";
+
     public static void main(String[] args) {
         System.out.println("");
         System.out.println("");
 
         Vehicle vehicle;
+
         // Parse args
         if(args.length == 0) {
             System.out.println("[Vehicle] Assuming random values for position, velocity and VIN.");
@@ -37,7 +40,14 @@ public class VehicleApp {
         }
         System.out.println("[Vehicle] Started: " + vehicle);
 
-        // @TODO: Lauch RemoteVehicleService
+        // Publish remote vehicle
+        // @TODO: Remove hardcode port and name to soething better
+        RemoteVehicleService remoteVehicle = new RemoteVehicleService();
+        remoteVehicle.publish("Vehicle1", 10500);
+
+        // @TODO: Had itself to the network
+        // @TODO: AKA call the remote network object
+
 
         try {
             System.out.println("[Vehicle] Press <enter> to kill the vehicle.");
