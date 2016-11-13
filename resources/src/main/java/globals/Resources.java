@@ -19,10 +19,12 @@ public class Resources {
 //  ------- NAMES ------------
 	public static final String CA_NAME = "ca";
 	public static final String RSU_NAME = "rsu";
+	public static final String VANET_NAME = "vanet";
 
 //  ------- PORTS ------------
 	public static final int CA_PORT = 10000;
 	public static final int RSU_PORT = 11000;
+	public static final int REGISTRY_PORT = 1099;
 
 //  ------- PATHS ------------
 	public static final String CA_REVOKED = "cert/revoked";

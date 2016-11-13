@@ -21,24 +21,18 @@
     </properties>
 
   <dependencies>
+      <dependency>
+        <groupId>remote</groupId>
+        <artifactId>remote-interfaces</artifactId>
+        <version>1.0-SNAPSHOT</version>
+      </dependency>
 
-        <dependency>
-          <groupId>remote</groupId>
-          <artifactId>remote-interfaces</artifactId>
-          <version>1.0-SNAPSHOT</version>
-        </dependency>
+  		<dependency>
+  			<groupId>globals</groupId>
+  			<artifactId>resources</artifactId>
+  			<version>1.0-SNAPSHOT</version>
+  		</dependency>
 
-		<dependency>
-			<groupId>globals</groupId>
-			<artifactId>resources</artifactId>
-			<version>1.0-SNAPSHOT</version>
-		</dependency>
-
-        <dependency>
-            <groupId>vanet</groupId>
-            <artifactId>vehicle-network</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
 
       <dependency>
           <groupId>junit</groupId>
