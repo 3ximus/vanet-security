@@ -3,6 +3,9 @@ package security;
 import globals.Resources;
 import remote.RemoteCAInterface;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.rmi.RemoteException;
 import java.security.cert.Certificate;
 import java.security.MessageDigest;
@@ -27,22 +30,17 @@ public class RemoteCAService implements RemoteCAInterface {
 // -------------------------------
 
 	private boolean isRevoked(Certificate certToVerify) throws Exception {
-		MessageDigest digest = MessageDigest.getInstance("SHA-256");
-		String hexDigest = printHexBinary(digest.digest(certToVerify.toString().getBytes()));
+		MessageDigest digest = MessageDigest.getInstance(Resources.CA_DIGEST);
+		String certString = certToVerify.toString();
+		String hexDigest = printHexBinary(digest.digest(certString.getBytes())); // get digest from certificate
 		File revoked_dir = new File(Resources.CA_REVOKED);
 		if ( ! revoked_dir.exists() || ! revoked_dir.isDirectory()) return false;
-		for (File iter : revoked_dir.listFiles()) {
+		for (File iter : revoked_dir.listFiles())
 			if (iter.getName().contains(hexDigest)) {
-				FileInputStream in = new FileInputStream(iter.getName());
-
+				String loadedCert = new String(Files.readAllBytes(Paths.get(iter.getName()))); // read file into string
+				if (certString == loadedCert)
+					return true;
 			}
-
-		}
-
-
-
-
-
-		return true;
+		return false;
 	}
 }

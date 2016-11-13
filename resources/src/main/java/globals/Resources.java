@@ -28,6 +28,9 @@ public class Resources {
 	public static final String CA_REVOKED = "cert/revoked";
 	public static final String CA_NODES = "cert/nodes";
 
+//  ------- OTHER ------------
+	public static final String CA_DIGEST = "SHA-256";
+
 //  ------- PASSWORDS ------------
 	public static final char[] STORE_PASS = "f4ncyP455WORd".toCharArray();
 	public static final char[] KEY_PASS = "Y3tAn0th3rF4ncyPa5sW00rd".toCharArray();
