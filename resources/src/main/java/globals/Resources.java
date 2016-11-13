@@ -19,11 +19,14 @@ public class Resources {
 //  ------- NAMES ------------
 	public static final String CA_NAME = "ca";
 	public static final String RSU_NAME = "rsu";
-	public static final String CA_NAME = "ca";
 
 //  ------- PORTS ------------
 	public static final int CA_PORT = 10000;
 	public static final int RSU_PORT = 11000;
+
+//  ------- PATHS ------------
+	public static final String CA_REVOKED = "cert/revoked";
+	public static final String CA_NODES = "cert/nodes";
 
 //  ------- PASSWORDS ------------
 	public static final char[] STORE_PASS = "f4ncyP455WORd".toCharArray();
