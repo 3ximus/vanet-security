@@ -7,34 +7,37 @@ import vanet.RemoteVehicleNetworkService;
 
 public class RemoteRSUService implements RemoteRSUInterface {
 
+	private RSU rsu;
 	// private RemoteCAService ca;
-	private RemoteVehicleNetworkService vehicle_network;
+	private RemoteVehicleNetworkService vehicle_network;	
 
-	// public RemoteRSUService(RemoteCAService ca, RemoteVehicleNetworkService network) {
-	// 	this.ca = ca;
-	// 	this.vehicle_network = network;
-	// }	
-
-	// TODO: remove. So aqui para compilar sem erros
-	public RemoteRSUService(RemoteVehicleNetworkService network) {
+	// TODO: Adicionar RemoteCaService qd tiver neste branch.
+	public RemoteRSUService(RSU rsu, RemoteVehicleNetworkService network) {
+		this.rsu = rsu;
 		this.vehicle_network = network;
+		// this.ca = ca;
 	}	
 
-	// called by the vehicle network
+	// Called by the vehicle network
 	// forwards request to ca.
 	public void receiveAuthenticationRequest(String pubKey) {
-		// forward to ca
 		// ca.receiveAuthenticationRequest(pubkey)
 	}
 
-	// called by the Certificate Authority
+	// Called by the Certificate Authority
+	// forwards request to vehicle network
 	public void receiveAuthenticationResponse(String pubkey) {
-		//forward to vehicle network
 		//vehicle_network.receiveAuthenticationResponse(pubkey);
 	}
 
+	// Called by vehicle-network??
 	public void receiveRevokeCertificateRequest(String certificate) {
-		//TODO:
+		// TODO: adicionar condicoes para remover. Nao pode remover a cada pedido.
+		try {
+			rsu.removeCertificateFromCache(certificate);
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
 	}
 
 }
