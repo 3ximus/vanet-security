@@ -57,7 +57,7 @@ public class Vehicle {
 	}
 
 	public void simulatePositionUpdate() {
-		System.out.println("Simulating update of position..");
+		// System.out.println("Simulating update of position..");
 		if(inDanger == false) {
 			position.x = position.x + velocity.x;
 			position.y = position.y + velocity.y;
