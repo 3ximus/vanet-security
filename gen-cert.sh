@@ -42,6 +42,7 @@ do
   keytool -import -keystore $server_kerystore_file -file "$entity_dir/$entity_name.cer" -alias $entity_name -storepass $STORE_PASS -keypass $KEY_PASS
   rm "$entity_dir/$entity_name.csr"
   echo "Copying certificate to $CA_DIR/$entity_name"
-  hashed_name=`md5sum $entity_dir/$entity_name.cer | awk '{ print $1 }'`_${entity_name}.cer
+  sum=($(sha256sum $entity_dir/$entity_name.cer))
+  hashed_name="${sum}_${entity_name}.cer"
   cp "$entity_dir/$entity_name.cer" "$CA_DIR/nodes/$hashed_name"
 done
