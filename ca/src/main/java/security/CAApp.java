@@ -8,7 +8,7 @@ public class CAApp {
     public static void main( String[] args ) {
         try {
             RemoteCAService caService = new RemoteCAService();
-            Registry reg = LocateRegistry.createRegistry(Resources.CA_PORT);
+            Registry reg = LocateRegistry.createRegistry(Resources.REGISTRY_PORT);
             reg.rebind(Resources.CA_NAME, caService);
 
             System.out.println(Resources.OK_MSG("CA Server Online."));

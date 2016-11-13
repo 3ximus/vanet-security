@@ -7,8 +7,8 @@ import java.rmi.server.UnicastRemoteObject;
 
 import globals.Resources;
 
-public class App 
-{	
+public class App
+{
 	// publishes RSU service to RMI
 	public void publishRSU(RemoteRSUService rsu_service) {
 		try {
@@ -24,20 +24,20 @@ public class App
 	}
 
     public static void main( String[] args )
-    {	
+    {
     	RSU rsu = new RSU();
 
     	try {
-    		
+
     		// TODO: uncomment qd existirem estas interfaces e variaveis em resources
-    		// Locate the vehicular network service 
+    		// Locate the vehicular network service
             // Registry registry = LocateRegistry.getRegistry(Resources.VN_PORT); //colocar porta correta
-            // RemoteVehicleNetworkInterface vehicle_service 
+            // RemoteVehicleNetworkInterface vehicle_service
             // 		= (RemoteVehicleNetworkService) registry.lookup(Resources.VN_NAME); //colocar nome correto
-            
+
             // Locate the certificate authority service
-            // Registry registry = LocateRegistry.getRegistry(Resources.CA_PORT);
-            // RemoteCAInterface ca_service 
+            // Registry registry = LocateRegistry.getRegistry(Resources.REGISTRY_PORT);
+            // RemoteCAInterface ca_service
             // 		= (RemoteCAInterface) registry.lookup(Resources.CA_NAME);
 
         } catch (Exception e) {
@@ -46,7 +46,7 @@ public class App
         }
 
     	// Constroi objeto remoto e publica-o para no RMI registry
-    	// RemoteRSUService rsu_service = new RemoteRSUService(rsu,vehicle_service,ca_service); 
-    	// publishRSU(rsu_service);        
+    	// RemoteRSUService rsu_service = new RemoteRSUService(rsu,vehicle_service,ca_service);
+    	// publishRSU(rsu_service);
     }
 }
