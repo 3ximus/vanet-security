@@ -12,8 +12,8 @@ pretty_echo () {
 }
 
 # Custom dirs
-dirs="remote-interfaces ca vehicle vehicle-network rsu"
-# dirs=$(find . -maxdepth 1 -type d -not -name '\.*' -not -name 'resources' -not -name 'target')
+dirs="resources remote-interfaces ca vehicle vehicle-network rsu"
+# dirs=$(find . -maxdepth 1 -type d -not -name '\.*' -not -name 'target')
 
 [[ $# -eq 0 || "$1" = "help" || "$1" = "-help" || "$1" = "-h" ]] && echo -e "Usage ./mvn_script  [ compile | install | <maven arguments> ]  <directory> \n
 	- For \033[4;29minstall\033[0m, \033[4;29mcompile\033[0m and \033[4;29mclean\033[0m in case no more arguments are given
