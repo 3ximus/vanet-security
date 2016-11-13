@@ -4,9 +4,9 @@
 # usage: ./gen_keys.sh <entity_name_1 entity_name_2 entity_name_3...>
 
 CA_ALIAS="ca"
-STORE_PASS="ins3cur3"
-KEY_PASS="1nsecure"
-CA_CERTIFICATE_PASS="1ns3cur3"
+STORE_PASS="f4ncyP455WORd"
+KEY_PASS="Y3tAn0th3rF4ncyPa5sW00rd"
+CA_CERTIFICATE_PASS="Th1sC4antB3.0neMorePa55?"
 D_NAME="CN=VanetInc,OU=KaijuBanana,O=IST,L=Lisbon,S=Lisbon,C=PT"
 SUBJ="/CN=VanetInc/OU=KaijuBanana/O=IST/L=Lisbon/C=PT"
 KEYS_VALIDITY=90

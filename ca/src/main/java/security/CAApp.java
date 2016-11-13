@@ -1,6 +1,6 @@
 package security;
 
-import globals.Resources; 
+import globals.Resources;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
