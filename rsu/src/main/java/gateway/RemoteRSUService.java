@@ -2,17 +2,17 @@ package gateway;
 
 
 import remote.RemoteRSUInterface;
-// import security.RemoteCAService;
-import vanet.RemoteVehicleNetworkService;
+import remote.RemoteVehicleNetworkInterface;
+// import remote.RemoteCAInterface;
 
 public class RemoteRSUService implements RemoteRSUInterface {
 
 	private RSU rsu;
-	// private RemoteCAService ca;
-	private RemoteVehicleNetworkService vehicle_network;	
+	// private RemoteCAInterface ca;
+	private RemoteVehicleNetworkInterface vehicle_network;	
 
-	// TODO: Adicionar RemoteCaService qd tiver neste branch.
-	public RemoteRSUService(RSU rsu, RemoteVehicleNetworkService network) {
+	// TODO: Adicionar RemoteCaInterface qd tiver neste branch.
+	public RemoteRSUService(RSU rsu, RemoteVehicleNetworkInterface network) {
 		this.rsu = rsu;
 		this.vehicle_network = network;
 		// this.ca = ca;
@@ -26,8 +26,13 @@ public class RemoteRSUService implements RemoteRSUInterface {
 
 	// Called by the Certificate Authority
 	// forwards request to vehicle network
-	public void receiveAuthenticationResponse(String pubkey) {
+	public void receiveAuthenticationResponse(String certificate) {
 		//vehicle_network.receiveAuthenticationResponse(pubkey);
+		try {
+			rsu.addCertificateToCache(certificate);
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
 	}
 
 	// Called by vehicle-network??
