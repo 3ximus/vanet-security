@@ -8,7 +8,7 @@
 pretty_echo () {
 	[[ $1 = 1 ]] && dash_size=`expr $(echo $3 | wc -c) + 10` || dash_size=`echo $3 | wc -c`
 	echo -e "\n\t\033[0;3${1}m$(printf "%${4}s%${dash_size}s"|tr " " "=")\n\t$([[ $1 = 1 ]] && echo "FAILED TO ${2^^}" || echo ${2^^}): $3\n\t$(printf "%${4}s%${dash_size}s"|tr " " "=")\033[0m\n"
-	[[ $1 = 1 ]] && exit
+	[[ $1 = 1 ]] && exit 1
 }
 
 # Custom dirs
