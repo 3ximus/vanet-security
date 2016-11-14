@@ -96,7 +96,7 @@ public class VehicleApp {
             remoteVehicle.unpublish();
             System.out.println("");
             System.out.println("");
-        System.exit(0);
+            System.exit(0);
         }
     }
 }

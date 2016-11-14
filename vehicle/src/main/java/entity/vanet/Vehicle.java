@@ -1,6 +1,7 @@
 package entity.vanet;
 
 import java.util.Map;
+import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -39,8 +40,7 @@ public class Vehicle {
 	};
 
 
-	// TODO timestamp should be Date or Datetime object
-	private Map<String, VehicleDTO> vicinity; // String is the pseudonim certificate
+	private Map<String, VehicleDTO> vicinity = new HashMap<>(); // String is the pseudonim certificate (is it?)
 
 	public Vehicle(String VIN, Vector2Df position, Vector2Df velocity) {
 		this.VIN = VIN;
@@ -78,7 +78,6 @@ public class Vehicle {
 	}
 
 	public void simulatePositionUpdate() {
-		// System.out.println("Simulating update of position..");
 		if(inDanger == false) {
 			position.x = position.x + velocity.x;
 			position.y = position.y + velocity.y;
@@ -87,6 +86,11 @@ public class Vehicle {
 
 	public void simulateBrain(VehicleDTO vehicleInfo) {
 		System.out.println("Simulating brain..");
+
+		// @TODO: Register on the list if new, or update if not
+		// @TODO: If was already registered use a data trust function that , according to previous records of the
+		// @TODO: same vehicle, decides whether to believe it or not
+
 		if(isVehicleDangerous(vehicleInfo) == true) {
 			if(inDanger = true) {
 				resetInDangerTimer.cancel();
@@ -95,12 +99,7 @@ public class Vehicle {
 			resetInDangerTimer = new Timer();
 			resetInDangerTimer.schedule(new ResetInDangerTask(), IN_DANGER_RESET_MILISSECONDS);
 
-		} else {
-			// @TODO: Register on the list if new, or update if not
-			// @TODO: If was already registered use a data trust function that , according to previous records of the
-			// @TODO: same vehicle, decides whether to believe it or not
 		}
-
 	}
 
 	private boolean isVehicleDangerous(VehicleDTO vehicleInfo) {
