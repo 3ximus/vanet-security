@@ -74,11 +74,7 @@ public class RemoteVehicleNetworkService implements RemoteVehicleNetworkInterfac
         try {
             RemoteVehicleNetworkInterface stub = (RemoteVehicleNetworkInterface) UnicastRemoteObject.exportObject(this, 0);
             Registry registry;
-            try {
-                registry = LocateRegistry.createRegistry(Resources.REGISTRY_PORT);
-            } catch(ExportException e) {
-                registry = LocateRegistry.getRegistry(Resources.REGISTRY_PORT);
-            }
+            registry = LocateRegistry.getRegistry(Resources.REGISTRY_PORT);
             registry.rebind(Resources.VANET_NAME, stub);
             isPublished = true;
             System.out.println("[VANET] Remote VANET called \"" + Resources.VANET_NAME+ "\".");

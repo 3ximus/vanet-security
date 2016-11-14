@@ -1,9 +1,21 @@
 package vanet;
 
+import globals.Resources;
+
+import java.rmi.registry.LocateRegistry;
+import java.rmi.server.ExportException;
+
 public class VehicleNetworkApp {
     public static void main(String[] args) {
         System.out.println("");
         System.out.println("");
+
+        // Create registry if it doesn't exist
+        try {
+            LocateRegistry.createRegistry(Resources.REGISTRY_PORT);
+        } catch(Exception e) {
+            // registry is already created
+        }
 
         VehicleNetwork vehicleNetwork = new VehicleNetwork();
         RemoteVehicleNetworkService VANET = new RemoteVehicleNetworkService(vehicleNetwork);

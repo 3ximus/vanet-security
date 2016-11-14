@@ -4,10 +4,7 @@ package entity.vanet;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.rmi.server.ExportException;
 import java.rmi.server.UnicastRemoteObject;
-
-import java.rmi.RemoteException;
 
 import globals.Resources;
 import remote.RemoteVehicleInterface;
@@ -43,12 +40,7 @@ public class RemoteVehicleService implements RemoteVehicleInterface {
 
 		try {
 			RemoteVehicleInterface stub = (RemoteVehicleInterface) UnicastRemoteObject.exportObject(this, 0); // zero means anonymous port
-			Registry registry;
-			try {
-				registry = LocateRegistry.createRegistry(Resources.REGISTRY_PORT);
-			} catch(ExportException e) {
-				registry = LocateRegistry.getRegistry(Resources.REGISTRY_PORT);
-			}
+			Registry registry = LocateRegistry.getRegistry(Resources.REGISTRY_PORT);
 			registry.rebind(name, stub);
 			isPublished = true;
 			System.out.println("[Vehicle] Remote vehicle called \"" + name + "\" is now published.");

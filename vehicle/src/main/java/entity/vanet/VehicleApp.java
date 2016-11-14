@@ -45,6 +45,13 @@ public class VehicleApp {
         }
         System.out.println("[Vehicle] Started: " + vehicle);
 
+        // Create registry if it doesn't exist
+        try {
+            LocateRegistry.createRegistry(Resources.REGISTRY_PORT);
+        } catch(Exception e) {
+            // registry is already created
+        }
+
         // Connect to the VANET
         RemoteVehicleNetworkInterface VANET;
         String vehicleUniqueName;
@@ -81,13 +88,11 @@ public class VehicleApp {
             VANET.removeVehicle(vehicleUniqueName);
         } catch (java.io.IOException e) {
             System.out.println(Resources.ERROR_MSG("[Vehicle] Unable to read from input. Exiting."));
-            return;
         } finally {
             remoteVehicle.unpublish();
+            System.out.println("");
+            System.out.println("");
+            System.exit(0);
         }
-
-        System.out.println("");
-        System.out.println("");
-        System.exit(0);
     }
 }
