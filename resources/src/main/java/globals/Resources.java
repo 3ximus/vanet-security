@@ -126,7 +126,7 @@ public class Resources {
 		sig.update(bytes);
 		try { return sig.verify(cipherDigest); }
 		catch (SignatureException se) {
-			System.err.println(WARNING_MSG("Invalentity Signature :" + se.getMessage()));
+			System.err.println(WARNING_MSG("Invalid Signature :" + se.getMessage()));
 			return false;
 		}
 	}

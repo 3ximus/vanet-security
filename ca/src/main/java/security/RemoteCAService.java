@@ -103,7 +103,7 @@ public class RemoteCAService implements RemoteCAInterface {
 			System.out.println(Resources.OK_MSG(Resources.CA_NAME+" published to registry."));
 		}
 		catch (Exception e) {
-            System.err.println(Resources.ERROR_MSG("Failed to publish remote CA." + e.getMessage()));
+            System.err.println(Resources.ERROR_MSG("Failed to publish remote CA: " + e.getMessage()));
 		 }
 	}
 
@@ -115,10 +115,10 @@ public class RemoteCAService implements RemoteCAInterface {
 
         try {
             Registry registry = LocateRegistry.getRegistry(Resources.REGISTRY_PORT);
-            registry.unbind(Resources.VANET_NAME);
+            registry.unbind(Resources.CA_NAME);
             UnicastRemoteObject.unexportObject(this, true);
         } catch (Exception e) {
-            System.err.println(Resources.ERROR_MSG("Unpublishing VANET" + e.getMessage()));
+            System.err.println(Resources.ERROR_MSG("Unpublishing CA: " + e.getMessage()));
         }
 	}
 }

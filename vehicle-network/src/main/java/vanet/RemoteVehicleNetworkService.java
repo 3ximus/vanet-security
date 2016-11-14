@@ -47,7 +47,7 @@ public class RemoteVehicleNetworkService implements RemoteVehicleNetworkInterfac
             Registry registry = LocateRegistry.getRegistry(1099); // @FIXME: only works for localhost
             vehicleToAdd = (RemoteVehicleInterface) registry.lookup(name);
         } catch(Exception e) {
-            System.err.println("[VANET] Failed to add vehicle with name " + name + ". " + e.getClass() + ": " +  e.getMessage());
+            System.err.println(Resources.ERROR_MSG("Failed to add vehicle \"" + name + "\" : " + e.getMessage()));
             return false;
         }
 
@@ -99,7 +99,7 @@ public class RemoteVehicleNetworkService implements RemoteVehicleNetworkInterfac
             registry.unbind(Resources.VANET_NAME);
             UnicastRemoteObject.unexportObject(this, true);
         } catch (Exception e) {
-            System.err.println(Resources.ERROR_MSG("Unpublishing VANET" + e.getMessage()));
+            System.err.println(Resources.ERROR_MSG("Unpublishing VANET: " + e.getMessage()));
         }
     }
 }

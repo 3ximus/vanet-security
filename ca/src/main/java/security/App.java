@@ -12,14 +12,16 @@ public class App {
         try { LocateRegistry.createRegistry(Resources.REGISTRY_PORT); }
         catch(Exception e) { } // registry is already created
 
-        try {
-            RemoteCAService caService = new RemoteCAService();
-            Registry reg = LocateRegistry.createRegistry(Resources.REGISTRY_PORT);
-            reg.rebind(Resources.CA_NAME, caService);
+        RemoteCAService CA = new RemoteCAService();
+        CA.publish();
 
-            System.out.println(Resources.OK_MSG("CA Server Online."));
-        } catch ( Exception e ) {
-            System.out.println(Resources.ERROR_MSG("Launching CA Server: " + e.getMessage()));
+        try {
+            System.out.println("Press enter to kill the server...");
+            System.in.read();
+        } catch (java.io.IOException e) {
+            System.out.println(Resources.ERROR_MSG("Unable to read from input. Exiting."));
+        } finally {
+            CA.unpublish();
         }
     }
 }

@@ -31,12 +31,12 @@ public class VehicleNetwork {
 	}
 
 	public void addVehicle(String name, RemoteVehicleInterface vehicleToAdd) {
-		System.out.println("Adding vehicle \"" + name + "\" to the network.");
+		System.out.println(Resources.OK_MSG("Adding vehicle \"" + name + "\" to the network."));
 		vehicleList.put(name, vehicleToAdd);
 	}
 
 	public void removeVehicle(String name) {
-		System.out.println("Removing vehicle \"" + name + "\" from the network.");
+		System.out.println(Resources.OK_MSG("Removing vehicle \"" + name + "\" from the network."));
 		vehicleList.remove(name);
 	}
 
