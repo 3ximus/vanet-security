@@ -66,6 +66,9 @@ public class VehicleApp {
             return;
         }
 
+        // Set vehicle VANET
+        vehicle.setVANET(VANET);
+
         // Publish remote vehicle
         RemoteVehicleService remoteVehicle = new RemoteVehicleService(vehicle, vehicleUniqueName);
         remoteVehicle.publish();

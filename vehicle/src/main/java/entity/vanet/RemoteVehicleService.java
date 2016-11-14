@@ -29,7 +29,7 @@ public class RemoteVehicleService implements RemoteVehicleInterface {
 
 	public void receiveBeaconMessage(VehicleDTO vehicleInfo) throws RemoteException {
 		// @TODO: Check security requirements
-		vehicle.simulateSensors(vehicleInfo);
+		vehicle.simulateBrain(vehicleInfo);
 	}
 
 	public void publish() {

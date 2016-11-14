@@ -1,11 +1,17 @@
 package remote;
 
-public class Vector2Df {
-    public float x;
-    public float y;
+import java.io.Serializable;
 
-    public Vector2Df(float x, float y) {
+public class Vector2Df implements Serializable {
+    public double x;
+    public double y;
+
+    public Vector2Df(double x, double y) {
         this.x = x;
         this.y = y;
+    }
+
+    public double distance(Vector2Df other) {
+        return Math.sqrt(Math.pow(this.x - other.x, 2) + Math.pow(this.y - other.y, 2));
     }
 }

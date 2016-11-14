@@ -20,6 +20,7 @@ public class Resources {
 	public static final String CA_NAME = "ca";
 	public static final String RSU_NAME = "rsu";
 	public static final String VANET_NAME = "vanet";
+	
 
 //  ------- PORTS ------------
 	public static final int REGISTRY_PORT = 1099;
@@ -30,6 +31,7 @@ public class Resources {
 
 //  ------- OTHER ------------
 	public static final String CA_DIGEST = "SHA-256";
+	public static final int MAX_IN_RANGE = 10;
 
 //  ------- PASSWORDS ------------
 	public static final char[] STORE_PASS = "f4ncyP455WORd".toCharArray();

@@ -6,16 +6,18 @@ import java.util.TimerTask;
 
 import remote.Vector2Df;
 import remote.VehicleDTO;
+import remote.RemoteVehicleNetworkInterface;
 
 public class Vehicle {
-	public static final int DELTA_MILISSECONDS = 200;
+	public static final int BEACON_DELTA_MILISSECONDS = 200;
 	public static final int IN_DANGER_RESET_MILISSECONDS = 1000;
 
 	private String VIN;
 	private Vector2Df position;
 	private Vector2Df velocity;
+	private RemoteVehicleNetworkInterface VANET;
 
-	boolean inDanger = false;
+	private boolean inDanger = false;
 	private Timer resetInDangerTimer = new Timer();
 	private TimerTask resetInDangerTask = new TimerTask() {
 		@Override
@@ -29,6 +31,7 @@ public class Vehicle {
 		@Override
 		public void run() {
 			simulatePositionUpdate();
+			beacon();
 		}
 	};
 
@@ -42,7 +45,7 @@ public class Vehicle {
 		this.velocity = velocity;
 
 		// Run the engine on a timer
-		timer.scheduleAtFixedRate(engineTask, 0, DELTA_MILISSECONDS);
+		timer.scheduleAtFixedRate(engineTask, 0, BEACON_DELTA_MILISSECONDS);
 	}
 
 	// ---------
@@ -51,9 +54,22 @@ public class Vehicle {
 	public Vector2Df getPosition() { return this.position; }
 	public Vector2Df getVelocity() { return this.velocity; }
 
-	public void beacon() {
-		// @TODO: Remote call the network (which will simulate the message being sent to the nearby cars)
+	// ---------
+	// SETTERS
+	// ---------
+	public void setVANET(RemoteVehicleNetworkInterface VANET) {
+		this.VANET = VANET;
+	}
 
+	public void beacon() {
+		if(VANET == null) return;
+		
+		VehicleDTO dto = new VehicleDTO(position, velocity, null); // @FIXME: change null to current time
+		try {
+			VANET.simulateBeaconBroadcast(dto);
+		} catch(Exception e) {
+			System.out.println("[Vehicle] Unable to beacon message. Cause: " + e.getMessage());
+		}
 	}
 
 	public void simulatePositionUpdate() {
@@ -64,8 +80,8 @@ public class Vehicle {
 		}
 	}
 
-	public void simulateSensors(VehicleDTO vehicleInfo) {
-		System.out.println("simulating sensors..");
+	public void simulateBrain(VehicleDTO vehicleInfo) {
+		System.out.println("simulating brain..");
 		if(isVehicleDangerous(vehicleInfo) == true) {
 			if(inDanger = true) {
 				resetInDangerTimer.cancel();

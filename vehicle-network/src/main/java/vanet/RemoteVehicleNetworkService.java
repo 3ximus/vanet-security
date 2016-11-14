@@ -4,6 +4,7 @@ import entity.vanet.RemoteVehicleService;
 import globals.Resources;
 import remote.RemoteVehicleInterface;
 import remote.RemoteVehicleNetworkInterface;
+import remote.Vector2Df;
 import remote.VehicleDTO;
 
 import java.rmi.server.ExportException;
@@ -24,9 +25,13 @@ public class RemoteVehicleNetworkService implements RemoteVehicleNetworkInterfac
 
     @Override
     public void simulateBeaconBroadcast(VehicleDTO messageToBeacon) throws RemoteException {
+        Vector2Df pos1 = messageToBeacon.getPosition();
         for(Map.Entry<String, RemoteVehicleInterface> entry: vehicleNetwork.getVehicleEntrySet()) {
-            // @TODO: Do something with this information
-            entry.getValue().simulateGetPosition();
+            RemoteVehicleInterface remoteVehicle = entry.getValue();
+
+            if(VehicleNetwork.inRange(pos1, remoteVehicle.simulateGetPosition())) {
+                remoteVehicle.receiveBeaconMessage(messageToBeacon);
+            }
         }
 
         // @TODO: for every vehicle in range send message
