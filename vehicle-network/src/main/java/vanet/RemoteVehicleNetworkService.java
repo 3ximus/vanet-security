@@ -53,7 +53,7 @@ public class RemoteVehicleNetworkService implements RemoteVehicleNetworkInterfac
             Registry registry = LocateRegistry.getRegistry(1099); // @FIXME: only works for localhost
             vehicleToAdd = (RemoteVehicleInterface) registry.lookup(name);
         } catch(Exception e) {
-            System.err.println("[VANET] Failed to add vehicle with name " + name + ". " + e.getClass() + ": " +  e.getMessage());
+            System.err.println(Resources.ERROR_MSG("Failed to add vehicle \"" + name + "\" : " + e.getMessage()));
             return false;
         }
 
@@ -77,8 +77,8 @@ public class RemoteVehicleNetworkService implements RemoteVehicleNetworkInterfac
     }
 
     public void publish() {
-        if(isPublished == true) {
-            System.out.println("[VANET] Vanet is already published. Doing nothing.");
+        if(isPublished) {
+			System.out.println(Resources.WARNING_MSG(Resources.VANET_NAME+" already published."));
             return;
         }
 
@@ -88,15 +88,15 @@ public class RemoteVehicleNetworkService implements RemoteVehicleNetworkInterfac
             registry = LocateRegistry.getRegistry(Resources.REGISTRY_PORT);
             registry.rebind(Resources.VANET_NAME, stub);
             isPublished = true;
-            System.out.println("[VANET] Remote VANET called \"" + Resources.VANET_NAME+ "\".");
+            System.out.println(Resources.OK_MSG(Resources.VANET_NAME+" published to registry."));
         } catch (Exception e) {
-            System.err.println("[VANET] Failed to publish remote VANET. " + e.getClass() + ": " +  e.getMessage());
+            System.err.println(Resources.ERROR_MSG("Failed to publish remote VANET: " + e.getMessage()));
         }
     }
 
     public void unpublish() {
-        if(isPublished == false) {
-            System.out.println("[VANET] Tried to unpublish. VANET was never published. Doing nothing.");
+        if(! isPublished) {
+            System.out.println(Resources.WARNING_MSG("Unpublishing "+Resources.VANET_NAME+" that was never published."));
             return;
         }
 
@@ -105,7 +105,7 @@ public class RemoteVehicleNetworkService implements RemoteVehicleNetworkInterfac
             registry.unbind(Resources.VANET_NAME);
             UnicastRemoteObject.unexportObject(this, true);
         } catch (Exception e) {
-            System.err.println("[VANET] Failed to unpublish VANET. " + e.getClass() + ": " +  e.getMessage());
+            System.err.println(Resources.ERROR_MSG("Unpublishing VANET: " + e.getMessage()));
         }
     }
 }

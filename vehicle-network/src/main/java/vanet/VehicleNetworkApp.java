@@ -22,10 +22,10 @@ public class VehicleNetworkApp {
         VANET.publish();
 
         try {
-            System.out.println("[Vehicle] Press <enter> to kill the vehicle.");
+            System.out.println("Press enter to kill the network.");
             System.in.read();
         } catch (java.io.IOException e) {
-            System.out.println("[Vehicle] [ERROR] Unable to read from input. Exiting.");
+            System.out.println(Resources.ERROR_MSG("Unable to read from input. Exiting."));
         } finally {
             VANET.unpublish();
         }

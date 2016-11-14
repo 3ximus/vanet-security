@@ -6,15 +6,22 @@ import java.rmi.registry.Registry;
 
 public class App {
     public static void main( String[] args ) {
-        try {
-            RemoteCAService caService = new RemoteCAService();
-            Registry reg = LocateRegistry.createRegistry(Resources.REGISTRY_PORT);
-            reg.rebind(Resources.CA_NAME, caService);
+        System.out.println("------------------------------");
 
-            System.out.println(Resources.OK_MSG("CA Server Online."));
-            System.out.println(Resources.ERROR_MSG("CA Server Online."));
-        } catch ( Exception e ) {
-            System.out.println(Resources.ERROR_MSG("Launching CA Server: " + e.getMessage()));
+        // Create registry if it doesn't exist
+        try { LocateRegistry.createRegistry(Resources.REGISTRY_PORT); }
+        catch(Exception e) { } // registry is already created
+
+        RemoteCAService CA = new RemoteCAService();
+        CA.publish();
+
+        try {
+            System.out.println("Press enter to kill the server...");
+            System.in.read();
+        } catch (java.io.IOException e) {
+            System.out.println(Resources.ERROR_MSG("Unable to read from input. Exiting."));
+        } finally {
+            CA.unpublish();
         }
     }
 }

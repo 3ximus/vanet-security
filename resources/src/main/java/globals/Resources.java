@@ -51,7 +51,7 @@ public class Resources {
 		return "[\033[0;33mWARNING\033[0m] [\033[1;35m"+st.getClassName()+"."+st.getMethodName()+"\033[0m] "+msg; }
 	public static String OK_MSG(String msg) {
 		StackTraceElement st = Thread.currentThread().getStackTrace()[2]; // caller stack element
-		return "[\033[0;32m  OK  \033[0m] [\033[1;35m"+st.getClassName()+"."+st.getMethodName()+"\033[0m] "+msg; }
+		return "[\033[0;32m  OK   \033[0m] [\033[1;35m"+st.getClassName()+"."+st.getMethodName()+"\033[0m] "+msg; }
 //  -----------------------------------
 
 
@@ -130,7 +130,7 @@ public class Resources {
 		sig.update(bytes);
 		try { return sig.verify(cipherDigest); }
 		catch (SignatureException se) {
-			System.err.println(WARNING_MSG("Invalentity Signature :" + se.getMessage()));
+			System.err.println(WARNING_MSG("Invalid Signature :" + se.getMessage()));
 			return false;
 		}
 	}
