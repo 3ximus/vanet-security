@@ -66,13 +66,14 @@ public class VehicleApp {
             return;
         }
 
-        // Set vehicle VANET
-        vehicle.setVANET(VANET);
-
         // Publish remote vehicle
         RemoteVehicleService remoteVehicle = new RemoteVehicleService(vehicle, vehicleUniqueName);
         remoteVehicle.publish();
 
+        // Start the vehicle
+        vehicle.start(VANET, vehicleUniqueName);
+
+        // Add vehicle to the VANET
         try {
             boolean result = VANET.addVehicle(vehicleUniqueName);
             if(result == false) {
@@ -84,7 +85,7 @@ public class VehicleApp {
             return;
         }
 
-
+        // Handle wait and removal
         try {
             System.out.println("[Vehicle] Press <enter> to kill the vehicle.");
             System.in.read();
@@ -95,7 +96,7 @@ public class VehicleApp {
             remoteVehicle.unpublish();
             System.out.println("");
             System.out.println("");
-            System.exit(0);
+        System.exit(0);
         }
     }
 }

@@ -41,7 +41,6 @@ public class VehicleNetwork {
 	}
 
 	public static boolean inRange(Vector2Df pos1, Vector2Df pos2) {
-		double distance = pos1.distance(pos2);
-		return !(distance == 0 || distance > Resources.MAX_IN_RANGE);
+		return pos1.distance(pos2) <= Resources.MAX_BEACON_RANGE;
 	}
 }

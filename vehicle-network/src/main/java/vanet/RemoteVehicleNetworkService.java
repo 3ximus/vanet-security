@@ -24,17 +24,23 @@ public class RemoteVehicleNetworkService implements RemoteVehicleNetworkInterfac
     }
 
     @Override
-    public void simulateBeaconBroadcast(VehicleDTO messageToBeacon) throws RemoteException {
-        Vector2Df pos1 = messageToBeacon.getPosition();
+    public void simulateBeaconBroadcast(String name, VehicleDTO messageToBeacon) throws RemoteException {
+        Vector2Df sendingVehiclePos = messageToBeacon.getPosition();
         for(Map.Entry<String, RemoteVehicleInterface> entry: vehicleNetwork.getVehicleEntrySet()) {
+            if(entry.getKey().equals(name)) continue;
+
             RemoteVehicleInterface remoteVehicle = entry.getValue();
 
-            if(VehicleNetwork.inRange(pos1, remoteVehicle.simulateGetPosition())) {
-                remoteVehicle.receiveBeaconMessage(messageToBeacon);
+            try {
+                Vector2Df remoteVehiclePos = remoteVehicle.simulateGetPosition();
+                if(VehicleNetwork.inRange(sendingVehiclePos, remoteVehiclePos)) {
+                    remoteVehicle.receiveBeaconMessage(messageToBeacon);
+                }
+            } catch(RemoteException e) {
+                System.out.println("Vehicle \"" + entry.getKey() + "\" seems to be dead.");
+                vehicleNetwork.removeVehicle(entry.getKey());
             }
         }
-
-        // @TODO: for every vehicle in range send message
     }
 
     @Override

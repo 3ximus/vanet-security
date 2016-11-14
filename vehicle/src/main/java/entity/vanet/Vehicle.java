@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import globals.Resources;
 import remote.Vector2Df;
 import remote.VehicleDTO;
 import remote.RemoteVehicleNetworkInterface;
@@ -16,15 +17,17 @@ public class Vehicle {
 	private Vector2Df position;
 	private Vector2Df velocity;
 	private RemoteVehicleNetworkInterface VANET;
+	private String nameInVANET;
 
 	private boolean inDanger = false;
 	private Timer resetInDangerTimer = new Timer();
-	private TimerTask resetInDangerTask = new TimerTask() {
+	class ResetInDangerTask extends TimerTask {
 		@Override
 		public void run() {
 			inDanger = false;
 		}
-	};
+	}
+	private TimerTask resetInDangerTask = new ResetInDangerTask();
 
 	private Timer timer = new Timer();
 	private TimerTask engineTask = new TimerTask() {
@@ -43,9 +46,6 @@ public class Vehicle {
 		this.VIN = VIN;
 		this.position = position;
 		this.velocity = velocity;
-
-		// Run the engine on a timer
-		timer.scheduleAtFixedRate(engineTask, 0, BEACON_DELTA_MILISSECONDS);
 	}
 
 	// ---------
@@ -54,21 +54,26 @@ public class Vehicle {
 	public Vector2Df getPosition() { return this.position; }
 	public Vector2Df getVelocity() { return this.velocity; }
 
-	// ---------
-	// SETTERS
-	// ---------
-	public void setVANET(RemoteVehicleNetworkInterface VANET) {
+
+	// Sets VANET, starts updating position and starts beaoning
+	public void start(RemoteVehicleNetworkInterface VANET, String name) {
 		this.VANET = VANET;
+		this.nameInVANET = name;
+
+		// Run the engine and beaconing on a timer
+		timer.scheduleAtFixedRate(engineTask, 0, BEACON_DELTA_MILISSECONDS);
 	}
 
 	public void beacon() {
 		if(VANET == null) return;
-		
+
 		VehicleDTO dto = new VehicleDTO(position, velocity, null); // @FIXME: change null to current time
 		try {
-			VANET.simulateBeaconBroadcast(dto);
+			VANET.simulateBeaconBroadcast(nameInVANET, dto);
 		} catch(Exception e) {
 			System.out.println("[Vehicle] Unable to beacon message. Cause: " + e.getMessage());
+			System.out.println("[Vehicle] VANET seems dead... Exiting...");
+			System.exit(-1);
 		}
 	}
 
@@ -81,13 +86,14 @@ public class Vehicle {
 	}
 
 	public void simulateBrain(VehicleDTO vehicleInfo) {
-		System.out.println("simulating brain..");
+		System.out.println("Simulating brain..");
 		if(isVehicleDangerous(vehicleInfo) == true) {
 			if(inDanger = true) {
 				resetInDangerTimer.cancel();
 			}
 			inDanger = true;
-			resetInDangerTimer.schedule(resetInDangerTask, IN_DANGER_RESET_MILISSECONDS);
+			resetInDangerTimer = new Timer();
+			resetInDangerTimer.schedule(new ResetInDangerTask(), IN_DANGER_RESET_MILISSECONDS);
 
 		} else {
 			// @TODO: Register on the list if new, or update if not
@@ -98,8 +104,8 @@ public class Vehicle {
 	}
 
 	private boolean isVehicleDangerous(VehicleDTO vehicleInfo) {
-		// @TODO
-		return false;
+		System.out.println(Resources.WARNING_MSG("DANGER!"));
+		return vehicleInfo.getPosition().distance(getPosition()) <= Resources.TOO_DANGEROUS_RANGE;
 	}
 
 
