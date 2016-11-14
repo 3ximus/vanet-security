@@ -16,8 +16,7 @@ public class VehicleApp {
     public static final String VEHICLE_ARGS_USAGE = "vehicle <VIN> <posX> <posY> <velX> <velY>";
 
     public static void main(String[] args) {
-        System.out.println("");
-        System.out.println("");
+        System.out.println("\n");
 
         Vehicle vehicle;
 
@@ -94,8 +93,7 @@ public class VehicleApp {
             System.out.println(Resources.ERROR_MSG("[Vehicle] Unable to read from input. Exiting."));
         } finally {
             remoteVehicle.unpublish();
-            System.out.println("");
-            System.out.println("");
+            System.out.println("\n");
             System.exit(0);
         }
     }

@@ -22,10 +22,12 @@ public class RemoteCAService implements RemoteCAInterface {
 
 // ------ INTERFACE METHODS --------
 
+	@Override
 	public boolean checkCertificate(Certificate certToVerify, Certificate senderCert, byte[] signature) throws RemoteException {
 		return this.isRevoked(certToVerify);
 	}
 
+	@Override
 	public boolean revokeCertificate(Certificate certToRevoke, Certificate senderCert, byte[] signature) throws RemoteException {
 		if (! this.ponderateRevokeRequest(senderCert))
 			return false;

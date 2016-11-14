@@ -11,6 +11,8 @@ import remote.RemoteVehicleInterface;
 import remote.Vector2Df;
 import remote.VehicleDTO;
 
+import java.security.cert.Certificate;
+
 public class RemoteVehicleService implements RemoteVehicleInterface {
 	private boolean isPublished = false;
 	private String name;
@@ -22,19 +24,26 @@ public class RemoteVehicleService implements RemoteVehicleInterface {
 		this.name = name;
 	}
 
+// ------ INTERFACE METHODS --------
+
 	public Vector2Df simulateGetPosition() throws RemoteException {
 		return vehicle.getPosition();
 
 	}
 
-	public void receiveBeaconMessage(VehicleDTO vehicleInfo) throws RemoteException {
+	public void receiveBeaconMessage(VehicleDTO vehicleInfo, Certificate senderCertificate, byte[] signature) throws RemoteException {
 		// @TODO: Check security requirements
 		vehicle.simulateBrain(vehicleInfo);
 	}
+// -------------------------------
+
+
+
+// ------ REGISTRY METHODS --------
 
 	public void publish() {
 		if(isPublished == true) {
-			System.out.println("[Vehicle] Tried to publish. Vehicle already published. Doing nothing.");
+			System.out.println(Resources.WARNING_MSG("Vehicle already published."));
 			return;
 		}
 
@@ -43,15 +52,15 @@ public class RemoteVehicleService implements RemoteVehicleInterface {
 			Registry registry = LocateRegistry.getRegistry(Resources.REGISTRY_PORT);
 			registry.rebind(name, stub);
 			isPublished = true;
-			System.out.println("[Vehicle] Remote vehicle called \"" + name + "\" is now published.");
+			System.out.println(Resources.OK_MSG("Published vehicle: " + name + "."));
 		} catch (Exception e) {
-			System.err.println("[Vehicle] Failed to publish remote vehicle. " + e.getClass() + ": " +  e.getMessage());
+			System.err.println(Resources.ERROR_MSG("Failed to publish remote vehicle: " +  e.getMessage()));
 		}
 	}
 
 	public void unpublish() {
 		if(isPublished == false) {
-			System.out.println("[Vehicle] Tried to unpublish. Vehicle was never published. Doing nothing.");
+			System.out.println(Resources.WARNING_MSG("Unpublishing vehicle that was never published"));
 			return;
 		}
 
@@ -60,7 +69,7 @@ public class RemoteVehicleService implements RemoteVehicleInterface {
 			registry.unbind(name);
 			UnicastRemoteObject.unexportObject(this, true);
 		} catch (Exception e) {
-			System.err.println("[Vehicle] Failed to unpublish remote vehicle. " + e.getClass() + ": " +  e.getMessage());
+			System.err.println(Resources.ERROR_MSG("Failed to unpublish remote vehicle: " + e.getMessage()));
 		}
 	}
 }

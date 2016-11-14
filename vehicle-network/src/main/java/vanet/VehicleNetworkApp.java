@@ -7,8 +7,7 @@ import java.rmi.server.ExportException;
 
 public class VehicleNetworkApp {
     public static void main(String[] args) {
-        System.out.println("");
-        System.out.println("");
+        System.out.println("\n");
 
         // Create registry if it doesn't exist
         try {
@@ -30,8 +29,7 @@ public class VehicleNetworkApp {
             VANET.unpublish();
         }
 
-        System.out.println("");
-        System.out.println("");
+        System.out.println("\n");
         System.exit(0);
     }
 }

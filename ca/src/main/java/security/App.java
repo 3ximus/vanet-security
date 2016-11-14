@@ -6,7 +6,7 @@ import java.rmi.registry.Registry;
 
 public class App {
     public static void main( String[] args ) {
-        System.out.println("------------------------------");
+        System.out.println("\n");
 
         // Create registry if it doesn't exist
         try { LocateRegistry.createRegistry(Resources.REGISTRY_PORT); }
@@ -22,6 +22,7 @@ public class App {
             System.out.println(Resources.ERROR_MSG("Unable to read from input. Exiting."));
         } finally {
             CA.unpublish();
+            System.out.println("\n");
         }
     }
 }

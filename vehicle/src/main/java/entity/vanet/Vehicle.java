@@ -69,7 +69,7 @@ public class Vehicle {
 
 		VehicleDTO dto = new VehicleDTO(position, velocity, null); // @FIXME: change null to current time
 		try {
-			VANET.simulateBeaconBroadcast(nameInVANET, dto);
+			VANET.simulateBeaconBroadcast(nameInVANET, dto, null, null); // TODO <- fill with certificate and sig
 		} catch(Exception e) {
 			System.out.println("[Vehicle] Unable to beacon message. Cause: " + e.getMessage());
 			System.out.println("[Vehicle] VANET seems dead... Exiting...");
