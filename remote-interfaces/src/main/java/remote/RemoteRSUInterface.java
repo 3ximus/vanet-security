@@ -9,4 +9,5 @@ public interface RemoteRSUInterface extends Remote {
 	// TODO missing security Arguments ( signature )
 	public boolean receiveAuthenticationRequest (String senderCertificate, byte[] signature) throws RemoteException;
 	public void receiveRevokeCertificateRequest (String senderCertificate, byte[] signature) throws RemoteException;
+	public void ping (String msg) throws RemoteException;
 }
