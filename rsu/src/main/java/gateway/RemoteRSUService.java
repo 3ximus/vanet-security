@@ -1,6 +1,6 @@
 package gateway;
 
-
+import globals.Resources;
 import remote.RemoteRSUInterface;
 import remote.RemoteVehicleNetworkInterface;
 import remote.RemoteCAInterface;
@@ -46,6 +46,10 @@ public class RemoteRSUService implements RemoteRSUInterface {
 	// returns result to network
 	public void receiveRevokeCertificateRequest(String senderCertificate, byte[] signature) {
 		// TODO:
+	}
+
+	public void ping(String msg) {
+		System.out.println(Resources.OK_MSG("ping:" + msg));
 	}
 
 }
