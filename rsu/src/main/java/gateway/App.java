@@ -6,11 +6,15 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 
 import globals.Resources;
+import remote.RemoteCAInterface;
+import remote.RemoteVehicleNetworkInterface;
+import gateway.RemoteRSUService;
+
 
 public class App
 {
 	// publishes RSU service to RMI
-	public void publishRSU(RemoteRSUService rsu_service) {
+	public static void publishRSU(RemoteRSUService rsu_service) {
 		try {
             RemoteRSUService stub = (RemoteRSUService) UnicastRemoteObject.exportObject(rsu_service, 0);
             Registry registry = LocateRegistry.getRegistry();
@@ -23,30 +27,32 @@ public class App
 
 	}
 
-    public static void main( String[] args )
-    {
+    public static void main( String[] args ) {
+        
     	RSU rsu = new RSU();
+        RemoteVehicleNetworkInterface vehicle_service = null;
+        RemoteCAInterface ca_service = null;
 
     	try {
-
-    		// TODO: uncomment qd existirem estas interfaces e variaveis em resources
     		// Locate the vehicular network service
-            // Registry registry = LocateRegistry.getRegistry(Resources.VN_PORT); //colocar porta correta
-            // RemoteVehicleNetworkInterface vehicle_service
-            // 		= (RemoteVehicleNetworkService) registry.lookup(Resources.VN_NAME); //colocar nome correto
+            Registry registry = LocateRegistry.getRegistry(Resources.REGISTRY_PORT); 
+            vehicle_service
+            		= (RemoteVehicleNetworkInterface) registry.lookup(Resources.VANET_NAME);
 
             // Locate the certificate authority service
-            // Registry registry = LocateRegistry.getRegistry(Resources.REGISTRY_PORT);
-            // RemoteCAInterface ca_service
-            // 		= (RemoteCAInterface) registry.lookup(Resources.CA_NAME);
+            registry = LocateRegistry.getRegistry(Resources.REGISTRY_PORT);
+            ca_service
+            		= (RemoteCAInterface) registry.lookup(Resources.CA_NAME);
 
         } catch (Exception e) {
             System.err.println("Remote lookup exception:");
             e.printStackTrace();
         }
 
-    	// Constroi objeto remoto e publica-o para no RMI registry
-    	// RemoteRSUService rsu_service = new RemoteRSUService(rsu,vehicle_service,ca_service);
-    	// publishRSU(rsu_service);
+    	// Constroi objeto remoto
+    	RemoteRSUService rsu_service = new RemoteRSUService(rsu,ca_service,vehicle_service);
+
+        // Publica-o no RMI registry
+    	publishRSU(rsu_service);
     }
 }
