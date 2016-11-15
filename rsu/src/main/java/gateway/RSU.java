@@ -50,22 +50,14 @@ public class RSU {
 		return certificate.contains(certificate);
 	}
 
-	public RemoteRSUService getRemoteRSUService(RSU rsu) {
+	public RemoteRSUService getRemoteRSUService(RSU rsu) throws Exception {
 
-		RemoteRSUService service = null;
-
-		try {
             // Locate the certificate authority service
             Registry registry = LocateRegistry.getRegistry(Resources.REGISTRY_PORT);
             RemoteCAInterface ca_service = (RemoteCAInterface) registry.lookup(Resources.CA_NAME);
-            System.out.println(Resources.OK_MSG("Remote Certificate Authority Interface located"));
-            service = new RemoteRSUService(rsu,ca_service);
+            System.out.println(Resources.OK_MSG("Remote CA Interface located"));
 
-        } catch (Exception e) {
-            System.err.println(Resources.ERROR_MSG("Cannot CA remote interface is not present in the RMI registry."));
-        }
-
-        return service;
+            return new RemoteRSUService(rsu,ca_service);
 	}
 
 }
