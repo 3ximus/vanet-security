@@ -100,6 +100,7 @@ public class Vehicle {
 	public void beacon() {
 		if(VANET == null) return;
 
+		// TODO as soon as the timestamp passed the real thing uncoment the real to string method in vehicleDTO
 		VehicleDTO dto = new VehicleDTO(position, velocity, null); // @FIXME: change null to current time
 		byte[] sig = null;
 		// Calculate digital signature of the content

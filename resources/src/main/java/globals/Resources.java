@@ -108,9 +108,9 @@ public class Resources {
 		BufferedInputStream bis = new BufferedInputStream(fis);
 		CertificateFactory cf = CertificateFactory.getInstance("X.509");
 
+		if (bis.available() > 0) { return cf.generateCertificate(bis); }
 		bis.close();
 		fis.close();
-		if (bis.available() > 0) { return cf.generateCertificate(bis); }
 		return null;
 	}
 
