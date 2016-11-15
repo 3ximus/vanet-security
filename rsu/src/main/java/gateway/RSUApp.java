@@ -1,61 +1,42 @@
 package gateway;
 
-import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
-import java.rmi.server.UnicastRemoteObject;
-
 import globals.Resources;
-import remote.RemoteCAInterface;
-import remote.RemoteVehicleNetworkInterface;
-import remote.RemoteRSUInterface;
-
+import java.rmi.registry.LocateRegistry;
 
 public class RSUApp
 {
-	// publishes RSU service to RMI
-	public static void publishRSU(RemoteRSUService rsu_service) {
-		try {
-            RemoteRSUInterface stub = (RemoteRSUInterface) UnicastRemoteObject.exportObject(rsu_service, 0);
-            Registry registry = LocateRegistry.getRegistry();
-            registry.rebind(Resources.RSU_NAME , stub);
-            System.out.println(Resources.OK_MSG("RemoteRSUService bound"));
-        } catch (Exception e) {
-            System.err.println(Resources.ERROR_MSG("RemoteRSUService exception:"));
-            e.printStackTrace();
-        }
-
-	}
-
     public static void main( String[] args ) {
 
-    	RSU rsu = new RSU();
-        RemoteVehicleNetworkInterface vehicle_service = null;
-        RemoteCAInterface ca_service = null;
+         System.out.println("\n");
 
-    	try {
-    		// Locate the vehicular network service
-            Registry registry = LocateRegistry.getRegistry(Resources.REGISTRY_PORT); 
-            vehicle_service
-            		= (RemoteVehicleNetworkInterface) registry.lookup(Resources.VANET_NAME);
-            System.out.println(Resources.OK_MSG("Remote Vehicle Network Interface located"));
-
-            // Locate the certificate authority service
-            registry = LocateRegistry.getRegistry(Resources.REGISTRY_PORT);
-            ca_service
-            		= (RemoteCAInterface) registry.lookup(Resources.CA_NAME);
-            System.out.println(Resources.OK_MSG("Remote Certificate Authority Interface located"));
-
-            // Constroi objeto remoto
-            RemoteRSUService rsu_service = new RemoteRSUService(rsu,ca_service,vehicle_service);
-
-            // Publica-o no RMI registry
-            publishRSU(rsu_service);
-
-        } catch (Exception e) {
-            System.err.println(Resources.ERROR_MSG("Remote lookup exception:"));
-            e.printStackTrace();
+        // Create registry if it doesn't exist
+        try {
+            LocateRegistry.createRegistry(Resources.REGISTRY_PORT);
+        } catch(Exception e) {
+            // registry is already created
         }
+
+        // Constroi RSU
+        RSU rsu = new RSU();
+
+        // Constroi objeto remoto
+        RemoteRSUService rsu_service = rsu.getRemoteRSUService(rsu);
+
+        // publica servico
+        rsu_service.publish();
+
+        try {
+            System.out.println("Press enter to kill the network.");
+            System.in.read();
+        } catch (java.io.IOException e) {
+            System.out.println(Resources.ERROR_MSG("Unable to read from input. Exiting."));
+        } finally {
+            // remove servico do registry
+            rsu_service.unpublish();
+        }
+
+        System.out.println("\n");
+        System.exit(0);
 
     }
 }

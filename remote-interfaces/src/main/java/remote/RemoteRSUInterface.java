@@ -2,12 +2,13 @@ package remote;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 import java.security.cert.Certificate;
 
-public interface RemoteRSUInterface extends Remote {
 
-	// @ANDRE este metodo faz o que?
-	public boolean authenticate(Certificate senderCertificate, byte[] signature) throws RemoteException;
+public interface RemoteRSUInterface extends Remote {
 
 	/**
 	 * Verifies revoked state of a given certificate ( uses RSU cache, if not found asks the CA )
@@ -16,7 +17,7 @@ public interface RemoteRSUInterface extends Remote {
 	 * @param	byte[]			message signature
 	 * @return	boolean			true if its valid, false if its revoked
 	 */
-	public boolean checkCertificate(Certificate certToVerify, Certificate senderCert, byte[] signature) throws RemoteException;
+	public boolean authenticate(Certificate certToVerify, Certificate senderCert, byte[] signature) throws RemoteException;
 
 
 	/**
