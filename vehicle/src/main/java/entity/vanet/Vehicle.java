@@ -136,9 +136,9 @@ public class Vehicle {
 	public void simulateBrain(VehicleDTO vehicleInfo) {
 		System.out.println("Simulating brain..");
 
-		// @TODO: Register on the list if new, or update if not
-		// @TODO: If was already registered use a data trust function that , according to previous records of the
-		// @TODO: same vehicle, decides whether to believe it or not
+		// TODO: Register on the list if new, or update if not
+		// TODO: If was already registered use a data trust function that , according to previous records of the
+		// TODO: same vehicle, decides whether to believe it or not
 
 		if(isVehicleDangerous(vehicleInfo) == true) {
 			if(inDanger = true) {

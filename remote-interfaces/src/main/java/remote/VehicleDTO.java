@@ -7,6 +7,7 @@ public class VehicleDTO implements Serializable {
 	private Vector2Df position;
 	private Vector2Df velocity;
 	private Timestamp timestamp;
+    public static final long serialVersionUID = 0;
 
 	public VehicleDTO(Vector2Df pos, Vector2Df vel, Timestamp timestamp) {
 		this.position = pos;

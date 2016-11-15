@@ -19,7 +19,7 @@ public class VehicleNetwork {
 	private Map<String, RemoteVehicleInterface> vehicleList = new TreeMap<>();
 
 	public VehicleNetwork() {
-		// @TODO: Launch vehicle processes (maybe) (probably not?)
+		// TODO: Launch vehicle processes (maybe) (probably not?)
 	}
 
 	public Set<Map.Entry<String, RemoteVehicleInterface>> getVehicleEntrySet() {
