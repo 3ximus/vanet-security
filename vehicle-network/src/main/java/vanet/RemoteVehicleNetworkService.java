@@ -37,10 +37,10 @@ public class RemoteVehicleNetworkService implements RemoteVehicleNetworkInterfac
 			try {
 				Vector2Df remoteVehiclePos = remoteVehicle.simulateGetPosition();
 				if(VehicleNetwork.inRange(sendingVehiclePos, remoteVehiclePos)) {
-					remoteVehicle.receiveBeaconMessage(messageToBeacon, null, null); // TODO <- use correct fields
+					remoteVehicle.receiveBeaconMessage(messageToBeacon, senderCertificate, signature);
 				}
 			} catch(RemoteException e) {
-				System.out.println("Vehicle \"" + entry.getKey() + "\" seems to be dead.");
+				System.out.println(Resources.WARNING_MSG("Vehicle \"" + entry.getKey() + "\" seems to be dead."));
 				vehicleNetwork.removeVehicle(entry.getKey());
 			}
 		}

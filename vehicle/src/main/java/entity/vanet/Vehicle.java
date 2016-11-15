@@ -12,6 +12,7 @@ import remote.RemoteVehicleNetworkInterface;
 import java.security.cert.Certificate;
 import java.security.PrivateKey;
 import java.security.KeyStore;
+import java.security.PrivateKey;
 
 public class Vehicle {
 	public static final int BEACON_DELTA_MILISSECONDS = 200;
@@ -26,6 +27,7 @@ public class Vehicle {
 
 	private Certificate myCert;
 	private PrivateKey myPrKey;
+	private KeyStore myKeystore;
 
 	private boolean inDanger = false;
 	private Timer resetInDangerTimer = new Timer();
@@ -71,8 +73,8 @@ public class Vehicle {
 			System.exit(1);
 		}
 		try {
-			KeyStore keystore = Resources.readKeystoreFile(certsDir+this.internalName+".jks", Resources.STORE_PASS);
-			this.myPrKey = Resources.getPrivateKeyFromKeystore(keystore, this.internalName, Resources.KEY_PASS); }
+			this.myKeystore = Resources.readKeystoreFile(certsDir + this.internalName + ".jks", Resources.STORE_PASS);
+			this.myPrKey = Resources.getPrivateKeyFromKeystore(this.myKeystore, this.internalName, Resources.KEY_PASS); }
 		catch (Exception e) {
 			System.out.println(Resources.ERROR_MSG("Error Loading PrivateKey: "+e.getMessage()));
 			System.out.println(Resources.ERROR_MSG("Exiting. Vehicle is useless without PrivateKey"));
@@ -84,6 +86,9 @@ public class Vehicle {
 
 	public Vector2Df getPosition() { return this.position; }
 	public Vector2Df getVelocity() { return this.velocity; }
+	public Certificate getCertificate() { return this.myCert; }
+	public PrivateKey getPrivateKey() { return this.myPrKey; }
+	public KeyStore getKeystore() { return this.myKeystore; }
 
 
 	// Sets VANET, starts updating position and starts beaoning
@@ -102,9 +107,10 @@ public class Vehicle {
 
 		// TODO as soon as the timestamp passed the real thing uncoment the real to string method in vehicleDTO
 		VehicleDTO dto = new VehicleDTO(position, velocity, null); // @FIXME: change null to current time
+
 		byte[] sig = null;
 		// Calculate digital signature of the content
-		String serializedMessage = nameInVANET + dto.toString() + myCert.toString();
+		String serializedMessage = dto.toString() + myCert.toString();
 		try {
 			sig = Resources.makeDigitalSignature(serializedMessage.getBytes(), this.myPrKey); }
 		catch (Exception e) {

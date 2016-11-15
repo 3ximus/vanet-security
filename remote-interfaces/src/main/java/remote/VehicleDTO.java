@@ -31,7 +31,7 @@ public class VehicleDTO implements Serializable {
 
 	@Override
 	public String toString() {
-		//return "P: "+this.position.toString()+"\nV: "+this.velocity.toString()+"\nT: "+this.timestamp.toString();
+		//return "{P: "+this.position.toString()+", V: "+this.velocity.toString()+", T: "+this.timestamp.toString()+"}";
 		// TODO FIXME TEMPORARY WORKAROUND, AS SOON AS REAL TIMESTAMP IS GIVEN^^
 		return "a string";
 	}

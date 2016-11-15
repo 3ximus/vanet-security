@@ -11,7 +11,12 @@ import remote.RemoteVehicleInterface;
 import remote.Vector2Df;
 import remote.VehicleDTO;
 
+import java.security.PublicKey;
+
+
 import java.security.cert.Certificate;
+
+import javax.sound.sampled.ReverbType;
 
 public class RemoteVehicleService implements RemoteVehicleInterface {
 	private boolean isPublished = false;
@@ -32,7 +37,39 @@ public class RemoteVehicleService implements RemoteVehicleInterface {
 	}
 
 	public void receiveBeaconMessage(VehicleDTO vehicleInfo, Certificate senderCertificate, byte[] signature) throws RemoteException {
-		// @TODO: Check security requirements
+
+		// Secure beacon
+
+		// verify if certificate was signed by CA
+		Certificate caCert = null;
+		try { caCert = Resources.getCertificateFromKeystore(this.vehicle.getKeystore(), Resources.CA_NAME); }
+		catch (Exception e) {
+			System.out.println(Resources.WARNING_MSG("Failed to verify CA digital signature of beacon sender: " + e.getMessage()));
+			System.out.println(Resources.WARNING_MSG("Droping Beacon: " + vehicleInfo.toString()));
+			return;
+		}
+		if (! Resources.verifySignedCertificate(senderCertificate, caCert.getPublicKey())) {
+			System.out.println(Resources.WARNING_MSG("Invalid CA Signature on beacon: " + vehicleInfo.toString()));
+			return;  // certificate was not signed by CA, beacon is dropped
+		}
+
+		// Contact RSU:
+		//String certificateCheckForRSU = senderCertificate.toString() + vehicle.getCertificate().toString();
+		//byte[] sig = Resources.makeDigitalSignature(certificateCheckForRSU.getBytes(), vehicle.getPrivateKey());
+		//RSU.checkCertificate(senderCertificate, vehicle.getCertificate(), sig);
+		// if ^^^^^ false; then return;
+
+		PublicKey senderPubKey = senderCertificate.getPublicKey();
+		String messageContent = vehicleInfo.toString() + senderCertificate.toString();
+		try {
+			Resources.verifyDigitalSignature(signature, messageContent.getBytes(), senderPubKey); }
+		catch (Exception e ) {
+			System.out.println(Resources.WARNING_MSG("Invalid digital signature on beacon: " + vehicleInfo.toString()));
+			return;  // certificate was not signed by sender, beacon is dropped
+		}
+
+		// end of security checks, process beacon
+
 		vehicle.simulateBrain(vehicleInfo);
 	}
 // -------------------------------
