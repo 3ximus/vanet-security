@@ -25,7 +25,7 @@ public class Resources {
 //  ------- PORTS ------------
 	public static final int REGISTRY_PORT = 1099;
 
-//  -------- VEHICLE-RANGES ---------	
+//  -------- VEHICLE-RANGES ---------
 	public static final int MAX_BEACON_RANGE = 100;
 	public static final int TOO_DANGEROUS_RANGE = 5;
 
@@ -33,9 +33,10 @@ public class Resources {
 //  ------- PATHS ------------
 	public static final String CA_REVOKED = "cert/revoked";
 	public static final String CA_NODES = "cert/nodes";
+	public static final String CERT_DIR = "cert"
 
 //  ------- OTHER ------------
-	public static final String CA_DIGEST = "SHA-256";	
+	public static final String CA_DIGEST = "SHA-256";
 
 //  ------- PASSWORDS ------------
 	public static final char[] STORE_PASS = "f4ncyP455WORd".toCharArray();

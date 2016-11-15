@@ -53,7 +53,7 @@ public class RemoteVehicleNetworkService implements RemoteVehicleNetworkInterfac
 
 		RemoteVehicleInterface vehicleToAdd;
 		try {
-			Registry registry = LocateRegistry.getRegistry(1099); // @FIXME: only works for localhost
+			Registry registry = LocateRegistry.getRegistry(Resources.REGISTRY_PORT); // @FIXME: only works for localhost
 			vehicleToAdd = (RemoteVehicleInterface) registry.lookup(name);
 		} catch(Exception e) {
 			System.err.println(Resources.ERROR_MSG("Failed to add vehicle \"" + name + "\" : " + e.getMessage()));

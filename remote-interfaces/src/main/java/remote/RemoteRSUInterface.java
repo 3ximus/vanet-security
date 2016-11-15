@@ -6,12 +6,34 @@ import java.security.cert.Certificate;
 
 public interface RemoteRSUInterface extends Remote {
 
-	// TODO: change certificate and key types. make sure of arguments passed
-	// TODO missing security Arguments ( signature )
-
-
 	// @ANDRE este metodo faz o que?
-	public boolean receiveAuthenticationRequest (Certificate senderCertificate, byte[] signature) throws RemoteException;
-	public void receiveRevokeCertificateRequest (Certificate certToRevoke, Certificate senderCertificate, byte[] signature) throws RemoteException;
-	public void ping (String msg) throws RemoteException;
+	public boolean authenticate(Certificate senderCertificate, byte[] signature) throws RemoteException;
+
+	/**
+	 * Verifies revoked state of a given certificate ( uses RSU cache, if not found asks the CA )
+	 * @param	Certificate		certificate to check validity
+	 * @param	Certificate		senders certificate to verify message signature
+	 * @param	byte[]			message signature
+	 * @return	boolean			true if its valid, false if its revoked
+	 */
+	public boolean checkCertificate(Certificate certToVerify, Certificate senderCert, byte[] signature) throws RemoteException;
+
+
+	/**
+	 * Ask RSU to revoke certificate, reroutes request to CA.
+	 * CA will handle certificate revocation, RSU will only maintain a cache if result
+	 * of revocation is true.
+	 * @param	Certificate		reported target certificate to be revoked
+	 * @param	Certificate		author of the report
+	 * @param	byte[]			message signature
+	 */
+	public void revokeCertificate(Certificate certToRevoke, Certificate senderCertificate, byte[] signature) throws RemoteException;
+
+
+	/**
+	 * Connectivity test
+	 * @param	String	message to ping;
+	 * @return	String	pong
+	 */
+	public String ping(String msg) throws RemoteException;
 }
