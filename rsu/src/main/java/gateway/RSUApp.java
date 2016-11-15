@@ -21,7 +21,7 @@ public class RSUApp
 
         try {
             // Constroi objeto remoto
-            RemoteRSUService rsu_service = rsu.getRemoteRSUService(rsu);
+            RemoteRSUService rsu_service = rsu.getRemoteRSUService(rsu); // lanca excecao caso nao encontre remoteCA no registry
             // publica servico
             rsu_service.publish();
 
