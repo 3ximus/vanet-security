@@ -9,6 +9,9 @@ import globals.Resources;
 import remote.Vector2Df;
 import remote.VehicleDTO;
 import remote.RemoteVehicleNetworkInterface;
+import java.security.cert.Certificate;
+import java.security.PrivateKey;
+import java.security.KeyStore;
 
 public class Vehicle {
 	public static final int BEACON_DELTA_MILISSECONDS = 200;
@@ -19,6 +22,10 @@ public class Vehicle {
 	private Vector2Df velocity;
 	private RemoteVehicleNetworkInterface VANET;
 	private String nameInVANET;
+	private String internalName; // only used to retrieve the correct certificate
+
+	private Certificate myCert;
+	private PrivateKey myPrKey;
 
 	private boolean inDanger = false;
 	private Timer resetInDangerTimer = new Timer();
@@ -39,18 +46,42 @@ public class Vehicle {
 		}
 	};
 
-
 	private Map<String, VehicleDTO> vicinity = new HashMap<>(); // String is the pseudonim certificate (is it?)
 
-	public Vehicle(String VIN, Vector2Df position, Vector2Df velocity) {
+//  -----------------------------------
+
+
+
+//  ------- CONSTRUCTOR  ------------
+
+	public Vehicle(String VIN, String certificateName, Vector2Df position, Vector2Df velocity) {
 		this.VIN = VIN;
 		this.position = position;
 		this.velocity = velocity;
+
+		this.internalName=certificateName;
+
+		String certsDir = Resources.CERT_DIR+this.internalName+"/";
+		// Read certificate file to a certificate object
+		try {
+			this.myCert = Resources.readCertificateFile(certsDir+this.internalName+".cer"); }
+		catch (Exception e) {
+			System.out.println(Resources.ERROR_MSG("Error Loading certificate: "+e.getMessage()));
+			System.out.println(Resources.ERROR_MSG("Exiting. Vehicle is useless without certificate"));
+			System.exit(1);
+		}
+		try {
+			KeyStore keystore = Resources.readKeystoreFile(certsDir+this.internalName+".jks", Resources.STORE_PASS);
+			this.myPrKey = Resources.getPrivateKeyFromKeystore(keystore, this.internalName, Resources.KEY_PASS); }
+		catch (Exception e) {
+			System.out.println(Resources.ERROR_MSG("Error Loading PrivateKey: "+e.getMessage()));
+			System.out.println(Resources.ERROR_MSG("Exiting. Vehicle is useless without PrivateKey"));
+			System.exit(1);
+		}
 	}
 
-	// ---------
-	// GETTERS
-	// ---------
+//  ------- GETTERS  ------------
+
 	public Vector2Df getPosition() { return this.position; }
 	public Vector2Df getVelocity() { return this.velocity; }
 
@@ -64,15 +95,27 @@ public class Vehicle {
 		timer.scheduleAtFixedRate(engineTask, 0, BEACON_DELTA_MILISSECONDS);
 	}
 
+//  ------- MAIN METHODS  ------------
+
 	public void beacon() {
 		if(VANET == null) return;
 
 		VehicleDTO dto = new VehicleDTO(position, velocity, null); // @FIXME: change null to current time
+		byte[] sig = null;
+		// Calculate digital signature of the content
+		String serializedMessage = nameInVANET + dto.toString() + myCert.toString();
 		try {
-			VANET.simulateBeaconBroadcast(nameInVANET, dto, null, null); // TODO <- fill with certificate and sig
+			sig = Resources.makeDigitalSignature(serializedMessage.getBytes(), this.myPrKey); }
+		catch (Exception e) {
+			System.out.println(Resources.ERROR_MSG("Failed to create signature: "+e.getMessage()));
+			return;
+		}
+
+		try {
+			VANET.simulateBeaconBroadcast(nameInVANET, dto, myCert, sig);
 		} catch(Exception e) {
-			System.out.println("[Vehicle] Unable to beacon message. Cause: " + e.getMessage());
-			System.out.println("[Vehicle] VANET seems dead... Exiting...");
+			System.out.println(Resources.ERROR_MSG("Unable to beacon message: " + e.getMessage()));
+			System.out.println(Resources.ERROR_MSG("VANET seems dead... Exiting..."));
 			System.exit(-1);
 		}
 	}
@@ -108,9 +151,8 @@ public class Vehicle {
 	}
 
 
-	// -------------
-	// -- UTILITY --
-	// -------------
+//  ------- UTILITY ------------
+
 	@Override
 	public String toString() {
 		String res;

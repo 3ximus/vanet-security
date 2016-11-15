@@ -22,17 +22,19 @@ public class VehicleApp {
 
         // Parse args
         if(args.length == 0) {
-            System.out.println("[Vehicle] Assuming random values for position, velocity and VIN.");
-            System.out.println("[Vehicle] To specify this values you could call with: " + VEHICLE_ARGS_USAGE + ".");
-            vehicle = new Vehicle("VIN1", new Vector2Df(0, 0), new Vector2Df(0, 0));
+            System.out.println(Resources.NOTIFY_MSG("Assuming random values for position, velocity and VIN."));
+            System.out.println(Resources.NOTIFY_MSG("To specify this values you could call with: " + VEHICLE_ARGS_USAGE + "."));
+// FIX ASAP !!!
+            vehicle = new Vehicle("VIN1", "vehicle1", new Vector2Df(0, 0), new Vector2Df(0, 0)); // < --- FIXME.. PLS
+// FIX ASAP !!!
 
-        } else if(args.length == 5) {
+        } else if(args.length == 6) {
             try {
-                float px = Float.parseFloat(args[1]);
-                float py = Float.parseFloat(args[2]);
-                float vx = Float.parseFloat(args[3]);
-                float vy = Float.parseFloat(args[4]);
-                vehicle = new Vehicle(args[0], new Vector2Df(px, py), new Vector2Df(vx, vy));
+                float px = Float.parseFloat(args[2]);
+                float py = Float.parseFloat(args[3]);
+                float vx = Float.parseFloat(args[4]);
+                float vy = Float.parseFloat(args[5]);
+                vehicle = new Vehicle(args[0], args[1], new Vector2Df(px, py), new Vector2Df(vx, vy));
             } catch (NumberFormatException e) {
                 System.out.println(Resources.ERROR_MSG("[Vehicle]Received the correct amount of arguments but couldn't convert to float."));
                 return;

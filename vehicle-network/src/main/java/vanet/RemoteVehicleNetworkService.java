@@ -76,7 +76,7 @@ public class RemoteVehicleNetworkService implements RemoteVehicleNetworkInterfac
 
 	@Override
 	public synchronized String getNextVehicleName() {
-		return "V" + nextVehicleNumber++;
+		return "V" + nextVehicleNumber++; // to match certificate names
 	}
 
 

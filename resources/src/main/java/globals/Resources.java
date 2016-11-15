@@ -31,9 +31,9 @@ public class Resources {
 
 
 //  ------- PATHS ------------
-	public static final String CA_REVOKED = "cert/revoked";
-	public static final String CA_NODES = "cert/nodes";
-	public static final String CERT_DIR = "cert"
+	public static final String CA_REVOKED = "cert/revoked/";
+	public static final String CA_NODES = "cert/nodes/";
+	public static final String CERT_DIR = "cert/";
 
 //  ------- OTHER ------------
 	public static final String CA_DIGEST = "SHA-256";
@@ -46,13 +46,16 @@ public class Resources {
 //  ------- OUTPUT METHODS ------------
 	public static String ERROR_MSG(String msg) {
 		StackTraceElement st = Thread.currentThread().getStackTrace()[2]; // caller stack element
-		return "[\033[0;31m ERROR \033[0m] [\033[1;35m"+st.getClassName()+"."+st.getMethodName()+"\033[0m] "+ msg; }
+		return "[\033[0;31mERRR\033[0m] [\033[1;35m"+st.getClassName()+"."+st.getMethodName()+"\033[0m] "+ msg; }
 	public static String WARNING_MSG(String msg) {
 		StackTraceElement st = Thread.currentThread().getStackTrace()[2]; // caller stack element
-		return "[\033[0;33mWARNING\033[0m] [\033[1;35m"+st.getClassName()+"."+st.getMethodName()+"\033[0m] "+msg; }
+		return "[\033[0;33mWARN\033[0m] [\033[1;35m"+st.getClassName()+"."+st.getMethodName()+"\033[0m] "+msg; }
+	public static String NOTIFY_MSG(String msg) {
+		StackTraceElement st = Thread.currentThread().getStackTrace()[2]; // caller stack element
+		return "[\033[0;34mNOTE\033[0m] [\033[1;35m"+st.getClassName()+"."+st.getMethodName()+"\033[0m] "+msg; }
 	public static String OK_MSG(String msg) {
 		StackTraceElement st = Thread.currentThread().getStackTrace()[2]; // caller stack element
-		return "[\033[0;32m  OK   \033[0m] [\033[1;35m"+st.getClassName()+"."+st.getMethodName()+"\033[0m] "+msg; }
+		return "[\033[0;32m OK \033[0m] [\033[1;35m"+st.getClassName()+"."+st.getMethodName()+"\033[0m] "+msg; }
 //  -----------------------------------
 
 
