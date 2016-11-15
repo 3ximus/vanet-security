@@ -1,7 +1,5 @@
 package globals;
 
-import static javax.xml.bind.DatatypeConverter.printHexBinary;
-
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -13,12 +11,7 @@ import java.security.Signature;
 import java.security.SignatureException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.cert.CertificateException;
 
-import java.util.Collection;
 import java.lang.Thread;
 
 public class Resources {
@@ -122,12 +115,11 @@ public class Resources {
 
 	public static boolean verifySignedCertificate(Certificate certificate, PublicKey caPublicKey) {
 		try { certificate.verify(caPublicKey); }
-		catch (InvalidKeyException | CertificateException | NoSuchAlgorithmException | NoSuchProviderException | SignatureException e) {
+		catch (Exception e) {
 			return false;
 		}
 		return true;
 	}
-
 
 //  -----------------------------------
 
