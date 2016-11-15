@@ -5,6 +5,7 @@ import java.io.Serializable;
 public class Vector2Df implements Serializable {
     public double x;
     public double y;
+    public static final long serialVersionUID = 0;
 
     public Vector2Df(double x, double y) {
         this.x = x;

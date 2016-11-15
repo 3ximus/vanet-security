@@ -12,7 +12,6 @@ import remote.RemoteVehicleNetworkInterface;
 import java.security.cert.Certificate;
 import java.security.PrivateKey;
 import java.security.KeyStore;
-import java.security.PrivateKey;
 
 public class Vehicle {
 	public static final int BEACON_DELTA_MILISSECONDS = 200;
