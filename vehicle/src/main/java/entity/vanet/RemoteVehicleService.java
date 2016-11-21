@@ -12,11 +12,7 @@ import remote.Vector2Df;
 import remote.VehicleDTO;
 
 import java.security.PublicKey;
-
-
 import java.security.cert.Certificate;
-
-import javax.sound.sampled.ReverbType;
 
 public class RemoteVehicleService implements RemoteVehicleInterface {
 	private boolean isPublished = false;

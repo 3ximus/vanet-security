@@ -10,6 +10,7 @@ import remote.Vector2Df;
 import remote.VehicleDTO;
 import remote.RemoteVehicleNetworkInterface;
 import java.security.cert.Certificate;
+import java.sql.Timestamp;
 import java.security.PrivateKey;
 import java.security.KeyStore;
 
@@ -105,7 +106,7 @@ public class Vehicle {
 		if(VANET == null) return;
 
 		// TODO as soon as the timestamp passed the real thing uncoment the real to string method in vehicleDTO
-		VehicleDTO dto = new VehicleDTO(position, velocity, null); // @FIXME: change null to current time
+		VehicleDTO dto = new VehicleDTO(position, velocity, new Timestamp(System.currentTimeMillis()));
 
 		byte[] sig = null;
 		// Calculate digital signature of the content

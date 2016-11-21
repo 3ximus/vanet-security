@@ -1,5 +1,12 @@
 #!/bin/bash
 
+# Custom dirs
+# dirs=$(find . -maxdepth 1 -type d -not -name '\.*' -not -name 'target')
+dirs="resources remote-interfaces ca vehicle vehicle-network rsu"
+
+# custom maven commands for certain directories
+declare -A special_rules=( ["vanet-gui/"]="integration-test -Pdesktop" )
+
 # echo function $1 = type	(type 1 = err | 2 = suc | 3 = inf)
 #				$2 = operation
 #				$3 = target
@@ -11,9 +18,8 @@ pretty_echo () {
 	[[ $1 = 1 ]] && exit 1
 }
 
-# Custom dirs
-dirs="resources remote-interfaces ca vehicle vehicle-network rsu"
-# dirs=$(find . -maxdepth 1 -type d -not -name '\.*' -not -name 'target')
+
+# ----- Main script
 
 [[ $# -eq 0 || "$1" = "help" || "$1" = "-help" || "$1" = "-h" ]] && echo -e "Usage ./mvn_script  [ compile | install | <maven arguments> ]  <directory> \n
 	- For \033[4;29minstall\033[0m, \033[4;29mcompile\033[0m and \033[4;29mclean\033[0m in case no more arguments are given
@@ -32,7 +38,14 @@ if [ "$1" = "compile" -o "$1" = "install" -o "$1" = "clean" ] && [ $# -eq 1 ]; t
 	done
 else		 # specific arguments for specified source dir
 	dir="${@: -1}"; length=$(($#-1));
-	[[ $# -eq 1 ]] && commands="clean compile exec:java" || commands=${@:1:$length};
+	if [ $# -eq 1 ] ; then
+		commands="clean compile exec:java"
+		for key in "${!special_rules[@]}" ; do
+			[[ "$dir" == "$key" ]] && commands="${special_rules[$key]}" ;
+		done
+	else
+		commands=${@:1:$length};
+	fi
 	pretty_echo 3 "maven" $dir 6
 	cd "$dir" && echo -e "Running: \033[1;35;40mmvn $commands\033[0m on \033[1;34;40m$dir\033[0m\n" && mvn $commands ;
 	[[ $? == 0 ]] && cd .. || pretty_echo 1 "run" $dir 4 ;
@@ -40,3 +53,4 @@ else		 # specific arguments for specified source dir
 fi
 
 echo -e "\t┬─┬ ノ(゜.゜ノ)   a11 iz d0n3 \n"
+
