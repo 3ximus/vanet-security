@@ -17,7 +17,7 @@ public class RemoteRSUService implements RemoteRSUInterface {
 	public RemoteRSUService(RSU rsu, RemoteCAInterface ca) {
 		this.rsu = rsu;
 		this.ca = ca;
-	}	
+	}
 
 	// Called by the vehicle network
 	// forwards request to ca
@@ -28,15 +28,15 @@ public class RemoteRSUService implements RemoteRSUInterface {
 		// create my own signature
 		// send msg to ca
 
-		// boolean isCertificateValid 
+		// boolean isCertificateValid
 		//		= ca.checkCertificate(senderCertificate, myCertificate, mysignature);
-		
+
 		// if(isCertificateValid) {
 		// 	try {
 		// 		rsu.addCertificateToCache(senderCertificate);
 		// 	} catch (Exception e) {
 		// 		System.out.println(e.getMessage());
-		// 	} 
+		// 	}
 		//}
 
 		// Enviar resultado para a vanet
@@ -46,7 +46,7 @@ public class RemoteRSUService implements RemoteRSUInterface {
 
 	// Called by vehicle-network
 	// forwards to ca
-	// returns result to network	
+	// returns result to network
 	@Override
 	public void revokeCertificate(Certificate certToRevoke, Certificate senderCertificate, byte[] signature) {
 		// TODO:

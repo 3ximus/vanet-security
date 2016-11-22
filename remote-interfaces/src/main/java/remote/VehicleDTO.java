@@ -3,6 +3,9 @@ package remote;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
+/**
+ * My Custom DtO
+ */
 public class VehicleDTO implements Serializable {
 	private Vector2Df position;
 	private Vector2Df velocity;
@@ -32,8 +35,6 @@ public class VehicleDTO implements Serializable {
 
 	@Override
 	public String toString() {
-		//return "{P: "+this.position.toString()+", V: "+this.velocity.toString()+", T: "+this.timestamp.toString()+"}";
-		// TODO FIXME TEMPORARY WORKAROUND, AS SOON AS REAL TIMESTAMP IS GIVEN^^
-		return "a string";
+		return "{P: "+this.position.toString()+", V: "+this.velocity.toString()+", T: "+this.timestamp.toString()+"}";
 	}
 }

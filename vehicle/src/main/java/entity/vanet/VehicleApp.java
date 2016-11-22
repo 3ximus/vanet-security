@@ -24,7 +24,7 @@ public class VehicleApp {
 		if(args.length == 0) {
 			System.out.println(Resources.NOTIFY_MSG("Assuming random values for position, velocity and VIN."));
 			System.out.println(Resources.NOTIFY_MSG("To specify this values you could call with: " + VEHICLE_ARGS_USAGE + "."));
-// FIX ASAP !!!
+// FIX ASAP  hardcoded vehicle name to fit certificate !!!
 			vehicle = new Vehicle("VIN1", "vehicle1", new Vector2Df(0, 0), new Vector2Df(0, 0)); // < --- FIXME.. PLS
 // FIX ASAP !!!
 
