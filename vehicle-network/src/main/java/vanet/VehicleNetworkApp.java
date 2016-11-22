@@ -3,7 +3,6 @@ package vanet;
 import globals.Resources;
 
 import java.rmi.registry.LocateRegistry;
-import java.rmi.server.ExportException;
 
 public class VehicleNetworkApp {
     public static void main(String[] args) {

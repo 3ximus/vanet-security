@@ -136,6 +136,7 @@ public class Resources {
 	}
 
 	public static boolean verifyDigitalSignature(byte[] cipherDigest, byte[] bytes, PublicKey publicKey) throws Exception {
+		System.out.println("IM FUCKING HERE -> "+ cipherDigest);
 		Signature sig = Signature.getInstance("SHA1WithRSA");
 		sig.initVerify(publicKey);
 		sig.update(bytes);
