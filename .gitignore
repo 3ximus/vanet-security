@@ -1,8 +1,11 @@
 */target
-*/*/target
 */.classpath
 */.project
 */.settings
+*/*/target
+*/*/.classpath
+*/*/.project
+*/*/.settings
 *.log
 *.lck
 .vscode
