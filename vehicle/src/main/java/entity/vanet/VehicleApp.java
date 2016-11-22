@@ -1,7 +1,6 @@
 package entity.vanet;
 
 import globals.Resources;
-import remote.RemoteVehicleInterface;
 import remote.RemoteVehicleNetworkInterface;
 import remote.Vector2Df;
 
@@ -13,37 +12,52 @@ import java.rmi.registry.Registry;
  *
  */
 public class VehicleApp {
-	public static final String VEHICLE_ARGS_USAGE = "vehicle <VIN> <posX> <posY> <velX> <velY>";
+	public static final String VEHICLE_ARGS_USAGE = "vehicle <VIN> <cert_name> <posX,posY> <velX,velY>";
 
+	/**
+	 * This works as follows:
+	 *
+	 * - Read arguments and store them, if none supplied use defaults
+	 * - Create vehicle with set parameters (args or defaults)
+	 * - Register this Vehicle in the RMI register
+	 * - Connect to the VANET getting the vehicle unique name
+	 * - Create a RemoteVehicleService and publish its interface to RMI
+	 * - Wait loop
+	 */
 	public static void main(String[] args) {
 		System.out.println("\n");
+
+		// Vehicle creation arguments
+		Vector2Df pos = new Vector2Df(70, 0);
+		Vector2Df vel = new Vector2Df(0, 0);
+		String vin = "VIN1"; // TODO GENERATE ONE RANDOM MAYBE?
+		String simulated_certName = "vehicle1"; // TODO select a diferent for each one
 
 		Vehicle vehicle;
 
 		// Parse args
-		if(args.length == 0) {
-			System.out.println(Resources.NOTIFY_MSG("Assuming random values for position, velocity and VIN."));
-			System.out.println(Resources.NOTIFY_MSG("To specify this values you could call with: " + VEHICLE_ARGS_USAGE + "."));
-// FIX ASAP !!!
-			vehicle = new Vehicle("VIN1", "vehicle1", new Vector2Df(0, 0), new Vector2Df(0, 0)); // < --- FIXME.. PLS
-// FIX ASAP !!!
-
-		} else if(args.length == 6) {
+		if (args.length == 0)
+			System.out.println(Resources.NOTIFY_MSG( "Assuming random values for position, velocity and VIN.\n\tTo specify this values you could call with: " + VEHICLE_ARGS_USAGE + "."));
+		else if(args.length == 4) {
 			try {
-				float px = Float.parseFloat(args[2]);
-				float py = Float.parseFloat(args[3]);
-				float vx = Float.parseFloat(args[4]);
-				float vy = Float.parseFloat(args[5]);
-				vehicle = new Vehicle(args[0], args[1], new Vector2Df(px, py), new Vector2Df(vx, vy));
+				String [] pos_args = args[2].split(",");
+				String [] vel_args = args[3].split(",");
+				pos = new Vector2Df(Float.parseFloat(pos_args[0]), Float.parseFloat(pos_args[1]));
+				vel = new Vector2Df(Float.parseFloat(vel_args[0]), Float.parseFloat(vel_args[1]));
+				vin = args[0];
+				simulated_certName = args[1];
 			} catch (NumberFormatException e) {
-				System.out.println(Resources.ERROR_MSG("Received the correct amount of arguments but couldn't convert to float."));
+				System.out.println( Resources.ERROR_MSG("Received the correct amount of arguments but couldn't convert to float."));
 				return;
 			}
 		} else {
-			System.out.println(Resources.ERROR_MSG("Incorrect amount of arguments."));
+			System.out.println(Resources.ERROR_MSG("Incorrect amount of arguments. Expecting 4 but received" + args.length));
 			System.out.println(Resources.NOTIFY_MSG("Usage: " + VEHICLE_ARGS_USAGE));
 			return;
 		}
+
+		vehicle = new Vehicle(vin, simulated_certName, pos, vel);
+
 		System.out.println(Resources.OK_MSG("Started: " + vehicle));
 
 		// Create registry if it doesn't exist

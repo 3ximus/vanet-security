@@ -1,7 +1,5 @@
 package vanet;
 
-import entity.vanet.RemoteVehicleService;
-import entity.vanet.Vehicle;
 import globals.Resources;
 import remote.RemoteVehicleInterface;
 import remote.Vector2Df;
@@ -9,8 +7,6 @@ import remote.Vector2Df;
 import java.util.TreeMap;
 import java.util.Map;
 import java.util.Set;
-
-import java.math.*;
 
 /*
 	Simulate physical wireless network

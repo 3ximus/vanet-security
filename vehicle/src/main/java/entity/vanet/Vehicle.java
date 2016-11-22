@@ -105,7 +105,6 @@ public class Vehicle {
 	public void beacon() {
 		if(VANET == null) return;
 
-		// TODO as soon as the timestamp passed the real thing uncoment the real to string method in vehicleDTO
 		VehicleDTO dto = new VehicleDTO(position, velocity, new Timestamp(System.currentTimeMillis()));
 
 		byte[] sig = null;
@@ -135,7 +134,6 @@ public class Vehicle {
 	}
 
 	public void simulateBrain(VehicleDTO vehicleInfo) {
-		System.out.println("Simulating brain..");
 
 		// TODO: Register on the list if new, or update if not
 		// TODO: If was already registered use a data trust function that , according to previous records of the
@@ -153,8 +151,12 @@ public class Vehicle {
 	}
 
 	private boolean isVehicleDangerous(VehicleDTO vehicleInfo) {
-		System.out.println(Resources.WARNING_MSG("DANGER!"));
-		return vehicleInfo.getPosition().distance(getPosition()) <= Resources.TOO_DANGEROUS_RANGE;
+		double distance = vehicleInfo.getPosition().distance(getPosition());
+		if ( distance <= Resources.TOO_DANGEROUS_RANGE) {
+			System.out.println(Resources.WARNING_MSG("Proximity Alert: Vehicle in " +distance + "m." ));
+			return true;
+		}
+		return false;
 	}
 
 
@@ -164,8 +166,8 @@ public class Vehicle {
 	public String toString() {
 		String res;
 		res = "Vehicle: <id>=" + VIN + "; ";
-		res += "<pos>=(" + position.x + ", " + position.y + "); ";
-		res += "<pos>=(" + position.x + ", " + position.y + ");";
+		res += "<pos>=(" + this.position.x + ", " + this.position.y + "); ";
+		res += "<vel>=(" + this.velocity.x + ", " + this.velocity.y + ");";
 		return res;
 	}
 }
