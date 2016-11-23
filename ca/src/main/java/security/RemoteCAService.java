@@ -32,6 +32,7 @@ public class RemoteCAService implements RemoteCAInterface {
 		if (! this.ponderateRevokeRequest(senderCert))
 			return false;
 
+		// TODO instead of this only write the certificate to a file inside revoked;
 		File localCert = this.findCertificateFileIn(certToRevoke, Resources.CA_NODES);
 		if (localCert == null)
 			System.out.println(Resources.WARNING_MSG("Revoke request of unexistent certificate."));

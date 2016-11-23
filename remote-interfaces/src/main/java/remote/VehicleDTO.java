@@ -3,9 +3,6 @@ package remote;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
-/**
- * My Custom DtO
- */
 public class VehicleDTO implements Serializable {
 	private Vector2Df position;
 	private Vector2Df velocity;

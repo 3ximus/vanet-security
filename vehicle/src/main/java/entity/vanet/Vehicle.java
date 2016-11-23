@@ -15,9 +15,6 @@ import java.security.PrivateKey;
 import java.security.KeyStore;
 
 public class Vehicle {
-	public static final int BEACON_DELTA_MILISSECONDS = 200;
-	public static final int IN_DANGER_RESET_MILISSECONDS = 1000;
-
 	private String VIN;
 	private Vector2Df position;
 	private Vector2Df velocity;
@@ -97,7 +94,7 @@ public class Vehicle {
 		this.nameInVANET = name;
 
 		// Run the engine and beaconing on a timer
-		timer.scheduleAtFixedRate(engineTask, 0, BEACON_DELTA_MILISSECONDS);
+		timer.scheduleAtFixedRate(engineTask, 0, Resources.BEACON_INTERVAL);
 	}
 
 //  ------- MAIN METHODS  ------------
@@ -120,6 +117,7 @@ public class Vehicle {
 		try {
 			VANET.simulateBeaconBroadcast(nameInVANET, dto, myCert, sig);
 		} catch(Exception e) {
+			// TODO maybe try to reconect??
 			System.out.println(Resources.ERROR_MSG("Unable to beacon message: " + e.getMessage()));
 			System.out.println(Resources.ERROR_MSG("VANET seems dead... Exiting..."));
 			System.exit(-1);
@@ -145,14 +143,14 @@ public class Vehicle {
 			}
 			inDanger = true;
 			resetInDangerTimer = new Timer();
-			resetInDangerTimer.schedule(new ResetInDangerTask(), IN_DANGER_RESET_MILISSECONDS);
+			resetInDangerTimer.schedule(new ResetInDangerTask(), Resources.DANGER_RESET_INTERVAL);
 
 		}
 	}
 
 	private boolean isVehicleDangerous(VehicleDTO vehicleInfo) {
 		double distance = vehicleInfo.getPosition().distance(getPosition());
-		if ( distance <= Resources.TOO_DANGEROUS_RANGE) {
+		if (distance <= Resources.TOO_DANGEROUS_RANGE) {
 			System.out.println(Resources.WARNING_MSG("Proximity Alert: Vehicle in " +distance + "m." ));
 			return true;
 		}

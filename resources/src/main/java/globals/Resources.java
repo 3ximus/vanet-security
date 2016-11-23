@@ -25,6 +25,8 @@ public class Resources {
 	public static final int REGISTRY_PORT = 1099;
 
 //  -------- VEHICLE-RANGES ---------
+	public static final int BEACON_INTERVAL = 200; // miliseconds
+	public static final int DANGER_RESET_INTERVAL = 1000; // miliseconds
 	public static final int MAX_BEACON_RANGE = 100;
 	public static final int TOO_DANGEROUS_RANGE = 5;
 
@@ -136,7 +138,6 @@ public class Resources {
 	}
 
 	public static boolean verifyDigitalSignature(byte[] cipherDigest, byte[] bytes, PublicKey publicKey) throws Exception {
-		System.out.println("IM FUCKING HERE -> "+ cipherDigest);
 		Signature sig = Signature.getInstance("SHA1WithRSA");
 		sig.initVerify(publicKey);
 		sig.update(bytes);
