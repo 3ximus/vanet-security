@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# MAVEN WRAPPER
+# instead of writting help here just run with ./mvn_script --help
+
+
 # Custom dirs
 # dirs=$(find . -maxdepth 1 -type d -not -name '\.*' -not -name 'target')
 dirs="resources remote-interfaces ca vehicle vehicle-network rsu"
@@ -18,13 +22,25 @@ pretty_echo () {
 	[[ $1 = 1 ]] && exit 1
 }
 
+is_dir() {
+	local d
+	for d in $dirs ; do [[ "$d" == "$1" ]] && return 0; done
+	return 1
+}
+
 
 # ----- Main script
 
-[[ $# -eq 0 || "$1" = "help" || "$1" = "-help" || "$1" = "-h" ]] && echo -e "Usage ./mvn_script  [ compile | install | <maven arguments> ]  <directory> \n
-	- For \033[4;29minstall\033[0m, \033[4;29mcompile\033[0m and \033[4;29mclean\033[0m in case no more arguments are given
-		all directories ($dirs) will run given command
-	- If only the directory is given it runs \033[4;29mmvn clean compile exec:java\033[0m on it.\n" && exit
+[[ $# -eq 0 || "$1" = "help" || "$1" = "-help" || "$1" = "-h" ]] && echo -e "Usage ./mvn_script  [ compile | install | <maven arguments> ]  <directory> [args] \n
+    - For \033[4;29minstall\033[0m, \033[4;29mcompile\033[0m and \033[4;29mclean\033[0m in case no more
+        arguments are given all directories will run given command:
+            ($dirs)
+    - If only the directory is given it runs \033[4;29mmvn clean compile exec:java\033[0m on it.
+
+        NOTE: Its possible to give arguments, just put them after the directory name (directory must be valid
+        otherwise the last argument to this script will be used as a directory)
+    Example:
+        ./mvn_script exec:java vehicle VIN1 vehicle1 0,0 1,1\n" && exit
 
 echo -e "\n\t-- (╯°□°）╯︵ ┻━┻ --\n"
 
@@ -36,18 +52,26 @@ if [ "$1" = "compile" -o "$1" = "install" -o "$1" = "clean" ] && [ $# -eq 1 ]; t
 		[[ $? == 0 ]] && cd .. || pretty_echo 1 $1 $i 8
 		pretty_echo 2 $1 $i 8
 	done
-else		 # specific arguments for specified source dir
-	dir="${@: -1}"; length=$(($#-1));
-	if [ $# -eq 1 ] ; then
+else # specific commands for specified source dir with arguments
+	dir_pos=$# # fixed value to prevent errors
+	for (( a=1;a < $#;a++ )) { # check wich argument is dir
+		is_dir ${!a} && dir=${!a} && dir_pos=$(($a)) && break
+	}
+	# if dir was defined... , else define dir as the last argument
+	[[ ! -z $dir ]] && args="${@:$(($dir_pos+1)):$#}" || dir="${@: -1}"
+
+	if [ $dir_pos -eq 1 ] ; then
 		commands="clean compile exec:java"
-		for key in "${!special_rules[@]}" ; do
+		for key in "${!special_rules[@]}" ; do # apply special rules
 			[[ "$dir" == "$key" ]] && commands="${special_rules[$key]}" ;
 		done
 	else
-		commands=${@:1:$length};
+		commands="${@:1:$(($dir_pos-1))}"
 	fi
+	[[ ! -z $args ]] && mvn_args="-Dexec.args=\""$args"\"" # put arguments in maven format
 	pretty_echo 3 "maven" $dir 6
-	cd "$dir" && echo -e "Running: \033[1;35;40mmvn $commands\033[0m on \033[1;34;40m$dir\033[0m\n" && mvn $commands ;
+# eval needed to run since arguments may have quotes
+	cd "$dir" && echo -e "Running: \033[1;35;40m mvn $commands \033[0m on \033[1;34;40m $dir \033[0m" `[[ ! -z $args ]] && echo "with args \033[1;33;40m" $args` "\033[0m\n" && eval "mvn $commands $mvn_args";
 	[[ $? == 0 ]] && cd .. || pretty_echo 1 "run" $dir 4 ;
 	pretty_echo 2 "maven" $dir 6
 fi
