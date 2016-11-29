@@ -1,15 +1,15 @@
-package remote;
+package globals;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
 
-public class VehicleDTO implements Serializable {
-	private Vector2Df position;
-	private Vector2Df velocity;
+public class BeaconDTO implements Serializable {
+	private Vector2D position;
+	private Vector2D velocity;
 	private Timestamp timestamp;
     public static final long serialVersionUID = 0;
 
-	public VehicleDTO(Vector2Df pos, Vector2Df vel, Timestamp timestamp) {
+	public BeaconDTO(Vector2D pos, Vector2D vel, Timestamp timestamp) {
 		this.position = pos;
 		this.velocity = vel;
 		this.timestamp = timestamp;
@@ -18,11 +18,11 @@ public class VehicleDTO implements Serializable {
 	// -------
 	// GETTERS
 	// -------
-	public Vector2Df getPosition() {
+	public Vector2D getPosition() {
 		return position;
 	}
 
-	public Vector2Df getVelocity() {
+	public Vector2D getVelocity() {
 		return velocity;
 	}
 

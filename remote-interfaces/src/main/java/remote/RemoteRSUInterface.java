@@ -14,7 +14,8 @@ public interface RemoteRSUInterface extends Remote {
 	 * @param	byte[]			message signature
 	 * @return	boolean			true if its valid, false if its revoked
 	 */
-	public boolean authenticate(Certificate certToVerify, Certificate senderCert, byte[] signature) throws RemoteException;
+	public boolean isRevoked(Certificate certToVerify, Certificate senderCert, byte[] signature) throws RemoteException;
+	//public boolean isRevoked(AuthenticatedCertificateDTO message) throws RemoteException;
 
 
 	/**
@@ -25,7 +26,8 @@ public interface RemoteRSUInterface extends Remote {
 	 * @param	Certificate		author of the report
 	 * @param	byte[]			message signature
 	 */
-	public void revokeCertificate(Certificate certToRevoke, Certificate senderCertificate, byte[] signature) throws RemoteException;
+	public void tryRevoke(Certificate certToRevoke, Certificate senderCertificate, byte[] signature) throws RemoteException;
+	//public boolean tryRevoke(AuthenticatedCertificateDTO message) throws RemoteException;
 
 
 	/**

@@ -1,6 +1,8 @@
 package gateway;
 
 import globals.Resources;
+import globals.SignedBeaconDTO;
+import globals.Vector2D;
 import remote.RemoteRSUInterface;
 import remote.RemoteCAInterface;
 import java.rmi.registry.LocateRegistry;
