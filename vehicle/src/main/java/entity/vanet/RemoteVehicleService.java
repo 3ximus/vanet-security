@@ -8,11 +8,11 @@ import java.rmi.server.UnicastRemoteObject;
 
 import globals.Resources;
 import remote.RemoteVehicleInterface;
-import remote.Vector2Df;
-import remote.VehicleDTO;
+import globals.Vector2D;
+import globals.SignedBeaconDTO;
 
 import java.security.PublicKey;
-import java.security.cert.Certificate;
+import java.security.cert.X509Certificate;
 
 public class RemoteVehicleService implements RemoteVehicleInterface {
 	private boolean isPublished = false;
@@ -27,25 +27,15 @@ public class RemoteVehicleService implements RemoteVehicleInterface {
 
 // ------ INTERFACE METHODS --------
 
-	public Vector2Df simulateGetPosition() throws RemoteException {
+	public Vector2D simulateGetPosition() throws RemoteException {
 		return vehicle.getPosition();
 
 	}
 
-	public void receiveBeaconMessage(VehicleDTO vehicleInfo, Certificate senderCertificate, byte[] signature) throws RemoteException {
-
-		// Secure beacon
-
+	public void receiveBeaconMessage(SignedBeaconDTO beacon) throws RemoteException {
 		// verify if certificate was signed by CA
-		Certificate caCert = null;
-		try { caCert = Resources.getCertificateFromKeystore(this.vehicle.getKeystore(), Resources.CA_NAME); }
-		catch (Exception e) {
-			System.out.println(Resources.WARNING_MSG("Failed to verify CA digital signature of beacon sender: " + e.getMessage()));
-			System.out.println(Resources.WARNING_MSG("Droping Beacon: " + vehicleInfo.toString()));
-			return;
-		}
-		if (! Resources.verifySignedCertificate(senderCertificate, caCert.getPublicKey())) {
-			System.out.println(Resources.WARNING_MSG("Invalid CA Signature on beacon: " + vehicleInfo.toString()));
+		if (! beacon.verifyCertificate(this.vehicle.getCACertificate())) {
+			System.out.println(Resources.WARNING_MSG("Invalid CA Signature on beacon: " + beacon.toString()));
 			return;  // certificate was not signed by CA, beacon is dropped
 		}
 
@@ -55,18 +45,14 @@ public class RemoteVehicleService implements RemoteVehicleInterface {
 		//RSU.checkCertificate(senderCertificate, vehicle.getCertificate(), sig);
 		// if ^^^^^ false; then return;
 
-		PublicKey senderPubKey = senderCertificate.getPublicKey();
-		String messageContent = vehicleInfo.toString() + senderCertificate.toString();
-		try {
-			Resources.verifyDigitalSignature(signature, messageContent.getBytes(), senderPubKey); }
-		catch (Exception e ) {
-			System.out.println(Resources.WARNING_MSG("Invalid digital signature on beacon: " + vehicleInfo.toString()));
+		if ( ! beacon.verifySignature()) {
+			System.out.println(Resources.WARNING_MSG("Invalid digital signature on beacon: " + beacon.toString()));
 			return;  // certificate was not signed by sender, beacon is dropped
 		}
 
 		// end of security checks, process beacon
 
-		vehicle.simulateBrain(vehicleInfo);
+		vehicle.simulateBrain(beacon);
 	}
 // -------------------------------
 

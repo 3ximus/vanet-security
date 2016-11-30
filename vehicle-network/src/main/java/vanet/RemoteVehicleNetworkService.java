@@ -4,8 +4,8 @@ import entity.vanet.RemoteVehicleService;
 import globals.Resources;
 import remote.RemoteVehicleInterface;
 import remote.RemoteVehicleNetworkInterface;
-import remote.Vector2Df;
-import remote.VehicleDTO;
+import globals.Vector2D;
+import globals.SignedBeaconDTO;
 
 import java.rmi.server.ExportException;
 import java.util.Map;
@@ -27,17 +27,17 @@ public class RemoteVehicleNetworkService implements RemoteVehicleNetworkInterfac
 // ------ INTERFACE METHODS --------
 
 	@Override
-	public void simulateBeaconBroadcast(String name, VehicleDTO messageToBeacon, Certificate senderCertificate, byte[] signature) throws RemoteException {
-		Vector2Df sendingVehiclePos = messageToBeacon.getPosition();
+	public void simulateBeaconBroadcast(String name, SignedBeaconDTO beacon) throws RemoteException {
+		Vector2D sendingVehiclePos = beacon.getPosition();
 		for(Map.Entry<String, RemoteVehicleInterface> entry: vehicleNetwork.getVehicleEntrySet()) {
 			if(entry.getKey().equals(name)) continue;
 
 			RemoteVehicleInterface remoteVehicle = entry.getValue();
 
 			try {
-				Vector2Df remoteVehiclePos = remoteVehicle.simulateGetPosition();
+				Vector2D remoteVehiclePos = remoteVehicle.simulateGetPosition();
 				if(VehicleNetwork.inRange(sendingVehiclePos, remoteVehiclePos)) {
-					remoteVehicle.receiveBeaconMessage(messageToBeacon, senderCertificate, signature);
+					remoteVehicle.receiveBeaconMessage(beacon);
 				}
 			} catch(RemoteException e) {
 				System.out.println(Resources.WARNING_MSG("Vehicle \"" + entry.getKey() + "\" seems to be dead."));

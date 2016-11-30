@@ -2,7 +2,7 @@ package vanet;
 
 import globals.Resources;
 import remote.RemoteVehicleInterface;
-import remote.Vector2Df;
+import globals.Vector2D;
 
 import java.util.TreeMap;
 import java.util.Map;
@@ -36,7 +36,7 @@ public class VehicleNetwork {
 		vehicleList.remove(name);
 	}
 
-	public static boolean inRange(Vector2Df pos1, Vector2Df pos2) {
+	public static boolean inRange(Vector2D pos1, Vector2D pos2) {
 		return pos1.distance(pos2) <= Resources.MAX_BEACON_RANGE;
 	}
 }

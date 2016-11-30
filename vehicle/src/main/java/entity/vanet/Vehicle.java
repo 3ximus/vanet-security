@@ -6,23 +6,25 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import globals.Resources;
-import remote.Vector2Df;
-import remote.VehicleDTO;
+import globals.Vector2D;
+import globals.SignedBeaconDTO;
+import globals.BeaconDTO;
 import remote.RemoteVehicleNetworkInterface;
-import java.security.cert.Certificate;
+import java.security.cert.X509Certificate;
 import java.sql.Timestamp;
 import java.security.PrivateKey;
 import java.security.KeyStore;
 
 public class Vehicle {
 	private String VIN;
-	private Vector2Df position;
-	private Vector2Df velocity;
+	private Vector2D position;
+	private Vector2D velocity;
 	private RemoteVehicleNetworkInterface VANET;
 	private String nameInVANET;
 	private String internalName; // only used to retrieve the correct certificate
 
-	private Certificate myCert;
+	private X509Certificate myCert;
+	private X509Certificate caCert;
 	private PrivateKey myPrKey;
 	private KeyStore myKeystore;
 
@@ -45,7 +47,7 @@ public class Vehicle {
 		}
 	};
 
-	private Map<String, VehicleDTO> vicinity = new HashMap<>(); // String is the pseudonim certificate (is it?)
+	private Map<String, BeaconDTO> vicinity = new HashMap<>(); // String is the pseudonim certificate (is it?)
 
 //  -----------------------------------
 
@@ -53,7 +55,7 @@ public class Vehicle {
 
 //  ------- CONSTRUCTOR  ------------
 
-	public Vehicle(String VIN, String certificateName, Vector2Df position, Vector2Df velocity) {
+	public Vehicle(String VIN, String certificateName, Vector2D position, Vector2D velocity) {
 		this.VIN = VIN;
 		this.position = position;
 		this.velocity = velocity;
@@ -63,10 +65,17 @@ public class Vehicle {
 		String certsDir = Resources.CERT_DIR+this.internalName+"/";
 		// Read certificate file to a certificate object
 		try {
-			this.myCert = Resources.readCertificateFile(certsDir+this.internalName+".cer"); }
+			this.myCert = (X509Certificate)Resources.readCertificateFile(certsDir+this.internalName+".cer"); }
 		catch (Exception e) {
 			System.out.println(Resources.ERROR_MSG("Error Loading certificate: "+e.getMessage()));
 			System.out.println(Resources.ERROR_MSG("Exiting. Vehicle is useless without certificate"));
+			System.exit(1);
+		}
+		try {
+			this.caCert = (X509Certificate)Resources.getCertificateFromKeystore(this.myKeystore, Resources.CA_NAME); }
+		catch (Exception e) {
+			System.out.println(Resources.WARNING_MSG("Failed to get CA certificate from Keystore: " + e.getMessage()));
+			System.out.println(Resources.ERROR_MSG("Exiting. Vehicle cannot authenticate messages without CACert"));
 			System.exit(1);
 		}
 		try {
@@ -81,9 +90,10 @@ public class Vehicle {
 
 //  ------- GETTERS  ------------
 
-	public Vector2Df getPosition() { return this.position; }
-	public Vector2Df getVelocity() { return this.velocity; }
-	public Certificate getCertificate() { return this.myCert; }
+	public Vector2D getPosition() { return this.position; }
+	public Vector2D getVelocity() { return this.velocity; }
+	public X509Certificate getCertificate() { return this.myCert; }
+	public X509Certificate getCACertificate() { return this.caCert; }
 	public PrivateKey getPrivateKey() { return this.myPrKey; }
 	public KeyStore getKeystore() { return this.myKeystore; }
 
@@ -102,20 +112,10 @@ public class Vehicle {
 	public void beacon() {
 		if(VANET == null) return;
 
-		VehicleDTO dto = new VehicleDTO(position, velocity, new Timestamp(System.currentTimeMillis()));
-
-		byte[] sig = null;
-		// Calculate digital signature of the content
-		String serializedMessage = dto.toString() + myCert.toString();
-		try {
-			sig = Resources.makeDigitalSignature(serializedMessage.getBytes(), this.myPrKey); }
-		catch (Exception e) {
-			System.out.println(Resources.ERROR_MSG("Failed to create signature: "+e.getMessage()));
-			return;
-		}
+		SignedBeaconDTO dto = new SignedBeaconDTO(this.position, this.velocity, this.myCert, this.myPrKey);
 
 		try {
-			VANET.simulateBeaconBroadcast(nameInVANET, dto, myCert, sig);
+			VANET.simulateBeaconBroadcast(nameInVANET, dto);
 		} catch(Exception e) {
 			// TODO maybe try to reconect??
 			System.out.println(Resources.ERROR_MSG("Unable to beacon message: " + e.getMessage()));
@@ -131,13 +131,13 @@ public class Vehicle {
 		}
 	}
 
-	public void simulateBrain(VehicleDTO vehicleInfo) {
+	public void simulateBrain(SignedBeaconDTO beacon) {
 
 		// TODO: Register on the list if new, or update if not
 		// TODO: If was already registered use a data trust function that , according to previous records of the
 		// TODO: same vehicle, decides whether to believe it or not
 
-		if(isVehicleDangerous(vehicleInfo) == true) {
+		if(isVehicleDangerous(beacon) == true) {
 			if(inDanger = true) {
 				resetInDangerTimer.cancel();
 			}
@@ -148,7 +148,7 @@ public class Vehicle {
 		}
 	}
 
-	private boolean isVehicleDangerous(VehicleDTO vehicleInfo) {
+	private boolean isVehicleDangerous(SignedBeaconDTO vehicleInfo) {
 		double distance = vehicleInfo.getPosition().distance(getPosition());
 		if (distance <= Resources.TOO_DANGEROUS_RANGE) {
 			System.out.println(Resources.WARNING_MSG("Proximity Alert: Vehicle in " +distance + "m." ));

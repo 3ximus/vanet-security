@@ -25,7 +25,7 @@ public class RemoteRSUService implements RemoteRSUInterface {
 	// forwards request to ca
 	// returns result to network
 	@Override
-	public boolean authenticate(Certificate certToVerify, Certificate senderCert, byte[] signature) {
+	public boolean isRevoked(Certificate certToVerify, Certificate senderCert, byte[] signature) {
 		// verify signature sent
 		// create my own signature
 		// send msg to ca
@@ -50,7 +50,7 @@ public class RemoteRSUService implements RemoteRSUInterface {
 	// forwards to ca
 	// returns result to network
 	@Override
-	public void revokeCertificate(Certificate certToRevoke, Certificate senderCertificate, byte[] signature) {
+	public void tryRevoke(Certificate certToRevoke, Certificate senderCertificate, byte[] signature) {
 		// TODO:
 	}
 

@@ -2,7 +2,7 @@ package entity.vanet;
 
 import globals.Resources;
 import remote.RemoteVehicleNetworkInterface;
-import remote.Vector2Df;
+import globals.Vector2D;
 
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -28,8 +28,8 @@ public class VehicleApp {
 		System.out.println("\n");
 
 		// Vehicle creation arguments
-		Vector2Df pos = new Vector2Df(70, 0);
-		Vector2Df vel = new Vector2Df(0, 0);
+		Vector2D pos = new Vector2D(70, 0);
+		Vector2D vel = new Vector2D(0, 0);
 		String vin = "VIN1"; // TODO GENERATE ONE RANDOM MAYBE?
 		String simulated_certName = "vehicle1"; // TODO select a diferent for each one
 
@@ -42,8 +42,8 @@ public class VehicleApp {
 			try {
 				String [] pos_args = args[2].split(",");
 				String [] vel_args = args[3].split(",");
-				pos = new Vector2Df(Float.parseFloat(pos_args[0]), Float.parseFloat(pos_args[1]));
-				vel = new Vector2Df(Float.parseFloat(vel_args[0]), Float.parseFloat(vel_args[1]));
+				pos = new Vector2D(Float.parseFloat(pos_args[0]), Float.parseFloat(pos_args[1]));
+				vel = new Vector2D(Float.parseFloat(vel_args[0]), Float.parseFloat(vel_args[1]));
 				vin = args[0];
 				simulated_certName = args[1];
 			} catch (NumberFormatException e) {

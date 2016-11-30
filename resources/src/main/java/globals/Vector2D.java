@@ -2,6 +2,9 @@ package globals;
 
 import java.io.Serializable;
 
+/**
+ * Two dimensinal vector with double precision
+ */
 public class Vector2D implements Serializable {
     public double x;
     public double y;
