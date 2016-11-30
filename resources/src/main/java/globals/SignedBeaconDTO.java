@@ -48,7 +48,13 @@ public class SignedBeaconDTO extends BeaconDTO {
 
 	@Override
 	public byte[] serialize() {
-		return this.beaconSign.serialize();
+		// Join serializations
+		byte[] serializedDTO = super.serialize();
+		byte[] serializedCert = this.beaconSign.serialize();
+		byte[] newSerialization = new byte[serializedDTO.length + serializedCert.length];
+		System.arraycopy(serializedDTO, 0, newSerialization, 0, serializedDTO.length);
+		System.arraycopy(serializedCert, 0, newSerialization, serializedDTO.length, serializedCert.length);
+		return newSerialization;
 	}
 
 	/*

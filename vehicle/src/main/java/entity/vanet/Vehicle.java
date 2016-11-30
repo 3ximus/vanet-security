@@ -72,18 +72,18 @@ public class Vehicle {
 			System.exit(1);
 		}
 		try {
-			this.caCert = (X509Certificate)Resources.getCertificateFromKeystore(this.myKeystore, Resources.CA_NAME); }
-		catch (Exception e) {
-			System.out.println(Resources.WARNING_MSG("Failed to get CA certificate from Keystore: " + e.getMessage()));
-			System.out.println(Resources.ERROR_MSG("Exiting. Vehicle cannot authenticate messages without CACert"));
-			System.exit(1);
-		}
-		try {
 			this.myKeystore = Resources.readKeystoreFile(certsDir + this.internalName + ".jks", Resources.STORE_PASS);
 			this.myPrKey = Resources.getPrivateKeyFromKeystore(this.myKeystore, this.internalName, Resources.KEY_PASS); }
 		catch (Exception e) {
 			System.out.println(Resources.ERROR_MSG("Error Loading PrivateKey: "+e.getMessage()));
 			System.out.println(Resources.ERROR_MSG("Exiting. Vehicle is useless without PrivateKey"));
+			System.exit(1);
+		}
+		try {
+			this.caCert = (X509Certificate)Resources.getCertificateFromKeystore(this.myKeystore, Resources.CA_NAME); }
+		catch (Exception e) {
+			System.out.println(Resources.WARNING_MSG("Failed to get CA certificate from Keystore: " + e.getMessage()));
+			System.out.println(Resources.ERROR_MSG("Exiting. Vehicle cannot authenticate messages without CACert"));
 			System.exit(1);
 		}
 	}

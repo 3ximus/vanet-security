@@ -35,12 +35,7 @@ public class SignedDTO extends DTO {
 	 */
 	@Override
 	public byte[] serialize() {
-		byte[] serializedDTO = this.parentDTO.serialize();
-		byte[] serializedCert = this.senderCertificate.toString().getBytes();
-		byte[] newSerialization = new byte[serializedDTO.length + serializedCert.length];
-		System.arraycopy(serializedDTO, 0, newSerialization, 0, serializedDTO.length);
-		System.arraycopy(serializedCert, 0, newSerialization, serializedDTO.length, serializedCert.length);
-		return newSerialization;
+		return this.senderCertificate.toString().getBytes();
 	}
 
 	/**
@@ -49,7 +44,7 @@ public class SignedDTO extends DTO {
 	 * @return	returns the signature generated
 	 */
 	public byte[] generateSignature(PrivateKey pKey) {
-		byte[] serializedVal = this.serialize();
+		byte[] serializedVal = this.parentDTO.serialize();
 		byte[] sig = null;
 		try {
 			sig = Resources.makeDigitalSignature(serializedVal, pKey); }
@@ -75,7 +70,7 @@ public class SignedDTO extends DTO {
 	 * @return	returns true if the signature is correct
 	 */
 	public boolean verifySignature() {
-		try { Resources.verifyDigitalSignature(this.signature, this.serialize(), this.senderCertificate.getPublicKey()); }
+		try { Resources.verifyDigitalSignature(this.signature, this.parentDTO.serialize(), this.senderCertificate.getPublicKey()); }
 		catch (Exception e ) { return false; } // certificate was not signed by sender, beacon is dropped
 		return true;
 	}
