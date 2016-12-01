@@ -50,8 +50,16 @@ public class RemoteRSUService implements RemoteRSUInterface {
 	// forwards to ca
 	// returns result to network
 	@Override
-	public void tryRevoke(Certificate certToRevoke, Certificate senderCertificate, byte[] signature) {
+	public boolean tryRevoke(Certificate certToRevoke, Certificate senderCertificate, byte[] signature) {
 		// TODO:
+	}
+
+	public void shareRevoked(/* TODO add argumensts */) {
+
+	}
+
+	public void enforceRevocation(/* TODO add argumensts */) {
+
 	}
 
 	@Override

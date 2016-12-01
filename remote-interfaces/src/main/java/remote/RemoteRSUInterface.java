@@ -26,9 +26,13 @@ public interface RemoteRSUInterface extends Remote {
 	 * @param	Certificate		author of the report
 	 * @param	byte[]			message signature
 	 */
-	public void tryRevoke(Certificate certToRevoke, Certificate senderCertificate, byte[] signature) throws RemoteException;
+	public boolean tryRevoke(Certificate certToRevoke, Certificate senderCertificate, byte[] signature) throws RemoteException;
 	//public boolean tryRevoke(AuthenticatedCertificateDTO message) throws RemoteException;
 
+	public void shareRevoked(/* TODO add argumensts */) throws RemoteException;
+
+
+	public void enforceRevocation(/* TODO add argumensts */) throws RemoteException;
 
 	/**
 	 * Connectivity test
