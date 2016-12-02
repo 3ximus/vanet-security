@@ -45,6 +45,6 @@ public class VehicleNetwork {
 
 	public void informVehiclesOfRevocation(SignedCertificateDTO dto) throws RemoteException { 
 		for (Map.Entry<String, RemoteVehicleInterface> vehicle : vehicleList.entrySet())
-			vehicle.getValue().addRevokedCertificate(dto);
+			vehicle.getValue().addRevokedCertificate(dto); // Each vehicle adds the revoked certificate
 	}
 }

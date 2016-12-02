@@ -37,8 +37,8 @@ public interface RemoteVehicleNetworkInterface extends Remote {
 	public String getNextVehicleName() throws RemoteException;
 
 	/**
-	 * forwards to all vehicles the revoked certificate
-	 * @param	SignedCertificateDTO 	revoked certificate to add to each vehicle cache;
-	 */	
+	 * Propagate new revoked certificates to vehicles in range
+	 * @param	SignedCertificateDTO	DTO containing certificate to be shared
+	 */
 	public void informVehiclesOfRevocation(SignedCertificateDTO dto);
 }

@@ -57,7 +57,8 @@ public class RemoteVehicleService implements RemoteVehicleInterface {
 
 	@Override
 	public void addRevokedCertificate(SignedCertificateDTO dto) {
-		// TODO: Add cache to revoked ceritificate cach to vehicle
+		// TODO1: verify that dto is from RSU 
+		// TODO2: Add cache to revoked ceritificate cache to vehicle if it isnt there already
 	}
 
 // -------------------------------

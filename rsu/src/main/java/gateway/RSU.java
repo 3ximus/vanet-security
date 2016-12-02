@@ -16,8 +16,10 @@ import java.security.PrivateKey;
 import java.security.KeyStore;
 
 import globals.Resources;
+
 import remote.RemoteCAInterface;
 import remote.RemoteRSUInterface;
+import remote.RemoteVehicleNetworkInterface;
 
 
 public class RSU {
@@ -89,7 +91,12 @@ public class RSU {
             RemoteCAInterface ca_service = (RemoteCAInterface) registry.lookup(Resources.CA_NAME);
             System.out.println(Resources.OK_MSG("Remote CA Interface located"));
 
-            return new RemoteRSUService(rsu,ca_service);
+            // Locate the certificate authority service
+            RemoteVehicleNetworkInterface vehicle_network_service 
+            		= (RemoteVehicleNetworkInterface) registry.lookup(Resources.CA_NAME);
+            System.out.println(Resources.OK_MSG("Remote Vehicle Netwrok Interface located"));
+
+            return new RemoteRSUService(rsu, ca_service, vehicle_network_service);
 	}
 
 	// Getters

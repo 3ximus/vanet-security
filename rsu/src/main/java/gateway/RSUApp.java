@@ -1,4 +1,4 @@
-package gateway;
+    package gateway;
 
 import globals.Resources;
 import java.rmi.registry.LocateRegistry;
@@ -36,7 +36,7 @@ public class RSUApp
             }
 
         } catch (Exception e) {
-            System.err.println(Resources.ERROR_MSG("CA remote interface is not present in the RMI registry."));
+            System.err.println(Resources.ERROR_MSG("CA or VANET remote interfaces are not present in the RMI registry."));
         }
 
         System.out.println("\n");

@@ -3,6 +3,7 @@ package gateway;
 import globals.Resources;
 import remote.RemoteRSUInterface;
 import remote.RemoteCAInterface;
+import remote.RemoteVehicleNetworkInterface;
 
 import globals.SignedCertificateDTO;
 import java.rmi.RemoteException;
@@ -15,10 +16,12 @@ public class RemoteRSUService implements RemoteRSUInterface {
 	private RSU rsu;
 	private boolean isPublished = false;
 	private RemoteCAInterface ca;
+	private RemoteVehicleNetworkInterface vehicle_network;
 
-	public RemoteRSUService(RSU rsu, RemoteCAInterface ca) {
+	public RemoteRSUService(RSU rsu, RemoteCAInterface ca, RemoteVehicleNetworkInterface vehicle_network) {
 		this.rsu = rsu;
 		this.ca = ca;
+		this.vehicle_network = vehicle_network;
 	}
 
 	// Called by vehicle
@@ -63,6 +66,9 @@ public class RemoteRSUService implements RemoteRSUInterface {
 				} catch(Exception e) {
 					System.out.println(Resources.WARNING_MSG(e.getMessage()));
 				}
+
+				informVehiclesOfRevocation(
+							new SignedCertificateDTO(dto.getCertificate(), rsu.getCertificate(), rsu.getPrivateKey()));
 				return true;
 			} 
 
@@ -71,12 +77,9 @@ public class RemoteRSUService implements RemoteRSUInterface {
 		return false;
 	}
 
+	// Called by the CA
 	public void shareRevoked(SignedCertificateDTO dto) throws RemoteException {
 
-	}
-
-	public void informVehiclesOfRevocation(SignedCertificateDTO dto) throws RemoteException {
-		// TODO: rsu needs to have vehicle-network-interface
 	}
 
 	// ------ INTERNAL METHODS --------
@@ -108,6 +111,10 @@ public class RemoteRSUService implements RemoteRSUInterface {
 		}
 
 		return true; // Sender is authenticated
+	}
+
+	private void informVehiclesOfRevocation(SignedCertificateDTO dto) throws RemoteException {	
+		vehicle_network.informVehiclesOfRevocation(dto);
 	}
 
 	// ------ REGISTRY METHODS --------

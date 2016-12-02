@@ -32,11 +32,4 @@ public interface RemoteRSUInterface extends Remote {
 	 */
 	public void shareRevoked(SignedCertificateDTO dto) throws RemoteException;
 
-
-	/**
-	 * Propagate new revoked certificates to vehicles in range
-	 * @param	SignedCertificateDTO	DTO containing certificate to be shared
-	 */
-	public void informVehiclesOfRevocation(SignedCertificateDTO dto) throws RemoteException;
-
 }
