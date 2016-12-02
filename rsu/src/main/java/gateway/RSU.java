@@ -11,6 +11,9 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
 
 import java.security.cert.Certificate;
+import java.security.cert.X509Certificate;
+import java.security.PrivateKey;
+import java.security.KeyStore;
 
 import globals.Resources;
 import remote.RemoteCAInterface;
@@ -21,14 +24,42 @@ public class RSU {
 	
 	private ArrayList<Certificate> revokedCache;
 
+	// Security atributes
+	private X509Certificate myCert;
+	private X509Certificate caCert;
+	private PrivateKey myPrKey;
+	private KeyStore myKeystore;
+
 	// Construtores //
 
-	public RSU() {
-		revokedCache = new ArrayList<Certificate>();
-	}
+	public RSU(String certificateName) {
 
-	public RSU(ArrayList<Certificate> certificates) {
-		revokedCache = certificates;
+		revokedCache = new ArrayList<Certificate>();
+		
+		String certsDir = Resources.CERT_DIR+certificateName+"/";
+		// Read certificate file to a certificate object
+		try {
+			this.myCert = (X509Certificate)Resources.readCertificateFile(certsDir+certificateName+".cer"); }
+		catch (Exception e) {
+			System.out.println(Resources.ERROR_MSG("Error Loading certificate: "+e.getMessage()));
+			System.out.println(Resources.ERROR_MSG("Exiting. Vehicle is useless without certificate"));
+			System.exit(1);
+		}
+		try {
+			this.myKeystore = Resources.readKeystoreFile(certsDir + certificateName + ".jks", Resources.STORE_PASS);
+			this.myPrKey = Resources.getPrivateKeyFromKeystore(this.myKeystore, certificateName, Resources.KEY_PASS); }
+		catch (Exception e) {
+			System.out.println(Resources.ERROR_MSG("Error Loading PrivateKey: "+e.getMessage()));
+			System.out.println(Resources.ERROR_MSG("Exiting. Vehicle is useless without PrivateKey"));
+			System.exit(1);
+		}
+		try {
+			this.caCert = (X509Certificate)Resources.getCertificateFromKeystore(this.myKeystore, Resources.CA_NAME); }
+		catch (Exception e) {
+			System.out.println(Resources.WARNING_MSG("Failed to get CA certificate from Keystore: " + e.getMessage()));
+			System.out.println(Resources.ERROR_MSG("Exiting. Vehicle cannot authenticate messages without CACert"));
+			System.exit(1);
+		}
 	}
 
 	//////////////////
@@ -60,5 +91,11 @@ public class RSU {
 
             return new RemoteRSUService(rsu,ca_service);
 	}
+
+	// Getters
+	public X509Certificate getCertificate()  { return this.myCert; }
+	public X509Certificate getCACertificate() { return this.caCert; }
+	public PrivateKey getPrivateKey() { return this.myPrKey; }
+	public KeyStore getKeystore() { return this.myKeystore; }
 
 }

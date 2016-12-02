@@ -8,6 +8,8 @@ import java.io.File;
 import java.security.cert.Certificate;
 import java.security.MessageDigest;
 import static javax.xml.bind.DatatypeConverter.printHexBinary;
+
+import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -28,7 +30,7 @@ public class RemoteCAService implements RemoteCAInterface {
 	 * @return	boolean			true if its valid, false if its revoked
 	 */
 	@Override
-	public boolean isRevoked(SignedCertificateDTO dto) {
+	public boolean isRevoked(SignedCertificateDTO dto) throws RemoteException {
 		return this.isRevoked(dto.getCertificate());
 }
 
@@ -38,7 +40,7 @@ public class RemoteCAService implements RemoteCAInterface {
 	 * @return	boolean			true if sucessfully revoked, false otherwise
 	 */
 	@Override
-	public boolean tryRevoke(SignedCertificateDTO dto) {
+	public boolean tryRevoke(SignedCertificateDTO dto) throws RemoteException {
 		if (! this.ponderateRevokeRequest(dto.getCertificate()))
 			return false;
 

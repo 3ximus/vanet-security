@@ -6,6 +6,7 @@ import globals.Vector2D;
 import remote.RemoteRSUInterface;
 import remote.RemoteCAInterface;
 
+import globals.SignedCertificateDTO;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -23,17 +24,54 @@ public class RemoteRSUService implements RemoteRSUInterface {
 		this.ca = ca;
 	}
 
-	// Called by the vehicle network
+	// Called by vehicle
 	// forwards request to ca
-	// returns result to network
+	// returns result to vehicle
 	@Override
-	public boolean isRevoked(Certificate certToVerify, Certificate senderCert, byte[] signature) throws RemoteException {
-		// verify signature sent
+	public boolean isRevoked(SignedCertificateDTO dto) throws RemoteException {
+	
+		// verify if certificate was signed by CA
+		if (!dto.verifyCertificate(this.rsu.getCACertificate())) {
+			System.out.println(Resources.WARNING_MSG("Invalid CA Signature on isRevoked request: " + dto.toString()));
+			return false;  // certificate was not signed by CA, isRevoked  request is dropped
+		}
+
+		// if certificate was revoked, request is dropped
+		if(rsu.isCertInCache(dto.getSenderCertificate())) {
+			System.out.println(Resources.ERROR_MSG("Sender's Certificate is revoked"));
+			return false; 
+		}
+
 		// create my own signature
 		// send msg to ca
+		// Contact RSU:
+		// String certificateCheckForRSU = senderCertificate.toString() + vehicle.getCertificate().toString();
+		// byte[] sig = Resources.makeDigitalSignature(certificateCheckForRSU.getBytes(), vehicle.getPrivateKey());
+		// RSU.checkCertificate(senderCertificate, vehicle.getCertificate(), sig);
+		// if ^^^^^ false; then return;
 
-		// boolean isCertificateValid
-		//		= ca.checkCertificate(senderCertificate, myCertificate, mysignature);
+		// verify signature sent
+		if (!dto.verifySignature()) {
+			System.out.println(Resources.WARNING_MSG("Invalid digital signature on isRevoked request: " + dto.toString()));
+			return false;  // certificate was not signed by sender, isRevoked is dropped
+		}
+
+		// end of security checks
+
+		// verify if revoked certificate is in cache
+		if(rsu.isCertInCache(dto.getCertificate())) {
+			System.out.println(Resources.ERROR_MSG("Certificate is revoked"));
+			return true; 
+		}
+
+		// Contact CA with possible revoked certificate
+		// create my own signature
+		// send msg to ca
+		
+		// String certificateCheckForRSU = senderCertificate.toString() + vehicle.getCertificate().toString();
+		// byte[] sig = Resources.makeDigitalSignature(certificateCheckForRSU.getBytes(), vehicle.getPrivateKey());
+		// RSU.checkCertificate(senderCertificate, vehicle.getCertificate(), sig);
+		// if ^^^^^ false; then return;
 
 		// if(isCertificateValid) {
 		// 	try {
@@ -43,36 +81,27 @@ public class RemoteRSUService implements RemoteRSUInterface {
 		// 	}
 		//}
 
-		// Enviar resultado para a vanet
-		// return isCertificateValid;
 		return true; 
 	}
 
 	@Override
-	public boolean tryRevoke(Certificate certToRevoke, Certificate senderCertificate, byte[] signature) throws RemoteException {
+	public boolean tryRevoke(SignedCertificateDTO dto) throws RemoteException {
 		// Called by a vehicle
 		// Check if sender vehicle has sent too many tryRevoke requests
 		// Forward to CA either:
 		// - sender's certificate (due to having too many tries)
 		// - the certificate "to be" revoked
 		// return true if it was actually revoked
-		ca.tryRevoke(certToRevoke, senderCertificate, signature);
+		ca.tryRevoke(dto);
 		return true;
 	}
 
-	public void shareRevoked(/* TODO add argumensts */) throws RemoteException {
+	public void shareRevoked(SignedCertificateDTO dto) throws RemoteException {
 
 	}
 
-	public void enforceRevocation(/* TODO add argumensts */) throws RemoteException {
+	public void informVehiclesOfRevocation(SignedCertificateDTO dto) throws RemoteException {
 
-	}
-
-	@Override
-	public String ping(String msg) {
-		String out_msg = Resources.OK_MSG("ping:" + msg);
-		System.out.println(out_msg);
-		return out_msg;
 	}
 
 	// ------ REGISTRY METHODS --------
