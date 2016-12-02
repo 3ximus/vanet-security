@@ -40,6 +40,7 @@ public class SignedBeaconDTO extends SignedDTO {
 	public Vector2D getPosition() { return this.beaconDTO.getPosition(); }
 	public Vector2D getVelocity() { return this.beaconDTO.getVelocity(); }
 	public Timestamp getTimestamp() { return this.beaconDTO.getTimestamp(); }
+	public String toString() { return this.beaconDTO.toString(); }
 
 	/**
 	 * Returns the serialized value of this DTO

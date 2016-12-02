@@ -37,6 +37,7 @@ public class SignedCertificateDTO extends SignedDTO {
 
 	public Timestamp getTimestamp() { return this.certDTO.getTimestamp(); }
 	public X509Certificate getCertificate() { return this.certDTO.certificate; }
+	public String toString() { return this.certDTO.toString(); }
 
 	/**
 	 * Returns the serialized value of this DTO

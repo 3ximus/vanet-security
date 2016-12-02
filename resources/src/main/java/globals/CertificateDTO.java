@@ -32,7 +32,7 @@ public class CertificateDTO extends DTO {
 
 	@Override
 	public String toString() {
-		return this.certificate.toString()+this.timestamp.toString();
+		return this.certificate.toString()+"\n"+this.timestamp.toString();
 	}
 
 	@Override
