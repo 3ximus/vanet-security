@@ -38,17 +38,15 @@ public class RemoteRSUService implements RemoteRSUInterface {
 
 		// if certificate was revoked, request is dropped
 		if(rsu.isCertInCache(dto.getSenderCertificate())) {
-			System.out.println(Resources.ERROR_MSG("Sender's Certificate is revoked"));
+			System.out.println(Resources.WARNING_MSG("Sender's Certificate is revoked"));
 			return false; 
 		}
 
-		// create my own signature
-		// send msg to ca
-		// Contact RSU:
-		// String certificateCheckForRSU = senderCertificate.toString() + vehicle.getCertificate().toString();
-		// byte[] sig = Resources.makeDigitalSignature(certificateCheckForRSU.getBytes(), vehicle.getPrivateKey());
-		// RSU.checkCertificate(senderCertificate, vehicle.getCertificate(), sig);
-		// if ^^^^^ false; then return;
+		// Contact CA to check if senders certificate is revoked
+		if(ca.isRevoked(new SignedCertificateDTO(dto.getSenderCertificate() ,rsu.getCertificate(), rsu.getPrivateKey()))) {
+			System.out.println(Resources.WARNING_MSG("Sender's Certificate is revoked"));
+			return false; 
+		}
 
 		// verify signature sent
 		if (!dto.verifySignature()) {
@@ -60,28 +58,23 @@ public class RemoteRSUService implements RemoteRSUInterface {
 
 		// verify if revoked certificate is in cache
 		if(rsu.isCertInCache(dto.getCertificate())) {
-			System.out.println(Resources.ERROR_MSG("Certificate is revoked"));
+			System.out.println(Resources.OK_MSG("Certificate is revoked"));
 			return true; 
 		}
 
 		// Contact CA with possible revoked certificate
-		// create my own signature
-		// send msg to ca
-		
-		// String certificateCheckForRSU = senderCertificate.toString() + vehicle.getCertificate().toString();
-		// byte[] sig = Resources.makeDigitalSignature(certificateCheckForRSU.getBytes(), vehicle.getPrivateKey());
-		// RSU.checkCertificate(senderCertificate, vehicle.getCertificate(), sig);
-		// if ^^^^^ false; then return;
+		if(ca.isRevoked(new SignedCertificateDTO(dto.getCertificate() ,rsu.getCertificate(), rsu.getPrivateKey()))) {
+			
+			try { rsu.addCertificateToCache(dto.getCertificate());
+			} catch (Exception e) {
+				System.out.println(e.getMessage());
+			}
 
-		// if(isCertificateValid) {
-		// 	try {
-		// 		rsu.addCertificateToCache(senderCertificate);
-		// 	} catch (Exception e) {
-		// 		System.out.println(e.getMessage());
-		// 	}
-		//}
+			System.out.println(Resources.OK_MSG("Certificate is revoked"));
+			return true; 
+		}
 
-		return true; 
+		return false; 
 	}
 
 	@Override
