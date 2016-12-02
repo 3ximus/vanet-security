@@ -7,9 +7,11 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 
 import globals.Resources;
-import remote.RemoteVehicleInterface;
 import globals.Vector2D;
 import globals.SignedBeaconDTO;
+import globals.SignedCertificateDTO;
+
+import remote.RemoteVehicleInterface;
 
 public class RemoteVehicleService implements RemoteVehicleInterface {
 	private boolean isPublished = false;
@@ -23,12 +25,13 @@ public class RemoteVehicleService implements RemoteVehicleInterface {
 	}
 
 // ------ INTERFACE METHODS --------
-
+	@Override
 	public Vector2D simulateGetPosition() throws RemoteException {
 		return vehicle.getPosition();
 
 	}
 
+	@Override
 	public void receiveBeaconMessage(SignedBeaconDTO beacon) throws RemoteException {
 		// verify if certificate was signed by CA
 		if (! beacon.verifyCertificate(this.vehicle.getCACertificate())) {
@@ -51,6 +54,12 @@ public class RemoteVehicleService implements RemoteVehicleInterface {
 
 		vehicle.simulateBrain(beacon);
 	}
+
+	@Override
+	public void addRevokedCertificate(SignedCertificateDTO dto) {
+		// TODO: Add cache to revoked ceritificate cach to vehicle
+	}
+
 // -------------------------------
 
 

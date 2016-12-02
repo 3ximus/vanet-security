@@ -1,6 +1,8 @@
 package remote;
 
 import globals.SignedBeaconDTO;
+import globals.SignedCertificateDTO;
+
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.security.cert.Certificate;
@@ -33,4 +35,10 @@ public interface RemoteVehicleNetworkInterface extends Remote {
 	 * @return	String	next available name
 	 */
 	public String getNextVehicleName() throws RemoteException;
+
+	/**
+	 * forwards to all vehicles the revoked certificate
+	 * @param	SignedCertificateDTO 	revoked certificate to add to each vehicle cache;
+	 */	
+	public void informVehiclesOfRevocation(SignedCertificateDTO dto);
 }

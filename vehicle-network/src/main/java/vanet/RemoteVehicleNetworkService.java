@@ -1,14 +1,16 @@
 package vanet;
 
 import entity.vanet.RemoteVehicleService;
-import globals.Resources;
 import remote.RemoteVehicleInterface;
 import remote.RemoteVehicleNetworkInterface;
-import globals.Vector2D;
-import globals.SignedBeaconDTO;
 
-import java.rmi.server.ExportException;
+import globals.Vector2D;
+import globals.Resources;
+import globals.SignedBeaconDTO;
+import globals.SignedCertificateDTO;
+
 import java.util.Map;
+import java.rmi.server.ExportException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -79,6 +81,14 @@ public class RemoteVehicleNetworkService implements RemoteVehicleNetworkInterfac
 		return "V" + nextVehicleNumber++; // to match certificate names
 	}
 
+	@Override 
+	public void informVehiclesOfRevocation(SignedCertificateDTO dto) {
+		try { 
+		this.vehicleNetwork.informVehiclesOfRevocation(dto);
+		} catch(RemoteException e) {
+			System.out.println(Resources.ERROR_MSG(e.getMessage()));
+		}
+	}
 
 // ------ REGISTRY METHODS --------
 

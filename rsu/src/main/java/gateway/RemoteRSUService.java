@@ -76,7 +76,7 @@ public class RemoteRSUService implements RemoteRSUInterface {
 	}
 
 	public void informVehiclesOfRevocation(SignedCertificateDTO dto) throws RemoteException {
-
+		// TODO: rsu needs to have vehicle-network-interface
 	}
 
 	// ------ INTERNAL METHODS --------

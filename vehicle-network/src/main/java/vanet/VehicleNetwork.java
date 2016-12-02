@@ -1,9 +1,12 @@
 package vanet;
 
 import globals.Resources;
-import remote.RemoteVehicleInterface;
 import globals.Vector2D;
+import globals.SignedCertificateDTO;
 
+import remote.RemoteVehicleInterface;
+
+import java.rmi.RemoteException;
 import java.util.TreeMap;
 import java.util.Map;
 import java.util.Set;
@@ -38,5 +41,10 @@ public class VehicleNetwork {
 
 	public static boolean inRange(Vector2D pos1, Vector2D pos2) {
 		return pos1.distance(pos2) <= Resources.MAX_BEACON_RANGE;
+	}
+
+	public void informVehiclesOfRevocation(SignedCertificateDTO dto) throws RemoteException { 
+		for (Map.Entry<String, RemoteVehicleInterface> vehicle : vehicleList.entrySet())
+			vehicle.getValue().addRevokedCertificate(dto);
 	}
 }
