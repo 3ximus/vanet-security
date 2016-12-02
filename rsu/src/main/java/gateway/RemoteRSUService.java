@@ -27,6 +27,62 @@ public class RemoteRSUService implements RemoteRSUInterface {
 	@Override
 	public boolean isRevoked(SignedCertificateDTO dto) throws RemoteException {
 
+		if(authenticateSender(dto)) {
+
+			// verify if revoked certificate is in cache
+			if(rsu.isCertInCache(dto.getCertificate())) {
+				System.out.println(Resources.OK_MSG("Certificate is revoked"));
+				return true; 
+			}
+
+			// Contact CA with possible revoked certificate
+			if(ca.isRevoked(new SignedCertificateDTO(dto.getCertificate() ,rsu.getCertificate(), rsu.getPrivateKey()))) {
+				
+				try { rsu.addCertificateToCache(dto.getCertificate());
+				} catch (Exception e) {
+					System.out.println(e.getMessage());
+				}
+
+				System.out.println(Resources.OK_MSG("Certificate is revoked"));
+				return true; 
+			}
+
+		}
+
+		return false; 
+	}
+
+	@Override
+	public boolean tryRevoke(SignedCertificateDTO dto) throws RemoteException {
+
+		if(authenticateSender(dto)) {
+
+			if(ca.tryRevoke(dto)) {
+				try {
+					rsu.addCertificateToCache(dto.getCertificate());
+				} catch(Exception e) {
+					System.out.println(Resources.WARNING_MSG(e.getMessage()));
+				}
+				return true;
+			} 
+
+		}
+
+		return false;
+	}
+
+	public void shareRevoked(SignedCertificateDTO dto) throws RemoteException {
+
+	}
+
+	public void informVehiclesOfRevocation(SignedCertificateDTO dto) throws RemoteException {
+
+	}
+
+	// ------ INTERNAL METHODS --------
+
+	private boolean authenticateSender(SignedCertificateDTO dto) throws RemoteException {
+
 		// verify if certificate was signed by CA
 		if (!dto.verifyCertificate(this.rsu.getCACertificate())) {
 			System.out.println(Resources.WARNING_MSG("Invalid CA Signature on isRevoked request: " + dto.toString()));
@@ -51,51 +107,7 @@ public class RemoteRSUService implements RemoteRSUInterface {
 			return false;  // certificate was not signed by sender, isRevoked is dropped
 		}
 
-		// end of security checks
-
-		// verify if revoked certificate is in cache
-		if(rsu.isCertInCache(dto.getCertificate())) {
-			System.out.println(Resources.OK_MSG("Certificate is revoked"));
-			return true; 
-		}
-
-		// Contact CA with possible revoked certificate
-		if(ca.isRevoked(new SignedCertificateDTO(dto.getCertificate() ,rsu.getCertificate(), rsu.getPrivateKey()))) {
-			
-			try { rsu.addCertificateToCache(dto.getCertificate());
-			} catch (Exception e) {
-				System.out.println(e.getMessage());
-			}
-
-			System.out.println(Resources.OK_MSG("Certificate is revoked"));
-			return true; 
-		}
-
-		return false; 
-	}
-
-	@Override
-	public boolean tryRevoke(SignedCertificateDTO dto) throws RemoteException {
-		// Called by a vehicle
-
-		// Check if sender vehicle has sent too many tryRevoke requests
-		// Forward to CA either:
-		// - sender's certificate (due to having too many tries)
-		// - the certificate "to be" revoked
-		// return true if it was actually revoked
-		if(ca.tryRevoke(dto)) {
-			rsu.addCertificateToCache(dto.getCertificate());
-			return true;
-		}
-		return false;
-	}
-
-	public void shareRevoked(SignedCertificateDTO dto) throws RemoteException {
-
-	}
-
-	public void informVehiclesOfRevocation(SignedCertificateDTO dto) throws RemoteException {
-
+		return true; // Sender is authenticated
 	}
 
 	// ------ REGISTRY METHODS --------
