@@ -41,6 +41,13 @@ public class RemoteCAService implements RemoteCAInterface {
 	 */
 	@Override
 	public boolean tryRevoke(SignedCertificateDTO dto) throws RemoteException {
+
+		// Check if sender vehicle has sent too many tryRevoke requests
+		// Forward to CA either:
+		// - sender's certificate (due to having too many tries)
+		// - the certificate "to be" revoked
+		// return true if it was actually revoked
+
 		if (! this.ponderateRevokeRequest(dto.getCertificate()))
 			return false;
 
