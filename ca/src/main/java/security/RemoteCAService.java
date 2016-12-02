@@ -1,10 +1,10 @@
 package security;
 
 import globals.Resources;
+import globals.SignedCertificateDTO;
 import remote.RemoteCAInterface;
 
 import java.io.File;
-import java.rmi.RemoteException;
 import java.security.cert.Certificate;
 import java.security.MessageDigest;
 import static javax.xml.bind.DatatypeConverter.printHexBinary;
@@ -22,18 +22,28 @@ public class RemoteCAService implements RemoteCAInterface {
 
 // ------ INTERFACE METHODS --------
 
+	/**
+	 * Verifies revoked state of a given certificate
+	 * @param	SignedCertificateDTO		certificate to check validity
+	 * @return	boolean			true if its valid, false if its revoked
+	 */
 	@Override
-	public boolean isRevoked(Certificate certToVerify, Certificate senderCert, byte[] signature) throws RemoteException {
-		return this.isRevoked(certToVerify);
-	}
+	public boolean isRevoked(SignedCertificateDTO dto) {
+		return this.isRevoked(dto.getCertificate());
+}
 
+	/**
+	 * Ask CA to revoke certificate
+	 * @param	SignedCertificateDTO		certifica to be revoked
+	 * @return	boolean			true if sucessfully revoked, false otherwise
+	 */
 	@Override
-	public boolean tryRevoke(Certificate certToRevoke, Certificate senderCert, byte[] signature) throws RemoteException {
-		if (! this.ponderateRevokeRequest(senderCert))
+	public boolean tryRevoke(SignedCertificateDTO dto) {
+		if (! this.ponderateRevokeRequest(dto.getCertificate()))
 			return false;
 
 		// TODO instead of this only write the certificate to a file inside revoked;
-		File localCert = this.findCertificateFileIn(certToRevoke, Resources.CA_NODES);
+		File localCert = this.findCertificateFileIn(dto.getCertificate(), Resources.CA_NODES);
 		if (localCert == null)
 			System.out.println(Resources.WARNING_MSG("Revoke request of unexistent certificate."));
 
