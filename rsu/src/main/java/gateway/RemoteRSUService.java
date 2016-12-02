@@ -102,8 +102,12 @@ public class RemoteRSUService implements RemoteRSUInterface {
 			return false;  // certificate was not signed by sender, isRevoked is dropped
 		}
 
-		if(ca.tryRevoke(dto) {
-			rsu.addCertificateToCache(dto.getCertificate());
+		if(ca.tryRevoke(dto)) {
+			try {
+				rsu.addCertificateToCache(dto.getCertificate());
+			} catch(Exception e) {
+				System.out.println(Resources.WARNING_MSG(e.getMessage()));
+			}
 			return true;
 		}
 
