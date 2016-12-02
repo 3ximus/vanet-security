@@ -52,6 +52,7 @@ public class RemoteRSUService implements RemoteRSUInterface {
 	@Override
 	public boolean tryRevoke(Certificate certToRevoke, Certificate senderCertificate, byte[] signature) {
 		// TODO:
+		return true;
 	}
 
 	public void shareRevoked(/* TODO add argumensts */) {

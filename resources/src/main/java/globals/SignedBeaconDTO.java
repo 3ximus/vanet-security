@@ -93,7 +93,7 @@ public class SignedBeaconDTO extends SignedDTO {
 	@Override
 	public boolean verifySignature() {
 		try { Resources.verifyDigitalSignature(this.signature, this.serialize(), this.senderCertificate.getPublicKey()); }
-		catch (Exception e ) { return false; } // certificate was not signed by sender, beacon is dropped
+		catch (Exception e ) { return false; } // certificate was not signed by sender
 		return true;
 	}
 }
