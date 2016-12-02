@@ -7,9 +7,9 @@ import java.sql.Timestamp;
 /**
  * Extension of the BeaconDTO but with signature
  */
-public class SignedBeaconDTO extends BeaconDTO {
+public class SignedBeaconDTO extends SignedDTO {
     public static final long serialVersionUID = 0;
-	private SignedDTO beaconSign;
+	private BeaconDTO beaconDTO;
 
 	/**
 	 * Builds a signed BeaconDTO
@@ -17,12 +17,10 @@ public class SignedBeaconDTO extends BeaconDTO {
 	 * @param	Vector2D			velocity vector
 	 * @param	Timestamp			timestamp of this beacon
 	 * @param	X509Certificate		certificate the entity sending this beacon
-	 * @param	DTO					DTO to wich this signedDTO belongs to
-	 * @param	PrivateKey			Sender private key (only used to generate signature, it wont be stored nor sent)
 	 */
-	public SignedBeaconDTO(Vector2D pos, Vector2D vel, Timestamp timestamp, X509Certificate senderCert, PrivateKey pkey) {
-		super(pos, vel, timestamp);
-		this.beaconSign = new SignedDTO(senderCert, this, pkey);
+	public SignedBeaconDTO(Vector2D pos, Vector2D vel, Timestamp timestamp, X509Certificate senderCert) {
+		this.setCertificate(senderCert);
+		this.beaconDTO = new BeaconDTO(pos, vel, timestamp);
 	}
 
 	/**
@@ -30,31 +28,52 @@ public class SignedBeaconDTO extends BeaconDTO {
 	 * @param	Vector2D			position vector
 	 * @param	Vector2D			velocity vector
 	 * @param	X509Certificate		certificate the entity sending this beacon
-	 * @param	DTO					DTO to wich this signedDTO belongs to
-	 * @param	PrivateKey			Sender private key (only used to generate signature, it wont be stored nor sent)
-	 * NOTE since timestamp is omited a new one is created with current time
+	 * <p><b>NOTE:</b> since timestamp is omited a new one is created with current time</p>
 	 */
-	public SignedBeaconDTO(Vector2D pos, Vector2D vel, X509Certificate senderCert, PrivateKey pkey) {
-		super(pos, vel);
-		this.beaconSign = new SignedDTO(senderCert, this, pkey);
+	public SignedBeaconDTO(Vector2D pos, Vector2D vel, X509Certificate senderCert) {
+		this.setCertificate(senderCert);
+		this.beaconDTO = new BeaconDTO(pos, vel);
 	}
 
 //  ------- GETTERS  ------------
 
-	public X509Certificate getSenderCertificate() { return this.beaconSign.getSenderCertificate(); }
-	public DTO getDTO() { return this.beaconSign.getDTO(); }
-	public byte[] getSignature() { return this.beaconSign.getSignature(); }
+	public Vector2D getPosition() { return this.beaconDTO.getPosition(); }
+	public Vector2D getVelocity() { return this.beaconDTO.getVelocity(); }
+	public Timestamp getTimestamp() { return this.beaconDTO.getTimestamp(); }
 
-
+	/**
+	 * Returns the serialized value of this DTO
+	 */
 	@Override
 	public byte[] serialize() {
 		// Join serializations
-		byte[] serializedDTO = super.serialize();
-		byte[] serializedCert = this.beaconSign.serialize();
+		byte[] serializedDTO = this.beaconDTO.serialize();
+		byte[] serializedCert = this.senderCertificate.toString().getBytes();
 		byte[] newSerialization = new byte[serializedDTO.length + serializedCert.length];
 		System.arraycopy(serializedDTO, 0, newSerialization, 0, serializedDTO.length);
 		System.arraycopy(serializedCert, 0, newSerialization, serializedDTO.length, serializedCert.length);
 		return newSerialization;
+	}
+
+	/**
+	 * Generates the signature for the DTO + senderCertificate in the constructor with given PrivateKey
+	 * @param	PrivateKey	key used to signed this DTO
+	 * @return	returns the signature generated
+	 *
+	 * <p><b>NOTE:</b> This also sets the internal atribute <b>signature</b> that can be acessed with <b>getSignature</b></p>
+	 */
+	@Override
+	public byte[] generateSignature(PrivateKey pKey) {
+		byte[] serializedVal = this.serialize();
+		byte[] sig = null;
+		try {
+			sig = Resources.makeDigitalSignature(serializedVal, pKey); }
+		catch (Exception e) {
+			System.out.println(Resources.ERROR_MSG("Failed to create signature: "+e.getMessage()));
+			return null;
+		}
+		this.signature = sig;
+		return this.signature;
 	}
 
 	/*
@@ -62,16 +81,20 @@ public class SignedBeaconDTO extends BeaconDTO {
 	 * @param	X509Certificate	entity used to verify the senderCertificate in this DTO (usually the CA)
 	 * @return	returns true if it was signed by given entity
 	 */
+	@Override
 	public boolean verifyCertificate(X509Certificate otherEntity) {
-		return this.beaconSign.verifyCertificate(otherEntity);
+		return Resources.verifySignedCertificate(this.senderCertificate, otherEntity.getPublicKey());
 	}
 
 	/**
 	 * Compares the received signature with the calculated DTO signature
 	 * @return	returns true if the signature is correct
 	 */
+	@Override
 	public boolean verifySignature() {
-		return this.beaconSign.verifySignature();
+		try { Resources.verifyDigitalSignature(this.signature, this.serialize(), this.senderCertificate.getPublicKey()); }
+		catch (Exception e ) { return false; } // certificate was not signed by sender, beacon is dropped
+		return true;
 	}
 }
 

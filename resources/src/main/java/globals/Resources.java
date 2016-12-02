@@ -26,6 +26,7 @@ public class Resources {
 
 //  -------- VEHICLE-RANGES ---------
 	public static final int BEACON_INTERVAL = 200; // miliseconds
+	public static final int BEACON_EXPIRATION = 800; // miliseconds
 	public static final int DANGER_RESET_INTERVAL = 1000; // miliseconds
 	public static final int MAX_BEACON_RANGE = 100;
 	public static final int TOO_DANGEROUS_RANGE = 5;
