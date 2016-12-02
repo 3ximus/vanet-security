@@ -45,7 +45,7 @@ public class RemoteCAService implements RemoteCAInterface {
 			return false;
 
 		// TODO instead of this only write the certificate to a file inside revoked;
-		File localCert = this.findCertificateFileIn(dto.getCertificate(), Resources.CA_NODES);
+		File localCert = this.findCertificateFileIn(dto.getCertificate(), Resources.CA_REVOKED); // FIXME this is wrong, remove
 		if (localCert == null)
 			System.out.println(Resources.WARNING_MSG("Revoke request of unexistent certificate."));
 

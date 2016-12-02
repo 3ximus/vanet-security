@@ -34,7 +34,6 @@ public class Resources {
 
 //  ------- PATHS ------------
 	public static final String CA_REVOKED = "cert/revoked/";
-	public static final String CA_NODES = "cert/nodes/";
 	public static final String CERT_DIR = "cert/";
 
 //  ------- OTHER ------------
@@ -125,7 +124,6 @@ public class Resources {
 	}
 
 //  -----------------------------------
-
 
 
 //  ------- SIGNATURES ------------

@@ -25,12 +25,12 @@ openssl req -new -x509 -keyout $CA_KEY_FILE -out $CA_PEM_FILE -days $KEYS_VALIDI
 echo -e "CA Certificate generated.\n"
 
 # generate and sign certificates rsu and each entity
-entities="rsu $*"
+entities="rsu $*" # NOTE change here to add more RSU's
 mkdir -p $VEHICLE_DIR $RSU_DIR
 rm -r $VEHICLE_DIR/* $RSU_DIR/* # clean previous certificates
 for entity_name in $entities
 do
-  [[ ! "$entity_name" = "rsu" ]] && entity_dir=$VEHICLE_DIR/$entity_name || entity_dir=$RSU_DIR/$entity_name
+  [[ ! "$entity_name" = "rsu" ]] && entity_dir=$VEHICLE_DIR/$entity_name || entity_dir=$RSU_DIR/$entity_name # NOTE change here for more RSU's
   echo -e "\n\033[32mGenerating certificate and associated keystore for \"$entity_name\" at \"$entity_dir\"...\033[0m"
   mkdir -p $entity_dir
   server_kerystore_file="$entity_dir/$entity_name.jks"

@@ -3,7 +3,7 @@ package security;
 import globals.Resources;
 import java.rmi.registry.LocateRegistry;
 
-public class App {
+public class CA {
     public static void main( String[] args ) {
         System.out.println("\n");
 
