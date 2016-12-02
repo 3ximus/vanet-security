@@ -10,44 +10,46 @@ import java.rmi.registry.Registry;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
 
+import java.security.cert.Certificate;
+
 import globals.Resources;
 import remote.RemoteCAInterface;
 import remote.RemoteRSUInterface;
 
 
 public class RSU {
-	// TODO: Change from String to Certificate type.
-	private ArrayList<String> certificateCache;
+	
+	private ArrayList<Certificate> revokedCache;
 
 	// Construtores //
 
 	public RSU() {
-		certificateCache = new ArrayList<String>();
+		revokedCache = new ArrayList<Certificate>();
 	}
 
-	public RSU(ArrayList<String> certificates) {
-		certificateCache = certificates;
+	public RSU(ArrayList<Certificate> certificates) {
+		revokedCache = certificates;
 	}
 
 	//////////////////
 
 
-	public void addCertificateToCache(String certificate) throws CertificateAlreadyInCacheException {
+	public void addCertificateToCache(Certificate certificate) throws CertificateAlreadyInCacheException {
 		if(isCertInCache(certificate))
-			certificateCache.add(certificate);
+			revokedCache.add(certificate);
 		else
 			throw new CertificateAlreadyInCacheException();
 	}
 
-	public void removeCertificateFromCache(String certificate) throws CertificateNotInCacheException {
+	public void removeCertificateFromCache(Certificate certificate) throws CertificateNotInCacheException {
 		if(isCertInCache(certificate))
-			certificateCache.remove(certificate);
+			revokedCache.remove(certificate);
 		else
 			throw new CertificateNotInCacheException();
 	}
 
-	public boolean isCertInCache(String certificate) {
-		return certificate.contains(certificate);
+	public boolean isCertInCache(Certificate certificate) {
+		return revokedCache.contains(certificate);
 	}
 
 	public RemoteRSUService getRemoteRSUService(RSU rsu) throws Exception {
