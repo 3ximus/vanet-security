@@ -35,7 +35,7 @@ public abstract class SignedDTO implements Serializable {
 	 * @param	PrivateKey	key used to signed this DTO
 	 * @return	returns the signature generated
 	 */
-	public abstract byte[] generateSignature(PrivateKey pKey);
+	public abstract byte[] sign(PrivateKey pKey);
 
 	/*
 	 * Verify if the senderCertificate was signed by the given entity

@@ -5,41 +5,38 @@ import java.security.cert.X509Certificate;
 import java.sql.Timestamp;
 
 /**
- * Extension of the BeaconDTO but with signature
+ * Extension of the CertificateDTO but with signature
  */
-public class SignedBeaconDTO extends SignedDTO {
+public class SignedCertificateDTO extends SignedDTO {
     public static final long serialVersionUID = 0;
-	private BeaconDTO beaconDTO;
+	private CertificateDTO certDTO;
 
 	/**
-	 * Builds a signed BeaconDTO
-	 * @param	Vector2D			position vector
-	 * @param	Vector2D			velocity vector
+	 * Builds a signed CertificateDTO
+	 * @param	X509Certificate		certificate to send
 	 * @param	Timestamp			timestamp of this beacon
 	 * @param	X509Certificate		certificate the entity sending this beacon
 	 */
-	public SignedBeaconDTO(Vector2D pos, Vector2D vel, Timestamp timestamp, X509Certificate senderCert) {
+	public SignedCertificateDTO(X509Certificate certificate, Timestamp timestamp, X509Certificate senderCert) {
 		this.setCertificate(senderCert);
-		this.beaconDTO = new BeaconDTO(pos, vel, timestamp);
+		this.certDTO = new CertificateDTO(certificate, timestamp);
 	}
 
 	/**
-	 * Builds a signed BeaconDTO
-	 * @param	Vector2D			position vector
-	 * @param	Vector2D			velocity vector
+	 * Builds a signed CertificateDTO
+	 * @param	X509Certificate		certificate to send
 	 * @param	X509Certificate		certificate the entity sending this beacon
 	 * <p><b>NOTE:</b> since timestamp is omited a new one is created with current time</p>
 	 */
-	public SignedBeaconDTO(Vector2D pos, Vector2D vel, X509Certificate senderCert) {
+	public SignedCertificateDTO(X509Certificate certificate, X509Certificate senderCert) {
 		this.setCertificate(senderCert);
-		this.beaconDTO = new BeaconDTO(pos, vel);
+		this.certDTO = new CertificateDTO(certificate);
 	}
 
 //  ------- GETTERS  ------------
 
-	public Vector2D getPosition() { return this.beaconDTO.getPosition(); }
-	public Vector2D getVelocity() { return this.beaconDTO.getVelocity(); }
-	public Timestamp getTimestamp() { return this.beaconDTO.getTimestamp(); }
+	public Timestamp getTimestamp() { return this.certDTO.getTimestamp(); }
+	public X509Certificate getCertificate() { return this.certDTO.certificate; }
 
 	/**
 	 * Returns the serialized value of this DTO
@@ -47,7 +44,7 @@ public class SignedBeaconDTO extends SignedDTO {
 	@Override
 	public byte[] serialize() {
 		// Join serializations
-		byte[] serializedDTO = this.beaconDTO.serialize();
+		byte[] serializedDTO = this.certDTO.serialize();
 		byte[] serializedCert = this.senderCertificate.toString().getBytes();
 		byte[] newSerialization = new byte[serializedDTO.length + serializedCert.length];
 		System.arraycopy(serializedDTO, 0, newSerialization, 0, serializedDTO.length);
