@@ -20,7 +20,6 @@ public class Vehicle {
 	private Vector2D velocity;
 	private RemoteVehicleNetworkInterface VANET;
 	private String nameInVANET;
-	private String internalName; // only used to retrieve the correct certificate
 
 	private X509Certificate myCert;
 	private X509Certificate caCert;
@@ -59,20 +58,18 @@ public class Vehicle {
 		this.position = position;
 		this.velocity = velocity;
 
-		this.internalName=certificateName;
-
-		String certsDir = Resources.CERT_DIR+this.internalName+"/";
+		String certsDir = Resources.CERT_DIR+certificateName+"/";
 		// Read certificate file to a certificate object
 		try {
-			this.myCert = (X509Certificate)Resources.readCertificateFile(certsDir+this.internalName+".cer"); }
+			this.myCert = (X509Certificate)Resources.readCertificateFile(certsDir+certificateName+".cer"); }
 		catch (Exception e) {
 			System.out.println(Resources.ERROR_MSG("Error Loading certificate: "+e.getMessage()));
 			System.out.println(Resources.ERROR_MSG("Exiting. Vehicle is useless without certificate"));
 			System.exit(1);
 		}
 		try {
-			this.myKeystore = Resources.readKeystoreFile(certsDir + this.internalName + ".jks", Resources.STORE_PASS);
-			this.myPrKey = Resources.getPrivateKeyFromKeystore(this.myKeystore, this.internalName, Resources.KEY_PASS); }
+			this.myKeystore = Resources.readKeystoreFile(certsDir + certificateName + ".jks", Resources.STORE_PASS);
+			this.myPrKey = Resources.getPrivateKeyFromKeystore(this.myKeystore, certificateName, Resources.KEY_PASS); }
 		catch (Exception e) {
 			System.out.println(Resources.ERROR_MSG("Error Loading PrivateKey: "+e.getMessage()));
 			System.out.println(Resources.ERROR_MSG("Exiting. Vehicle is useless without PrivateKey"));

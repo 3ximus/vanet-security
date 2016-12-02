@@ -8,7 +8,7 @@ public class BeaconDTO extends DTO {
 	private Vector2D velocity;
 
 	/**
-	 * Builds a signed BeaconDTO
+	 * Builds a BeaconDTO
 	 * @param	Vector2D			position vector
 	 * @param	Vector2D			velocity vector
 	 * @param	Timestamp			timestamp of this beacon
@@ -20,7 +20,7 @@ public class BeaconDTO extends DTO {
 	}
 
 	/**
-	 * Builds a signed BeaconDTO
+	 * Builds a BeaconDTO
 	 * @param	Vector2D			position vector
 	 * @param	Vector2D			velocity vector
 	 * <p><b>NOTE:</b> since timestamp is omited a new one is created with current time</p>

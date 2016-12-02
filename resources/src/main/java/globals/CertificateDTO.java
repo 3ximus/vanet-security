@@ -8,7 +8,7 @@ public class CertificateDTO extends DTO {
 	protected X509Certificate certificate;
 
 	/**
-	 * Builds a signed CertificateDTO
+	 * Builds a CertificateDTO
 	 * @param	X509Certificate		certificate to send
 	 * @param	Timestamp			timestamp of this beacon
 	 */
@@ -18,7 +18,7 @@ public class CertificateDTO extends DTO {
 	}
 
 	/**
-	 * Builds a signed CertificateDTO
+	 * Builds a CertificateDTO
 	 * @param	X509Certificate		certificate to send
 	 * <p><b>NOTE:</b> since timestamp is omited a new one is created with current time</p>
 	 */
