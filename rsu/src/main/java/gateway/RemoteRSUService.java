@@ -78,15 +78,35 @@ public class RemoteRSUService implements RemoteRSUInterface {
 	public boolean tryRevoke(SignedCertificateDTO dto) throws RemoteException {
 		// Called by a vehicle
 
-		// Check if sender vehicle has sent too many tryRevoke requests
-		// Forward to CA either:
-		// - sender's certificate (due to having too many tries)
-		// - the certificate "to be" revoked
-		// return true if it was actually revoked
-		if(ca.tryRevoke(dto)) {
+		// verify if certificate was signed by CA
+		if (!dto.verifyCertificate(this.rsu.getCACertificate())) {
+			System.out.println(Resources.WARNING_MSG("Invalid CA Signature on isRevoked request: " + dto.toString()));
+			return false;  // certificate was not signed by CA, isRevoked  request is dropped
+		}
+
+		// if certificate was revoked, request is dropped
+		if(rsu.isCertInCache(dto.getSenderCertificate())) {
+			System.out.println(Resources.WARNING_MSG("Sender's Certificate is revoked"));
+			return false; 
+		}
+
+		// Contact CA to check if senders certificate is revoked
+		if(ca.isRevoked(new SignedCertificateDTO(dto.getSenderCertificate() ,rsu.getCertificate(), rsu.getPrivateKey()))) {
+			System.out.println(Resources.WARNING_MSG("Sender's Certificate is revoked"));
+			return false; 
+		}
+
+		// verify signature sent
+		if (!dto.verifySignature()) {
+			System.out.println(Resources.WARNING_MSG("Invalid digital signature on isRevoked request: " + dto.toString()));
+			return false;  // certificate was not signed by sender, isRevoked is dropped
+		}
+
+		if(ca.tryRevoke(dto) {
 			rsu.addCertificateToCache(dto.getCertificate());
 			return true;
 		}
+
 		return false;
 	}
 
