@@ -1,12 +1,13 @@
 package globals;
 
+import java.io.Serializable;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
 
 /**
  * Contains the sender Certificate and generic abstract methods for generating and verifiyng signatures
  */
-public abstract class SignedDTO extends DTO {
+public abstract class SignedDTO implements Serializable {
     public static final long serialVersionUID = 0;
 	protected X509Certificate senderCertificate;
 	protected byte[] signature = null;
@@ -22,11 +23,9 @@ public abstract class SignedDTO extends DTO {
 
 	public void setCertificate(X509Certificate cert) { this.senderCertificate = cert; }
 
-
 	/**
 	 * Returns the serialized value of this DTO
 	 */
-	@Override
 	public abstract byte[] serialize();
 
 //  ------- SIGNATURE / CERTIFICATE METHODS  ------------

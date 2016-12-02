@@ -11,9 +11,6 @@ import remote.RemoteVehicleInterface;
 import globals.Vector2D;
 import globals.SignedBeaconDTO;
 
-import java.security.PublicKey;
-import java.security.cert.X509Certificate;
-
 public class RemoteVehicleService implements RemoteVehicleInterface {
 	private boolean isPublished = false;
 	private String name;

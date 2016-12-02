@@ -8,7 +8,6 @@ import java.sql.Timestamp;
  * Extension of the BeaconDTO but with signature
  */
 public class SignedBeaconDTO extends SignedDTO {
-    public static final long serialVersionUID = 0;
 	private BeaconDTO beaconDTO;
 
 	/**

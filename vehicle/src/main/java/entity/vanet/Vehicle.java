@@ -11,7 +11,6 @@ import globals.SignedBeaconDTO;
 import globals.BeaconDTO;
 import remote.RemoteVehicleNetworkInterface;
 import java.security.cert.X509Certificate;
-import java.sql.Timestamp;
 import java.security.PrivateKey;
 import java.security.KeyStore;
 
@@ -113,6 +112,7 @@ public class Vehicle {
 		if(VANET == null) return;
 
 		SignedBeaconDTO dto = new SignedBeaconDTO(this.position, this.velocity, this.myCert);
+		dto.generateSignature(this.myPrKey);
 
 		try {
 			VANET.simulateBeaconBroadcast(nameInVANET, dto);
