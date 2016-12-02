@@ -5,6 +5,8 @@ import globals.SignedBeaconDTO;
 import globals.Vector2D;
 import remote.RemoteRSUInterface;
 import remote.RemoteCAInterface;
+
+import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
@@ -25,7 +27,7 @@ public class RemoteRSUService implements RemoteRSUInterface {
 	// forwards request to ca
 	// returns result to network
 	@Override
-	public boolean isRevoked(Certificate certToVerify, Certificate senderCert, byte[] signature) {
+	public boolean isRevoked(Certificate certToVerify, Certificate senderCert, byte[] signature) throws RemoteException {
 		// verify signature sent
 		// create my own signature
 		// send msg to ca
@@ -43,23 +45,26 @@ public class RemoteRSUService implements RemoteRSUInterface {
 
 		// Enviar resultado para a vanet
 		// return isCertificateValid;
-		return true; // TODO: Remove
+		return true; 
 	}
 
-	// Called by vehicle-network
-	// forwards to ca
-	// returns result to network
 	@Override
-	public boolean tryRevoke(Certificate certToRevoke, Certificate senderCertificate, byte[] signature) {
-		// TODO:
+	public boolean tryRevoke(Certificate certToRevoke, Certificate senderCertificate, byte[] signature) throws RemoteException {
+		// Called by a vehicle
+		// Check if sender vehicle has sent too many tryRevoke requests
+		// Forward to CA either:
+		// - sender's certificate (due to having too many tries)
+		// - the certificate "to be" revoked
+		// return true if it was actually revoked
+		ca.tryRevoke(certToRevoke, senderCertificate, signature);
 		return true;
 	}
 
-	public void shareRevoked(/* TODO add argumensts */) {
+	public void shareRevoked(/* TODO add argumensts */) throws RemoteException {
 
 	}
 
-	public void enforceRevocation(/* TODO add argumensts */) {
+	public void enforceRevocation(/* TODO add argumensts */) throws RemoteException {
 
 	}
 

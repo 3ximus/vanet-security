@@ -33,7 +33,6 @@ public class RSU {
 
 	//////////////////
 
-
 	public void addCertificateToCache(Certificate certificate) throws CertificateAlreadyInCacheException {
 		if(isCertInCache(certificate))
 			revokedCache.add(certificate);

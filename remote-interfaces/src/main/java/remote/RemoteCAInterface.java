@@ -13,7 +13,7 @@ public interface RemoteCAInterface extends Remote {
 	 * @param	byte[]			message signature
 	 * @return	boolean			true if its valid, false if its revoked
 	 */
-	public boolean checkCertificate(Certificate certToVerify, Certificate senderCert, byte[] signature) throws RemoteException;
+	public boolean isRevoked(Certificate certToVerify, Certificate senderCert, byte[] signature) throws RemoteException;
 
 	/**
 	 * Ask CA to revoke certificate
@@ -22,5 +22,5 @@ public interface RemoteCAInterface extends Remote {
 	 * @param	byte[]			message signature
 	 * @return	boolean			true if sucessfully revoked, false otherwise
 	 */
-	public boolean revokeCertificate(Certificate certToRevoke, Certificate senderCert, byte[] signature) throws RemoteException;
+	public boolean tryRevoke(Certificate certToRevoke, Certificate senderCert, byte[] signature) throws RemoteException;
 }
