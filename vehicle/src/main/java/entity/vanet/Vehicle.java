@@ -108,8 +108,7 @@ public class Vehicle {
 	public void beacon() {
 		if(VANET == null) return;
 
-		SignedBeaconDTO dto = new SignedBeaconDTO(this.position, this.velocity, this.myCert);
-		dto.sign(this.myPrKey);
+		SignedBeaconDTO dto = new SignedBeaconDTO(this.position, this.velocity, this.myCert, this.myPrKey);
 
 		try {
 			VANET.simulateBeaconBroadcast(nameInVANET, dto);

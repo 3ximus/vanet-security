@@ -1,8 +1,6 @@
 package gateway;
 
 import globals.Resources;
-import globals.SignedBeaconDTO;
-import globals.Vector2D;
 import remote.RemoteRSUInterface;
 import remote.RemoteCAInterface;
 
@@ -11,7 +9,6 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.security.cert.Certificate;
 
 public class RemoteRSUService implements RemoteRSUInterface {
 
@@ -29,7 +26,7 @@ public class RemoteRSUService implements RemoteRSUInterface {
 	// returns result to vehicle
 	@Override
 	public boolean isRevoked(SignedCertificateDTO dto) throws RemoteException {
-	
+
 		// verify if certificate was signed by CA
 		if (!dto.verifyCertificate(this.rsu.getCACertificate())) {
 			System.out.println(Resources.WARNING_MSG("Invalid CA Signature on isRevoked request: " + dto.toString()));
