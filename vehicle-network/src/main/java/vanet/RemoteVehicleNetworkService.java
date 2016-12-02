@@ -37,7 +37,7 @@ public class RemoteVehicleNetworkService implements RemoteVehicleNetworkInterfac
 			RemoteVehicleInterface remoteVehicle = entry.getValue();
 
 			try {
-				Vector2D remoteVehiclePos = remoteVehicle.simulateGetPosition();
+				Vector2D remoteVehiclePos = remoteVehicle.simulateGetPosition(); // FIXME this looks weird, remotly simulation its position...
 				if(VehicleNetwork.inRange(sendingVehiclePos, remoteVehiclePos)) {
 					remoteVehicle.receiveBeaconMessage(beacon);
 				}
@@ -81,9 +81,9 @@ public class RemoteVehicleNetworkService implements RemoteVehicleNetworkInterfac
 		return "V" + nextVehicleNumber++; // to match certificate names
 	}
 
-	@Override 
+	@Override
 	public void informVehiclesOfRevocation(SignedCertificateDTO dto) {
-		try { 
+		try {
 			this.vehicleNetwork.informVehiclesOfRevocation(dto);
 		} catch(RemoteException e) {
 			System.out.println(Resources.ERROR_MSG(e.getMessage()));

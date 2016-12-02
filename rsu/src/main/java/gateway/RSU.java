@@ -23,7 +23,7 @@ import remote.RemoteVehicleNetworkInterface;
 
 
 public class RSU {
-	
+
 	private ArrayList<Certificate> revokedCache;
 
 	// Security atributes
@@ -37,14 +37,14 @@ public class RSU {
 	public RSU(String certificateName) {
 
 		revokedCache = new ArrayList<Certificate>();
-		
+
 		String certsDir = Resources.CERT_DIR+certificateName+"/";
 		// Read certificate file to a certificate object
 		try {
 			this.myCert = (X509Certificate)Resources.readCertificateFile(certsDir+certificateName+".cer"); }
 		catch (Exception e) {
 			System.out.println(Resources.ERROR_MSG("Error Loading certificate: "+e.getMessage()));
-			System.out.println(Resources.ERROR_MSG("Exiting. Vehicle is useless without certificate"));
+			System.out.println(Resources.ERROR_MSG("Exiting. RSU is useless without certificate"));
 			System.exit(1);
 		}
 		try {
@@ -52,14 +52,14 @@ public class RSU {
 			this.myPrKey = Resources.getPrivateKeyFromKeystore(this.myKeystore, certificateName, Resources.KEY_PASS); }
 		catch (Exception e) {
 			System.out.println(Resources.ERROR_MSG("Error Loading PrivateKey: "+e.getMessage()));
-			System.out.println(Resources.ERROR_MSG("Exiting. Vehicle is useless without PrivateKey"));
+			System.out.println(Resources.ERROR_MSG("Exiting. RSU is useless without PrivateKey"));
 			System.exit(1);
 		}
 		try {
 			this.caCert = (X509Certificate)Resources.getCertificateFromKeystore(this.myKeystore, Resources.CA_NAME); }
 		catch (Exception e) {
 			System.out.println(Resources.WARNING_MSG("Failed to get CA certificate from Keystore: " + e.getMessage()));
-			System.out.println(Resources.ERROR_MSG("Exiting. Vehicle cannot authenticate messages without CACert"));
+			System.out.println(Resources.ERROR_MSG("Exiting. RSU cannot authenticate messages without CACert"));
 			System.exit(1);
 		}
 	}
@@ -92,7 +92,7 @@ public class RSU {
             System.out.println(Resources.OK_MSG("Remote CA Interface located"));
 
             // Locate the vehicle Network service
-            RemoteVehicleNetworkInterface vehicle_network_service 
+            RemoteVehicleNetworkInterface vehicle_network_service
             		= (RemoteVehicleNetworkInterface) registry.lookup(Resources.VANET_NAME);
             System.out.println(Resources.OK_MSG("Remote Vehicle Netwrok Interface located"));
 

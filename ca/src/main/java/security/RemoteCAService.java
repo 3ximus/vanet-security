@@ -5,8 +5,12 @@ import globals.SignedCertificateDTO;
 import remote.RemoteCAInterface;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.security.cert.Certificate;
+import java.security.cert.X509Certificate;
 import java.security.MessageDigest;
+
+
 import static javax.xml.bind.DatatypeConverter.printHexBinary;
 
 import java.rmi.RemoteException;
@@ -14,11 +18,28 @@ import java.rmi.server.UnicastRemoteObject;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
+/**
+ * Remote CA Service
+ * The CA stores its revoked certificates with a name given by the hash
+ * algorithm SHA-256 of the certificate itself.
+ * The wikipedia page for the <b>Birthday Problem</b> gives us the exact formula
+ * for the probability of a colision:  p ~ (1/2)(n/2^128)^2
+ * 		where n is the number of values to be considered
+ * In our case if we account for 2 cars per person in the whole world (14 000 000 000 cars)
+ * and assuming that each cars has a new pseudonim certificate every 15 minutes
+ * for 20 years (20*365*24*4 = 700800 certificates per vehicle) we reach the value of n = 9.8e+15
+ * and so acording to the formula, the probability of a colision is 4.15e-46
+ * So its extremely unlikely that a colision can ocurr by chance (or even by brute-forcing)
+ */
 public class RemoteCAService implements RemoteCAInterface {
 	private boolean isPublished = false;
+	private X509Certificate myCert;
 
-
-	public RemoteCAService() {
+	public RemoteCAService(X509Certificate myCert) {
+		this.myCert = myCert;
+ 		// make revoked dir if unexistent
+		File revokedDir = new File(Resources.CA_REVOKED);
+		if (! revokedDir.exists()) revokedDir.mkdir();
 
 	}
 
@@ -31,8 +52,10 @@ public class RemoteCAService implements RemoteCAInterface {
 	 */
 	@Override
 	public boolean isRevoked(SignedCertificateDTO dto) throws RemoteException {
-		return this.isRevoked(dto.getCertificate());
-}
+		if (!this.authenticateSender(dto))
+			return false;
+		return this.findCertificate(dto.getCertificate()) != null;
+	}
 
 	/**
 	 * Ask CA to revoke certificate
@@ -42,32 +65,35 @@ public class RemoteCAService implements RemoteCAInterface {
 	@Override
 	public boolean tryRevoke(SignedCertificateDTO dto) throws RemoteException {
 
-		// Check if sender vehicle has sent too many tryRevoke requests
-		// Forward to CA either:
-		// - sender's certificate (due to having too many tries)
-		// - the certificate "to be" revoked
-		// return true if it was actually revoked
-
-		if (! this.ponderateRevokeRequest(dto.getCertificate()))
+		if (!this.authenticateSender(dto))
 			return false;
 
-		// TODO instead of this only write the certificate to a file inside revoked;
-		File localCert = this.findCertificateFileIn(dto.getCertificate(), Resources.CA_REVOKED); // FIXME this is wrong, remove
-		if (localCert == null)
-			System.out.println(Resources.WARNING_MSG("Revoke request of unexistent certificate."));
-
-		// Move certificate to Resources.CA_REVOKED
-		else {
-			File revokedDir = new File(Resources.CA_REVOKED);
-			if (! revokedDir.exists()) revokedDir.mkdir(); // make dir if unexistent
-			if (localCert.renameTo(new File(Resources.CA_REVOKED+localCert.getName()))) {
-				System.out.println(Resources.OK_MSG("Sucessfully revoked: "+localCert.getName()));
-				return true;
-			}
-			else System.out.println(Resources.ERROR_MSG("Failed to revoke: "+localCert.getName()));
+		Certificate certToRevoke = dto.getCertificate();
+		String hashedCert = this.genHashedName(certToRevoke.toString());
+		File localCert = this.findCertificate(certToRevoke);
+		if (localCert != null) {
+			System.out.println(Resources.OK_MSG("Already revoked: "+hashedCert));
+			return true; // its already revoked
 		}
 
-		return false;
+		if (! this.ponderateRevokeRequest(dto.getSenderCertificate())) {
+			System.out.println(Resources.WARNING_MSG("Failed to revoke: "+hashedCert));
+			return false; // sender not allowed to revoke or score not high enough
+		}
+
+		// all else fails so we revoke the certificate
+		FileOutputStream out = null;
+		try {
+ 			out = new FileOutputStream(Resources.CA_REVOKED+hashedCert);
+			out.write(certToRevoke.toString().getBytes());
+			out.close();
+		} catch (Exception e) {
+			// FileOutputStream only throws this if it fails to create the file...
+			System.out.println(Resources.WARNING_MSG("Error Creating File: "+hashedCert+". "+e.getMessage()));
+			return false;
+		}
+		System.out.println(Resources.OK_MSG("Sucessfully revoked: "+hashedCert));
+		return true;
 	}
 
 // -------------------------------
@@ -76,37 +102,65 @@ public class RemoteCAService implements RemoteCAInterface {
 
 // ------ INTERNAL METHODS --------
 
+	/**
+	 * Verifies if certificate was signed by the CA
+	 * Verifies if its not revoked
+	 * Verfies Signature
+	 * If no verification fails returns true
+	 */
+	private boolean authenticateSender(SignedCertificateDTO dto) {
+		// verify if certificate was signed by CA
+		// FIXME make sure certificate is read correctly from file... then uncoment code bellow
+		/*
+		if (!dto.verifyCertificate(this.myCert)) {
+			System.out.println(Resources.WARNING_MSG("Invalid CA Signature on isRevoked request: " + dto.toString()));
+			return false;  // certificate was not signed by CA, isRevoked  request is dropped
+		}
+		*/
+
+		// verify if certificate is revoked
+		if(this.findCertificate(dto.getCertificate()) != null) {
+			System.out.println(Resources.WARNING_MSG("Sender's Certificate is revoked"));
+			return false;
+		}
+
+		// verify signature sent
+		if (!dto.verifySignature()) {
+			System.out.println(Resources.WARNING_MSG("Invalid digital signature on isRevoked request: " + dto.toString()));
+			return false;  // certificate was not signed by sender
+		}
+
+		return true; // Sender is authenticated
+	}
 	private boolean ponderateRevokeRequest(Certificate senderCert) {
 		// TODO Debate over some ancient philosophical questions and eventually realize everything is binary
 		return true;
 	}
 
-	private boolean isRevoked(Certificate certToVerify) {
-		return this.findCertificateFileIn(certToVerify, Resources.CA_REVOKED) != null;
+	/**
+	 * Finds certificate in the revoked directory, if not found returns null
+	 */
+	private File findCertificate(Certificate certToLocate) {
+		String hashedCertificate = this.genHashedName(certToLocate.toString());
+
+		File dirObj = new File(Resources.CA_REVOKED);
+		if ( ! dirObj.exists() || ! dirObj.isDirectory()) return null;
+		for (File iter : dirObj.listFiles())
+			if (iter.getName().contains(hashedCertificate))
+				return iter;
+		return null;
 	}
 
-	private File findCertificateFileIn(Certificate certToLocate, String dir) {
+	/**
+	 * Returns string given hashed with Resources.CA_DIGEST
+	 */
+	private String genHashedName(String valToHash) {
 		MessageDigest digest = null;
 		try { digest = MessageDigest.getInstance(Resources.CA_DIGEST); }
 		catch (java.security.NoSuchAlgorithmException e) { return null; } // im confident it wont hapen
-		String certString = certToLocate.toString();
-		String hexDigest = printHexBinary(digest.digest(certString.getBytes())); // get digest from certificate
-		File dirObj = new File(dir);
-		if ( ! dirObj.exists() || ! dirObj.isDirectory()) return null;
-		for (File iter : dirObj.listFiles())
-			if (iter.getName().contains(hexDigest)) {
-				String loadedCert = null;
-				// load certificate from file and store it in a string for comparison
-				try { loadedCert = Resources.readCertificateFile(dir+iter.getName()).toString(); }
-				catch (Exception e) {
-					System.out.println(Resources.ERROR_MSG("Reading file Certificate: "+e.getMessage()));
-					return null;
-				}
-				if (certString == loadedCert)
-					return iter;
-			}
-		return null;
+		return printHexBinary(digest.digest(valToHash.getBytes()));
 	}
+
 // -------------------------------
 
 // ------ REGISTRY METHODS --------

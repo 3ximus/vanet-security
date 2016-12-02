@@ -17,7 +17,7 @@ public class RSUApp
         }
 
         // Constroi RSU
-        RSU rsu = new RSU("RSU"); //fixed certificate name.
+        RSU rsu = new RSU(Resources.RSU_NAME);
 
         try {
             // Constroi objeto remoto

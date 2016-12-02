@@ -18,8 +18,8 @@ VEHICLE_DIR="vehicle/cert"
 RSU_DIR="rsu/cert"
 
 # generate CA Certificate
-mkdir -p "$CA_DIR/nodes"
-rm -r $CA_DIR/nodes/* $CA_DIR/*.{txt,srl} # clean previous certificates
+mkdir -p "$CA_DIR/revoked"
+rm -r $CA_DIR/revoked/* $CA_DIR/*.{txt,srl} # clean previous certificates
 echo -e "\033[32mGenerating the CA certificate...\033[0m"
 openssl req -new -x509 -keyout $CA_KEY_FILE -out $CA_PEM_FILE -days $KEYS_VALIDITY -passout pass:$CA_CERTIFICATE_PASS -subj $SUBJ
 echo -e "CA Certificate generated.\n"
@@ -44,5 +44,5 @@ do
   echo "Copying certificate to $CA_DIR/$entity_name"
   sum=($(sha256sum $entity_dir/$entity_name.cer))
   hashed_name="${sum}_${entity_name}.cer"
-  cp "$entity_dir/$entity_name.cer" "$CA_DIR/nodes/$hashed_name"
+  cp "$entity_dir/$entity_name.cer" "$CA_DIR/revoked/$hashed_name" # by default all certificates will be revoked, delete the ones not needed
 done

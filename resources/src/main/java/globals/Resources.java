@@ -1,8 +1,11 @@
 package globals;
 
 import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.security.KeyFactory;
+
 
 import java.security.KeyStore;
 import java.security.PrivateKey;
@@ -11,6 +14,10 @@ import java.security.Signature;
 import java.security.SignatureException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
+import java.security.spec.KeySpec;
+import java.security.spec.PKCS8EncodedKeySpec;
+
+
 
 import java.lang.Thread;
 
@@ -35,6 +42,8 @@ public class Resources {
 //  ------- PATHS ------------
 	public static final String CA_REVOKED = "cert/revoked/";
 	public static final String CERT_DIR = "cert/";
+	public static final String CA_PK = "cert/ca-certificate.pem.txt";
+	public static final String CA_CERT = "cert/ca-key.pem.txt";
 
 //  ------- OTHER ------------
 	public static final String CA_DIGEST = "SHA-256";
@@ -92,6 +101,23 @@ public class Resources {
 	public static Certificate getCertificateFromKeystore(KeyStore keystore, String certAlias) throws Exception {
 		return keystore.getCertificate(certAlias);
 	}
+
+	public static PrivateKey readPrivateKeyFile(String keyPath) throws Exception {
+		File privKeyFile = new File(keyPath);
+		BufferedInputStream bis = null;
+		try {
+			bis = new BufferedInputStream(new FileInputStream(privKeyFile));
+		} catch(FileNotFoundException e) {
+			System.err.println(ERROR_MSG("PrivateKey File not found: " + keyPath));
+			return null;
+		}
+		byte[] privKeyBytes = new byte[(int)privKeyFile.length()];
+		bis.read(privKeyBytes);
+		bis.close();
+		KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+		KeySpec ks = new PKCS8EncodedKeySpec(privKeyBytes);
+		return (PrivateKey) keyFactory.generatePrivate(ks);
+	}
 //  -----------------------------------
 
 
@@ -148,6 +174,5 @@ public class Resources {
 	}
 
 //  -----------------------------------
-
 
 }

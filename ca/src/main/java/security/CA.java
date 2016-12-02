@@ -2,6 +2,7 @@ package security;
 
 import globals.Resources;
 import java.rmi.registry.LocateRegistry;
+import java.security.cert.X509Certificate;
 
 public class CA {
     public static void main( String[] args ) {
@@ -11,7 +12,14 @@ public class CA {
         try { LocateRegistry.createRegistry(Resources.REGISTRY_PORT); }
         catch(Exception e) { } // registry is already created
 
-        RemoteCAService CA = new RemoteCAService();
+        RemoteCAService CA = null;
+        try {
+            // FIXME... this certificate has a diferent format...
+            CA = new RemoteCAService(null/*(X509Certificate)Resources.readCertificateFile(Resources.CA_CERT)*/);
+        } catch (Exception e) {
+            System.out.println(Resources.ERROR_MSG(e.getMessage()));
+            System.exit(1);
+        }
         CA.publish();
 
         try {
