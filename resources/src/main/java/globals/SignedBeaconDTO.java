@@ -18,9 +18,10 @@ public class SignedBeaconDTO extends SignedDTO {
 	 * @param	Timestamp			timestamp of this beacon
 	 * @param	X509Certificate		certificate the entity sending this beacon
 	 */
-	public SignedBeaconDTO(Vector2D pos, Vector2D vel, Timestamp timestamp, X509Certificate senderCert) {
+	public SignedBeaconDTO(Vector2D pos, Vector2D vel, Timestamp timestamp, X509Certificate senderCert, PrivateKey pKey) {
 		this.setCertificate(senderCert);
 		this.beaconDTO = new BeaconDTO(pos, vel, timestamp);
+		this.sign(pKey);
 	}
 
 	/**
@@ -30,9 +31,10 @@ public class SignedBeaconDTO extends SignedDTO {
 	 * @param	X509Certificate		certificate the entity sending this beacon
 	 * <p><b>NOTE:</b> since timestamp is omited a new one is created with current time</p>
 	 */
-	public SignedBeaconDTO(Vector2D pos, Vector2D vel, X509Certificate senderCert) {
+	public SignedBeaconDTO(Vector2D pos, Vector2D vel, X509Certificate senderCert, PrivateKey pKey) {
 		this.setCertificate(senderCert);
 		this.beaconDTO = new BeaconDTO(pos, vel);
+		this.sign(pKey);
 	}
 
 //  ------- GETTERS  ------------

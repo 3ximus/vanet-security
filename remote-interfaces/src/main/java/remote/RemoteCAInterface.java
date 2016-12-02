@@ -2,7 +2,6 @@ package remote;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
-import java.security.cert.Certificate;
 
 import globals.SignedCertificateDTO;
 

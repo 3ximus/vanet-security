@@ -1,8 +1,6 @@
 package gateway;
 
 import globals.Resources;
-import globals.SignedBeaconDTO;
-import globals.Vector2D;
 import remote.RemoteRSUInterface;
 import remote.RemoteCAInterface;
 
@@ -11,7 +9,6 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.security.cert.Certificate;
 
 public class RemoteRSUService implements RemoteRSUInterface {
 
@@ -29,7 +26,7 @@ public class RemoteRSUService implements RemoteRSUInterface {
 	// returns result to vehicle
 	@Override
 	public boolean isRevoked(SignedCertificateDTO dto) throws RemoteException {
-	
+
 		// verify if certificate was signed by CA
 		if (!dto.verifyCertificate(this.rsu.getCACertificate())) {
 			System.out.println(Resources.WARNING_MSG("Invalid CA Signature on isRevoked request: " + dto.toString()));
@@ -39,7 +36,7 @@ public class RemoteRSUService implements RemoteRSUInterface {
 		// if certificate was revoked, request is dropped
 		if(rsu.isCertInCache(dto.getSenderCertificate())) {
 			System.out.println(Resources.ERROR_MSG("Sender's Certificate is revoked"));
-			return false; 
+			return false;
 		}
 
 		// create my own signature
@@ -61,13 +58,13 @@ public class RemoteRSUService implements RemoteRSUInterface {
 		// verify if revoked certificate is in cache
 		if(rsu.isCertInCache(dto.getCertificate())) {
 			System.out.println(Resources.ERROR_MSG("Certificate is revoked"));
-			return true; 
+			return true;
 		}
 
 		// Contact CA with possible revoked certificate
 		// create my own signature
 		// send msg to ca
-		
+
 		// String certificateCheckForRSU = senderCertificate.toString() + vehicle.getCertificate().toString();
 		// byte[] sig = Resources.makeDigitalSignature(certificateCheckForRSU.getBytes(), vehicle.getPrivateKey());
 		// RSU.checkCertificate(senderCertificate, vehicle.getCertificate(), sig);
@@ -81,7 +78,7 @@ public class RemoteRSUService implements RemoteRSUInterface {
 		// 	}
 		//}
 
-		return true; 
+		return true;
 	}
 
 	@Override
