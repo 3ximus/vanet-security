@@ -91,9 +91,9 @@ public class RSU {
             RemoteCAInterface ca_service = (RemoteCAInterface) registry.lookup(Resources.CA_NAME);
             System.out.println(Resources.OK_MSG("Remote CA Interface located"));
 
-            // Locate the certificate authority service
+            // Locate the vehicle Network service
             RemoteVehicleNetworkInterface vehicle_network_service 
-            		= (RemoteVehicleNetworkInterface) registry.lookup(Resources.CA_NAME);
+            		= (RemoteVehicleNetworkInterface) registry.lookup(Resources.VANET_NAME);
             System.out.println(Resources.OK_MSG("Remote Vehicle Netwrok Interface located"));
 
             return new RemoteRSUService(rsu, ca_service, vehicle_network_service);

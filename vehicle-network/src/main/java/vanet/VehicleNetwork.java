@@ -43,7 +43,8 @@ public class VehicleNetwork {
 		return pos1.distance(pos2) <= Resources.MAX_BEACON_RANGE;
 	}
 
-	public void informVehiclesOfRevocation(SignedCertificateDTO dto) throws RemoteException { 
+	public void informVehiclesOfRevocation(SignedCertificateDTO dto) throws RemoteException {
+		//TODO: ver issue #24 no github
 		for (Map.Entry<String, RemoteVehicleInterface> vehicle : vehicleList.entrySet())
 			vehicle.getValue().addRevokedCertificate(dto); // Each vehicle adds the revoked certificate
 	}
