@@ -71,8 +71,11 @@ else # specific commands for specified source dir with arguments
 	[[ ! -z $args ]] && mvn_args="-Dexec.args=\""$args"\"" # put arguments in maven format
 	pretty_echo 3 "maven" $dir 6
 # eval needed to run since arguments may have quotes
-	cd "$dir" && echo -e "Running: \033[1;35;40m mvn $commands \033[0m on \033[1;34;40m $dir \033[0m" `[[ ! -z $args ]] && echo "with args \033[1;33;40m" $args` "\033[0m\n" && eval "mvn $commands $mvn_args";
-	[[ $? == 0 ]] && cd .. || pretty_echo 1 "run" $dir 4 ;
+	cd "$dir" && echo -e "Running: \033[1;35;40m mvn $commands \033[0m on \033[1;34;40m $dir \033[0m" `[[ ! -z $args ]] && \
+	echo "with args \033[1;33;40m" $args` "\033[0m\n" && \
+	eval "mvn $commands $mvn_args";
+	echo " - Finished. Press any key to terminate... - " && read;
+	#[[ $? == 0 ]] && cd .. || pretty_echo 1 "run" $dir 4 ;
 	pretty_echo 2 "maven" $dir 6
 fi
 

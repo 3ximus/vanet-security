@@ -11,6 +11,14 @@ else
 	vterm=xterm
 fi
 
+function ctrl_c() {
+	echo "Detected ctrl-c. Killing launched processes..."
+	kill $(jobs -p)
+	exit
+}
+
+trap ctrl_c INT
+
 echo "[+] Launching ca"
 $vterm -e ./mvn_script.sh ca &
 
