@@ -36,8 +36,13 @@ public class RemoteVehicleService implements RemoteVehicleInterface {
 		
 		// TODO: Only do this security check periodically, not for every beacon
 		// Verify that sender is trustworthy
-		if(!authenticateSender(beacon))
-			return;
+		try {
+			if(!authenticateSender(beacon))
+				return;
+		} catch(RemoteException e) {
+			System.out.println(Resources.ERROR_MSG("RSU seems dead... Exiting..."));
+			System.exit(-1);
+		}
 
 		// end of security checks, process beacon
 
@@ -80,6 +85,16 @@ public class RemoteVehicleService implements RemoteVehicleInterface {
 
 		return true;
 	}
+
+	/**
+	 * Verifies if certificate was signed by the CA
+	 * Verfies Signature
+	 * If no verification fails returns true
+	 */
+	
+	// private boolean authenticateSender(SignedCertificateDTO rsu_dto) throws RemoteException {
+
+	// } 
 
 
 // ------ REGISTRY METHODS --------

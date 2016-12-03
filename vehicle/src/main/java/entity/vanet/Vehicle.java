@@ -113,7 +113,7 @@ public class Vehicle {
 //  ------- MAIN METHODS  ------------
 
 	public void beacon() {
-		if(VANET == null) return;
+		if(VANET == null || RSU == null) return;
 
 		SignedBeaconDTO dto = new SignedBeaconDTO(this.position, this.velocity, this.myCert, this.myPrKey);
 
