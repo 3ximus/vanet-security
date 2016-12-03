@@ -12,33 +12,43 @@ else
 fi
 
 function ctrl_c() {
-	echo "Detected ctrl-c. Killing launched processes..."
+	echo -e "\nDetected ctrl-c. Killing launched processes..."
 	kill $(jobs -p)
 	exit
 }
 
 trap ctrl_c INT
 
-echo "[+] Launching ca"
-$vterm -e ./mvn_script.sh ca &
+echo -e "[+] Launching CA"
+$vterm -e "./mvn_script.sh ca" >/dev/null 2>&1 &
 
-echo "[+] Launching vanet"
-$vterm -e ./mvn_script.sh vehicle-network &
+echo "[+] Launching VANET"
+$vterm -e "./mvn_script.sh vehicle-network" >/dev/null 2>&1 &
 
-echo "[*] Press enter when both are running"
-read
+if [ "$1" == "auto" ] ; then
+	echo "[*] Waiting 8 seconds to launch RSU"
+	sleep 8
+else
+	echo "[*] Press enter when both are running to launch RSU"
+	read
+fi
 
-echo "[+] Launching rsu"
-$vterm -e ./mvn_script.sh rsu &
+echo "[+] Launching RSU"
+$vterm -e "./mvn_script.sh rsu" >/dev/null 2>&1 &
 
-echo "[*] Press enter when rsu is running"
-read
+if [ "$1" == "auto" ] ; then
+	echo "[*] Waiting 8 seconds to launch vehicles"
+	sleep 8
+else
+	echo "[*] Press enter when rsu is running"
+	read
+fi
 
 while true; do
-	echo "[*] Write arguments to launch vehicle with:"
+	echo -n "[*] Write arguments to launch vehicle with: "
 	read args
 
 	echo "[+] Launching vehicle with: $args"
-	$vterm -e ./mvn_script.sh vehicle $args &
+	$vterm -e "./mvn_script.sh vehicle $args" >/dev/null 2>&1 &
 done
 
