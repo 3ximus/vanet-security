@@ -83,11 +83,7 @@ public class RemoteVehicleNetworkService implements RemoteVehicleNetworkInterfac
 
 	@Override
 	public void informVehiclesOfRevocation(SignedCertificateDTO dto) throws RemoteException {
-		try {
-			this.vehicleNetwork.informVehiclesOfRevocation(dto);
-		} catch(RemoteException e) {
-			System.out.println(Resources.ERROR_MSG(e.getMessage()));
-		}
+		this.vehicleNetwork.informVehiclesOfRevocation(dto);
 	}
 
 // ------ REGISTRY METHODS --------
