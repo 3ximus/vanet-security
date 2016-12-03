@@ -121,7 +121,7 @@ public class RemoteRSUService implements RemoteRSUInterface {
 	}
 
 	private void informVehiclesOfRevocation(SignedCertificateDTO dto) throws RemoteException {
-		vehicle_network.informVehiclesOfRevocation(dto);
+		vehicle_network.informVehiclesOfRevocation(dto, rsu.getPosition());
 	}
 
 	// ------ REGISTRY METHODS --------

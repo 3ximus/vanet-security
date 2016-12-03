@@ -16,6 +16,7 @@ import java.security.PrivateKey;
 import java.security.KeyStore;
 
 import globals.Resources;
+import globals.Vector2D;
 
 import remote.RemoteCAInterface;
 import remote.RemoteRSUInterface;
@@ -25,6 +26,7 @@ import remote.RemoteVehicleNetworkInterface;
 public class RSU {
 
 	private ArrayList<Certificate> revokedCache;
+	private Vector2D position;
 
 	// Security atributes
 	private X509Certificate myCert;
@@ -34,11 +36,13 @@ public class RSU {
 
 	// Construtores //
 
-	public RSU(String certificateName) {
+	public RSU(String certificateName, Vector2D position) {
 
 		revokedCache = new ArrayList<Certificate>();
+		this.position = position;
 
 		String certsDir = Resources.CERT_DIR+certificateName+"/";
+
 		// Read certificate file to a certificate object
 		try {
 			this.myCert = (X509Certificate)Resources.readCertificateFile(certsDir+certificateName+".cer"); }
@@ -84,7 +88,7 @@ public class RSU {
 		return revokedCache.contains(certificate);
 	}
 
-	public RemoteRSUService getRemoteRSUService(RSU rsu) throws Exception {
+	public RemoteRSUService getRemoteRSUService() throws Exception {
 
             // Locate the certificate authority service
             Registry registry = LocateRegistry.getRegistry(Resources.REGISTRY_PORT);
@@ -96,13 +100,23 @@ public class RSU {
             		= (RemoteVehicleNetworkInterface) registry.lookup(Resources.VANET_NAME);
             System.out.println(Resources.OK_MSG("Remote Vehicle Netwrok Interface located"));
 
-            return new RemoteRSUService(rsu, ca_service, vehicle_network_service);
+            return new RemoteRSUService(this, ca_service, vehicle_network_service);
 	}
 
 	// Getters
+	public Vector2D getPosition() { return this.position; }
 	public X509Certificate getCertificate()  { return this.myCert; }
 	public X509Certificate getCACertificate() { return this.caCert; }
 	public PrivateKey getPrivateKey() { return this.myPrKey; }
 	public KeyStore getKeystore() { return this.myKeystore; }
+
+	//  ------- UTILITY ------------
+	@Override
+	public String toString() {
+		String res;
+		res = "RSU: ";
+		res += "<pos>=(" + this.position.x + ", " + this.position.y + "); ";
+		return res;
+	}
 
 }

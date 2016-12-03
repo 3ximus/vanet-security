@@ -2,6 +2,7 @@ package remote;
 
 import globals.SignedBeaconDTO;
 import globals.SignedCertificateDTO;
+import globals.Vector2D;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -40,5 +41,5 @@ public interface RemoteVehicleNetworkInterface extends Remote {
 	 * Propagate new revoked certificates to vehicles in range
 	 * @param	SignedCertificateDTO	DTO containing certificate to be shared
 	 */
-	public void informVehiclesOfRevocation(SignedCertificateDTO dto) throws RemoteException;
+	public void informVehiclesOfRevocation(SignedCertificateDTO dto, Vector2D rsu_position) throws RemoteException;
 }

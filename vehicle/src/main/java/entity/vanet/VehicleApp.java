@@ -22,6 +22,7 @@ public class VehicleApp {
 	 * - Create vehicle with set parameters (args or defaults)
 	 * - Register this Vehicle in the RMI register
 	 * - Connect to the VANET getting the vehicle unique name
+	 * - Connect to the RSU
 	 * - Create a RemoteVehicleService and publish its interface to RMI
 	 * - Wait loop
 	 */
