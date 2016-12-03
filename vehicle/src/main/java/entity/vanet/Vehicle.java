@@ -7,10 +7,14 @@ import java.util.TimerTask;
 
 import globals.Resources;
 import globals.Vector2D;
-import globals.SignedBeaconDTO;
 import globals.BeaconDTO;
+import globals.SignedBeaconDTO;
+import globals.SignedCertificateDTO;
+
 import remote.RemoteVehicleNetworkInterface;
 import remote.RemoteRSUInterface;
+
+import java.rmi.RemoteException;
 import java.security.cert.X509Certificate;
 import java.security.PrivateKey;
 import java.security.KeyStore;
@@ -154,6 +158,12 @@ public class Vehicle {
 			return true;
 		}
 		return false;
+	}
+
+	public boolean isRevoked(SignedBeaconDTO beacon) throws RemoteException {
+		return RSU.isRevoked(new SignedCertificateDTO (	beacon.getSenderCertificate(), 
+									  					this.getCertificate(), 
+									  					this.getPrivateKey()));
 	}
 
 

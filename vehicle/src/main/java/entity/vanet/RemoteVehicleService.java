@@ -33,22 +33,11 @@ public class RemoteVehicleService implements RemoteVehicleInterface {
 
 	@Override
 	public void receiveBeaconMessage(SignedBeaconDTO beacon) throws RemoteException {
-		// verify if certificate was signed by CA
-		if (! beacon.verifyCertificate(this.vehicle.getCACertificate())) {
-			System.out.println(Resources.WARNING_MSG("Invalid CA Signature on beacon: " + beacon.toString()));
-			return;  // certificate was not signed by CA, beacon is dropped
-		}
-
-		// Contact RSU:
-		//String certificateCheckForRSU = senderCertificate.toString() + vehicle.getCertificate().toString();
-		//byte[] sig = Resources.makeDigitalSignature(certificateCheckForRSU.getBytes(), vehicle.getPrivateKey());
-		//RSU.checkCertificate(senderCertificate, vehicle.getCertificate(), sig);
-		// if ^^^^^ false; then return;
-
-		if ( ! beacon.verifySignature()) {
-			System.out.println(Resources.WARNING_MSG("Invalid digital signature on beacon: " + beacon.toString()));
-			return;  // certificate was not signed by sender, beacon is dropped
-		}
+		
+		// TODO: Only do this security check periodically, not for every beacon
+		// Verify that sender is trustworthy
+		if(!authenticateSender(beacon))
+			return;
 
 		// end of security checks, process beacon
 
@@ -61,8 +50,36 @@ public class RemoteVehicleService implements RemoteVehicleInterface {
 		// TODO2: Add cache to revoked ceritificate cache to vehicle if it isnt there already
 	}
 
-// -------------------------------
+// ------ INTERNAL METHODS --------
 
+	/**
+	 * Verifies if certificate was signed by the CA
+	 * Verifies if its not revoked (cached or contact CA through rsu)
+	 * Verfies Signature
+	 * If no verification fails returns true
+	 */
+
+	private boolean authenticateSender(SignedBeaconDTO beacon) throws RemoteException {
+		// verify if certificate was signed by CA
+		if (! beacon.verifyCertificate(this.vehicle.getCACertificate())) {
+			System.out.println(Resources.WARNING_MSG("Invalid CA Signature on beacon: " + beacon.toString()));
+			return false;  // certificate was not signed by CA, beacon is dropped
+		}
+
+		// Contact RSU:
+		if(vehicle.isRevoked(beacon)) {
+			System.out.println(Resources.WARNING_MSG("Sender's Certificate is revoked"));
+			return false; // certificate was revoked, beacon is dropped
+		}
+
+		// Verify digital signature
+		if ( ! beacon.verifySignature()) {
+			System.out.println(Resources.WARNING_MSG("Invalid digital signature on beacon: " + beacon.toString()));
+			return false;  // certificate was not signed by sender, beacon is dropped
+		}
+
+		return true;
+	}
 
 
 // ------ REGISTRY METHODS --------

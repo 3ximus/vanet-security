@@ -24,12 +24,10 @@ public class RemoteRSUService implements RemoteRSUInterface {
 		this.vehicle_network = vehicle_network;
 	}
 
-	// Called by vehicle
-	// forwards request to ca
-	// returns result to vehicle
 	@Override
 	public boolean isRevoked(SignedCertificateDTO dto) throws RemoteException {
 
+		// Verify that sender is trustworthy
 		if(!authenticateSender(dto))
 			return false;
 
@@ -57,8 +55,13 @@ public class RemoteRSUService implements RemoteRSUInterface {
 	@Override
 	public boolean tryRevoke(SignedCertificateDTO dto) throws RemoteException {
 
+		// Verify that sender is trustworthy
 		if(!authenticateSender(dto))
 			return false;
+
+		// verify if certificate is in cache
+		if(rsu.isCertInCache(dto.getCertificate()))
+			return true;
 
 		if(ca.tryRevoke(dto)) {
 			try {
@@ -71,6 +74,7 @@ public class RemoteRSUService implements RemoteRSUInterface {
 						new SignedCertificateDTO(dto.getCertificate(), rsu.getCertificate(), rsu.getPrivateKey()));
 			return true;
 		}
+
 		return false;
 	}
 
@@ -95,16 +99,16 @@ public class RemoteRSUService implements RemoteRSUInterface {
 			return false;  // certificate was not signed by CA, isRevoked  request is dropped
 		}
 
-		// if certificate was revoked, request is dropped
+		// verify if certificate is revoked
 		if(rsu.isCertInCache(dto.getSenderCertificate())) {
 			System.out.println(Resources.WARNING_MSG("Sender's Certificate is revoked"));
-			return false;
+			return false; // certificate was revoked, isRevoked  request is dropped
 		}
 
-		// Contact CA to check if senders certificate is revoked
+		// Contact CA to verify if senders certificate is revoked
 		if(ca.isRevoked(new SignedCertificateDTO(dto.getSenderCertificate() ,rsu.getCertificate(), rsu.getPrivateKey()))) {
 			System.out.println(Resources.WARNING_MSG("Sender's Certificate is revoked"));
-			return false;
+			return false; // certificate was revoked, isRevoked  request is dropped
 		}
 
 		// verify signature sent
