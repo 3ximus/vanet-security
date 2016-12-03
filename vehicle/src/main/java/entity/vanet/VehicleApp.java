@@ -2,6 +2,7 @@ package entity.vanet;
 
 import globals.Resources;
 import remote.RemoteVehicleNetworkInterface;
+import remote.RemoteRSUInterface;
 import globals.Vector2D;
 
 import java.rmi.registry.LocateRegistry;
@@ -81,12 +82,24 @@ public class VehicleApp {
 			return;
 		}
 
+		// Connect to the RSU
+		RemoteRSUInterface RSU;
+
+		try {
+			Registry registry = LocateRegistry.getRegistry(Resources.REGISTRY_PORT);
+			RSU = (RemoteRSUInterface) registry.lookup(Resources.RSU_NAME);
+		} catch(Exception e) {
+			System.err.println(Resources.ERROR_MSG("Failed to connect to RSU: " +  e.getMessage()));
+			System.exit(0); // Return seems to not work for some reason
+			return;
+		}
+
 		// Publish remote vehicle
 		RemoteVehicleService remoteVehicle = new RemoteVehicleService(vehicle, vehicleUniqueName);
 		remoteVehicle.publish();
 
 		// Start the vehicle
-		vehicle.start(VANET, vehicleUniqueName);
+		vehicle.start(VANET, RSU, vehicleUniqueName);
 
 		// Add vehicle to the VANET
 		try {

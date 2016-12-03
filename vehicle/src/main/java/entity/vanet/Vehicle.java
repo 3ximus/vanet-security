@@ -10,6 +10,7 @@ import globals.Vector2D;
 import globals.SignedBeaconDTO;
 import globals.BeaconDTO;
 import remote.RemoteVehicleNetworkInterface;
+import remote.RemoteRSUInterface;
 import java.security.cert.X509Certificate;
 import java.security.PrivateKey;
 import java.security.KeyStore;
@@ -19,6 +20,7 @@ public class Vehicle {
 	private Vector2D position;
 	private Vector2D velocity;
 	private RemoteVehicleNetworkInterface VANET;
+	private RemoteRSUInterface	RSU;
 	private String nameInVANET;
 
 	private X509Certificate myCert;
@@ -95,8 +97,9 @@ public class Vehicle {
 
 
 	// Sets VANET, starts updating position and starts beaoning
-	public void start(RemoteVehicleNetworkInterface VANET, String name) {
+	public void start(RemoteVehicleNetworkInterface VANET, RemoteRSUInterface RSU, String name) {
 		this.VANET = VANET;
+		this.RSU = RSU;
 		this.nameInVANET = name;
 
 		// Run the engine and beaconing on a timer
