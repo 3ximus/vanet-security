@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # get terminal emulator application
 if hash konsole 2>/dev/null ; then
@@ -44,11 +44,7 @@ else
 	read
 fi
 
-while true; do
-	echo -n "[*] Write arguments to launch vehicle with: "
-	read args
-
+while echo -n "[*] Write arguments to launch vehicle with: " && read args; do
 	echo "[+] Launching vehicle with: $args"
 	$vterm -e "./mvn_script.sh vehicle $args" >/dev/null 2>&1 &
-done
-
+done < <(cat launcher_profile.txt -)

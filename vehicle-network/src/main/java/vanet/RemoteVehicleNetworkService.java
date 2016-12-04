@@ -1,6 +1,5 @@
 package vanet;
 
-import entity.vanet.RemoteVehicleService;
 import remote.RemoteVehicleInterface;
 import remote.RemoteVehicleNetworkInterface;
 
@@ -10,12 +9,10 @@ import globals.SignedBeaconDTO;
 import globals.SignedCertificateDTO;
 
 import java.util.Map;
-import java.rmi.server.ExportException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.security.cert.Certificate;
 
 public class RemoteVehicleNetworkService implements RemoteVehicleNetworkInterface {
 	private boolean isPublished = false;

@@ -2,7 +2,6 @@ package security;
 
 import globals.Resources;
 import java.rmi.registry.LocateRegistry;
-import java.security.cert.X509Certificate;
 
 public class CA {
     public static void main( String[] args ) {

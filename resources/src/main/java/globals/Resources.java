@@ -1,11 +1,10 @@
 package globals;
 
 import java.io.BufferedInputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.security.KeyFactory;
 
+import org.apache.commons.codec.binary.Base64;
 
 import java.security.KeyStore;
 import java.security.PrivateKey;
@@ -13,10 +12,11 @@ import java.security.PublicKey;
 import java.security.Signature;
 import java.security.SignatureException;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateFactory;
-import java.security.spec.KeySpec;
-import java.security.spec.PKCS8EncodedKeySpec;
-
+import java.security.cert.X509Certificate;
+import java.security.MessageDigest;
+import static javax.xml.bind.DatatypeConverter.printHexBinary;
 
 
 import java.lang.Thread;
@@ -35,7 +35,7 @@ public class Resources {
 	public static final int REGISTRY_PORT = 1099;
 
 //  -------- VEHICLE-RANGES ---------
-	public static final int BEACON_INTERVAL = 200; // miliseconds
+	public static final int BEACON_INTERVAL = 1000; // miliseconds
 	public static final int BEACON_EXPIRATION = 800; // miliseconds
 	public static final int DANGER_RESET_INTERVAL = 1000; // miliseconds
 	public static final int MAX_BEACON_RANGE = 100;
@@ -109,22 +109,6 @@ public class Resources {
 		return keystore.getCertificate(certAlias);
 	}
 
-	public static PrivateKey readPrivateKeyFile(String keyPath) throws Exception {
-		File privKeyFile = new File(keyPath);
-		BufferedInputStream bis = null;
-		try {
-			bis = new BufferedInputStream(new FileInputStream(privKeyFile));
-		} catch(FileNotFoundException e) {
-			System.err.println(ERROR_MSG("PrivateKey File not found: " + keyPath));
-			return null;
-		}
-		byte[] privKeyBytes = new byte[(int)privKeyFile.length()];
-		bis.read(privKeyBytes);
-		bis.close();
-		KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-		KeySpec ks = new PKCS8EncodedKeySpec(privKeyBytes);
-		return (PrivateKey) keyFactory.generatePrivate(ks);
-	}
 //  -----------------------------------
 
 
@@ -156,6 +140,23 @@ public class Resources {
 		return true;
 	}
 
+	public static String convertToPemCertificate(X509Certificate certificate) {
+		Base64 encoder = new Base64(64, "\n".getBytes());
+		String cert_begin = "-----BEGIN CERTIFICATE-----\n";
+		String end_cert = "-----END CERTIFICATE-----\n";
+
+		byte[] derCert = null;
+		try {
+			derCert = certificate.getEncoded();
+		} catch (CertificateEncodingException e) {
+			System.err.println(WARNING_MSG("Error in certificate conversion :" + e.getMessage()));
+			return null;
+		}
+		String pemCertPre = new String(encoder.encode(derCert));
+		String pemCert = cert_begin + pemCertPre + end_cert;
+		return pemCert;
+	}
+
 //  -----------------------------------
 
 
@@ -178,6 +179,16 @@ public class Resources {
 			System.err.println(WARNING_MSG("Invalid Signature :" + se.getMessage()));
 			return false;
 		}
+	}
+
+	/**
+	 * Returns string given hashed with Resources.CA_DIGEST
+	 */
+	public static String genHashedName(String valToHash) {
+		MessageDigest digest = null;
+		try { digest = MessageDigest.getInstance(Resources.CA_DIGEST); }
+		catch (java.security.NoSuchAlgorithmException e) { return null; } // im confident it wont hapen
+		return printHexBinary(digest.digest(valToHash.getBytes())).toLowerCase();
 	}
 
 //  -----------------------------------

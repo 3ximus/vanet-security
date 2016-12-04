@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.rmi.RemoteException;
 import java.rmi.registry.Registry;
 import java.rmi.registry.LocateRegistry;
-import java.rmi.server.UnicastRemoteObject;
 
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
@@ -19,7 +18,6 @@ import globals.Vector2D;
 import globals.SignedCertificateDTO;
 
 import remote.RemoteCAInterface;
-import remote.RemoteRSUInterface;
 import remote.RemoteVehicleNetworkInterface;
 
 
