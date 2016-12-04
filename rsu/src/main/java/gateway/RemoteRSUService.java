@@ -104,8 +104,16 @@ public class RemoteRSUService implements RemoteRSUInterface {
 	}
 
 	// Called by the CA
+	@Override
 	public void shareRevoked(SignedCertificateDTO dto) throws RemoteException {
-		// TODO:
+
+		// Verify that sender is trustworthy
+		if(!authenticateSender(dto))
+			return;
+
+		// Share revoked certificate with nearby rsu's
+		rsu.shareRevoked(dto);
+
 	}
 
 	// ------ INTERNAL METHODS --------
@@ -165,7 +173,7 @@ public class RemoteRSUService implements RemoteRSUInterface {
 
 	public void publish() {
 		if(isPublished) {
-			System.out.println(Resources.WARNING_MSG(Resources.RSU_NAME+" already published."));
+			System.out.println(Resources.WARNING_MSG(rsu.getName() + " already published."));
 			return;
 		}
 
@@ -173,9 +181,9 @@ public class RemoteRSUService implements RemoteRSUInterface {
 			RemoteRSUInterface stub = (RemoteRSUInterface) UnicastRemoteObject.exportObject(this, 0);
 			Registry registry;
 			registry = LocateRegistry.getRegistry(Resources.REGISTRY_PORT);
-			registry.rebind(Resources.RSU_NAME, stub);
+			registry.rebind(rsu.getName(), stub);
 			isPublished = true;
-			System.out.println(Resources.OK_MSG(Resources.RSU_NAME+" published to registry."));
+			System.out.println(Resources.OK_MSG(rsu.getName()+" published to registry."));
 		} catch (Exception e) {
 			System.err.println(Resources.ERROR_MSG("Failed to publish remote RSU: " + e.getMessage()));
 		}
@@ -183,13 +191,13 @@ public class RemoteRSUService implements RemoteRSUInterface {
 
 	public void unpublish() {
 		if(!isPublished) {
-			System.out.println(Resources.WARNING_MSG("Unpublishing "+Resources.RSU_NAME+" that was never published."));
+			System.out.println(Resources.WARNING_MSG("Unpublishing "+rsu.getName()+" that was never published."));
 			return;
 		}
 
 		try {
 			Registry registry = LocateRegistry.getRegistry(Resources.REGISTRY_PORT);
-			registry.unbind(Resources.RSU_NAME);
+			registry.unbind(rsu.getName());
 			UnicastRemoteObject.unexportObject(this, true);
 		} catch (Exception e) {
 			System.err.println(Resources.ERROR_MSG("Unpublishing RSU: " + e.getMessage()));

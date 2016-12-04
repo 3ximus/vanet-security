@@ -8,38 +8,19 @@ import java.rmi.registry.LocateRegistry;
 public class RSUApp
 {
 
-    public static final String RSU_ARGS_USAGE = "rsu <posX,posY>";
-
     public static void main(String[] args) {
 
         System.out.println("\n");
         
-        // rsu creation argument
-        Vector2D pos = new Vector2D(5, 5);
+        // rsu's positions 
+        Vector2D pos_1 = new Vector2D(-100, 0);
+        Vector2D pos_2 = new Vector2D(0, 0);
+        Vector2D pos_3 = new Vector2D(Resources.MAX_RSU_RANGE-1, 0); // ja esta out-of-range de pos1
 
-        // Constroi RSU
-        RSU rsu;
-
-        // Parse args
-        if (args.length == 0)
-            System.out.println(Resources.NOTIFY_MSG( "Assuming default values for position.\n\tTo specify the position you could call with: " + RSU_ARGS_USAGE + "."));
-        else if(args.length == 1) {
-            try {
-                String [] pos_args = args[1].split(",");
-                pos = new Vector2D(Float.parseFloat(pos_args[0]), Float.parseFloat(pos_args[1]));
-            } catch (NumberFormatException e) {
-                System.out.println( Resources.ERROR_MSG("Received the correct amount of arguments but couldn't convert to float."));
-                return;
-            }
-        } else {
-            System.out.println(Resources.ERROR_MSG("Incorrect amount of arguments. Expecting 1 but received" + args.length));
-            System.out.println(Resources.NOTIFY_MSG("Usage: " + RSU_ARGS_USAGE));
-            return;
-        }
-
-        rsu = new RSU(Resources.RSU_NAME, pos);
-
-        System.out.println(Resources.OK_MSG("Started: " + rsu));
+        // Constroi RSU's
+        RSU rsu_1 = new RSU(Resources.RSU_NAME_1, pos_1);
+        RSU rsu_2 = new RSU(Resources.RSU_NAME_2, pos_2);
+        RSU rsu_3 = new RSU(Resources.RSU_NAME_3, pos_3);
 
          // Create registry if it doesn't exist
         try {
@@ -49,19 +30,41 @@ public class RSUApp
         }
 
         try {
-            // Constroi objeto remoto
-            RemoteRSUService rsu_service = rsu.getRemoteRSUService(); // lanca excecao caso nao encontre remoteCA/VANET no registry
+            // Constroi objetos remotos
+            // lanca excecao caso nao encontre remoteCA/VANET no registry
+            RemoteRSUService rsu1_service = rsu_1.getRemoteRSUService(); 
+            RemoteRSUService rsu2_service = rsu_2.getRemoteRSUService(); 
+            RemoteRSUService rsu3_service = rsu_3.getRemoteRSUService(); 
+
+            // Adiciona rsu's perto de 1
+            rsu_1.addRSU(rsu_2.getPosition(), rsu2_service);
+
+            // Adiciona rsu's perto de 2
+            rsu_2.addRSU(rsu_1.getPosition(), rsu1_service); 
+            rsu_2.addRSU(rsu_3.getPosition(), rsu3_service);
+
+            // Adiciona rsu's perto de 3
+            rsu_3.addRSU(rsu_2.getPosition(), rsu2_service);
+
             // publica servico
-            rsu_service.publish();
+            rsu1_service.publish();
+            rsu2_service.publish();
+            rsu3_service.publish();
+
+            System.out.println(Resources.OK_MSG("Started: " + rsu_1));
+            System.out.println(Resources.OK_MSG("Started: " + rsu_2));
+            System.out.println(Resources.OK_MSG("Started: " + rsu_3));
 
             try {
-                System.out.println("Press enter to kill the road side unit...");
+                System.out.println("Press enter to kill the road side units...");
                 System.in.read();
             } catch (java.io.IOException e) {
                 System.out.println(Resources.ERROR_MSG("Unable to read from input. Exiting."));
             } finally {
                 // remove servico do registry
-                rsu_service.unpublish();
+                rsu1_service.unpublish();
+                rsu2_service.unpublish();
+                rsu3_service.unpublish();
             }
 
         } catch (Exception e) {
@@ -72,4 +75,5 @@ public class RSUApp
         System.exit(0);
 
     }
+
 }

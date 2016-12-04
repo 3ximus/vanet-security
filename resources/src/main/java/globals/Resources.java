@@ -25,8 +25,11 @@ public class Resources {
 
 //  ------- NAMES ------------
 	public static final String CA_NAME = "ca";
-	public static final String RSU_NAME = "rsu";
 	public static final String VANET_NAME = "vanet";
+	public static final String RSU_NAME = "rsu"; //used only for certificate Dir
+	public static final String RSU_NAME_1 = "rsu1";
+	public static final String RSU_NAME_2 = "rsu2";
+	public static final String RSU_NAME_3 = "rsu3";
 
 //  ------- PORTS ------------
 	public static final int REGISTRY_PORT = 1099;
