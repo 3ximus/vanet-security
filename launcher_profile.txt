@@ -1,0 +1,2 @@
+VIN5 vehicle5 0,0 0,0
+

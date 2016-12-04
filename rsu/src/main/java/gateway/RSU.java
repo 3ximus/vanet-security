@@ -5,10 +5,8 @@ import java.util.ArrayList;
 import gateway.exceptions.CertificateAlreadyInCacheException;
 import gateway.exceptions.CertificateNotInCacheException;
 
-import java.rmi.RemoteException;
 import java.rmi.registry.Registry;
 import java.rmi.registry.LocateRegistry;
-import java.rmi.server.UnicastRemoteObject;
 
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
@@ -19,7 +17,6 @@ import globals.Resources;
 import globals.Vector2D;
 
 import remote.RemoteCAInterface;
-import remote.RemoteRSUInterface;
 import remote.RemoteVehicleNetworkInterface;
 
 

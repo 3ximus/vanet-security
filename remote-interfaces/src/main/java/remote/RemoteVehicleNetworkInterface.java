@@ -6,7 +6,6 @@ import globals.Vector2D;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
-import java.security.cert.Certificate;
 
 public interface RemoteVehicleNetworkInterface extends Remote {
 

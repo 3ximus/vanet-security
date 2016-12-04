@@ -6,12 +6,7 @@ import remote.RemoteCAInterface;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
-import java.security.MessageDigest;
-
-
-import static javax.xml.bind.DatatypeConverter.printHexBinary;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -64,12 +59,11 @@ public class RemoteCAService implements RemoteCAInterface {
 	 */
 	@Override
 	public boolean tryRevoke(SignedCertificateDTO dto) throws RemoteException {
-
 		if (!this.authenticateSender(dto))
 			return false;
 
-		Certificate certToRevoke = dto.getCertificate();
-		String hashedCert = this.genHashedName(certToRevoke.toString());
+		X509Certificate certToRevoke = dto.getCertificate();
+		String hashedCert = Resources.genHashedName(Resources.convertToPemCertificate(certToRevoke));
 		File localCert = this.findCertificate(certToRevoke);
 		if (localCert != null) {
 			System.out.println(Resources.OK_MSG("Already revoked: "+hashedCert));
@@ -103,14 +97,14 @@ public class RemoteCAService implements RemoteCAInterface {
 // ------ INTERNAL METHODS --------
 
 	/**
-	 * Verifies if certificate was signed by the CA
-	 * Verifies if its not revoked
-	 * Verfies Signature
+	 * <p>Verifies if certificate was signed by the CA</p>
+	 * <p>Verifies if its not revoked</p>
+	 * <p>Verfies Signature</p>
 	 * If no verification fails returns true
 	 */
 	private boolean authenticateSender(SignedCertificateDTO dto) {
 		// verify if certificate was signed by CA
-		// FIXME make sure certificate is read correctly from file... then uncoment code bellow
+		// FIXME uncoment this when we are able to correctly read the CA certificate from the file (it has a weird format)
 		/*
 		if (!dto.verifyCertificate(this.myCert)) {
 			System.out.println(Resources.WARNING_MSG("Invalid CA Signature on isRevoked request: " + dto.toString()));
@@ -119,7 +113,7 @@ public class RemoteCAService implements RemoteCAInterface {
 		*/
 
 		// verify if certificate is revoked
-		if(this.findCertificate(dto.getCertificate()) != null) {
+		if(this.findCertificate(dto.getSenderCertificate()) != null) {
 			System.out.println(Resources.WARNING_MSG("Sender's Certificate is revoked"));
 			return false;
 		}
@@ -132,7 +126,7 @@ public class RemoteCAService implements RemoteCAInterface {
 
 		return true; // Sender is authenticated
 	}
-	private boolean ponderateRevokeRequest(Certificate senderCert) {
+	private boolean ponderateRevokeRequest(X509Certificate senderCert) {
 		// TODO Debate over some ancient philosophical questions and eventually realize everything is binary
 		return true;
 	}
@@ -140,8 +134,9 @@ public class RemoteCAService implements RemoteCAInterface {
 	/**
 	 * Finds certificate in the revoked directory, if not found returns null
 	 */
-	private File findCertificate(Certificate certToLocate) {
-		String hashedCertificate = this.genHashedName(certToLocate.toString());
+	private File findCertificate(X509Certificate certToLocate) {
+		String pemCertificate = Resources.convertToPemCertificate(certToLocate);
+		String hashedCertificate = Resources.genHashedName(pemCertificate);
 
 		File dirObj = new File(Resources.CA_REVOKED);
 		if ( ! dirObj.exists() || ! dirObj.isDirectory()) return null;
@@ -149,16 +144,6 @@ public class RemoteCAService implements RemoteCAInterface {
 			if (iter.getName().contains(hashedCertificate))
 				return iter;
 		return null;
-	}
-
-	/**
-	 * Returns string given hashed with Resources.CA_DIGEST
-	 */
-	private String genHashedName(String valToHash) {
-		MessageDigest digest = null;
-		try { digest = MessageDigest.getInstance(Resources.CA_DIGEST); }
-		catch (java.security.NoSuchAlgorithmException e) { return null; } // im confident it wont hapen
-		return printHexBinary(digest.digest(valToHash.getBytes()));
 	}
 
 // -------------------------------
