@@ -79,7 +79,7 @@ public class RemoteCAService implements RemoteCAInterface {
 		FileOutputStream out = null;
 		try {
  			out = new FileOutputStream(Resources.CA_REVOKED+hashedCert);
-			out.write(certToRevoke.toString().getBytes());
+			out.write(Resources.convertToPemCertificate(certToRevoke).getBytes());
 			out.close();
 		} catch (Exception e) {
 			// FileOutputStream only throws this if it fails to create the file...
