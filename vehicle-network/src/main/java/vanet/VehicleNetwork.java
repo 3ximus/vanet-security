@@ -10,17 +10,36 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.TreeMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.Set;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 /*
 	Simulate physical wireless network
 */
 public class VehicleNetwork {
-	private Map<String, RemoteVehicleInterface> vehicleList = new TreeMap<>();
+	private Map<String, RemoteVehicleInterface> vehicleList = new ConcurrentHashMap<>();
+	private Map<String, Vector2D> vehicleListPos = new ConcurrentHashMap<>();
 	private ArrayList<Vector2D> rsuList = new ArrayList<Vector2D>();
 
+	private Timer timer = new Timer();
+	private TimerTask vehiclePosUpdaterTask = new TimerTask() {
+		@Override
+		public void run() {
+			for (Map.Entry<String, RemoteVehicleInterface> entry : vehicleList.entrySet()) {
+				try {
+					vehicleListPos.replace(entry.getKey(), entry.getValue().simulateGetPosition());
+				} catch(Exception e) {
+					System.out.println(Resources.WARNING_MSG("Unable to update position for vehicle \"" + entry.getKey() + "\"."));
+				}
+			}
+		}
+	};
+
 	public VehicleNetwork() {
-		// TODO: Launch vehicle processes (maybe) (probably not?)
+		timer.scheduleAtFixedRate(vehiclePosUpdaterTask, 0, Resources.NETWORK_POSITION_UPDATE_INTERVAL);
 	}
 
 	public Set<Map.Entry<String, RemoteVehicleInterface>> getVehicleEntrySet() {
@@ -31,27 +50,30 @@ public class VehicleNetwork {
 		return vehicleList.containsKey(name);
 	}
 
-	public void addVehicle(String name, RemoteVehicleInterface vehicleToAdd) {
+	public void addVehicle(String name, RemoteVehicleInterface vehicleToAdd, Vector2D position) {
 		System.out.println(Resources.OK_MSG("Adding vehicle \"" + name + "\" to the network."));
 		vehicleList.put(name, vehicleToAdd);
+		vehicleListPos.put(name, position);
 	}
 
 	public void removeVehicle(String name) {
 		System.out.println(Resources.OK_MSG("Removing vehicle \"" + name + "\" from the network."));
 		vehicleList.remove(name);
+		vehicleListPos.remove(name);
 	}
 
-	public static boolean inRange(Vector2D pos1, Vector2D pos2) {
+	public Vector2D getVehiclePos(String name) {
+		return vehicleListPos.get(name);
+	}
+
+	public static boolean inRangeForBeacon(Vector2D pos1, Vector2D pos2) {
 		return pos1.distance(pos2) <= Resources.MAX_BEACON_RANGE;
 	}
 
-	public void informVehiclesOfRevocation(SignedCertificateDTO dto, Vector2D rsu_position) throws RemoteException {
-		//TODO: ver issue #24 no github
-		//TODO: do stuff with rsu_position
-		addRSU(rsu_position);
-		for (Map.Entry<String, RemoteVehicleInterface> vehicle : vehicleList.entrySet())
-			vehicle.getValue().addRevokedCertificate(dto); // Each vehicle adds the revoked certificate
+	public static boolean inRangeForRsu(Vector2D pos1, Vector2D pos2) {
+		return pos1.distance(pos2) <= Resources.MAX_RSU_RANGE;
 	}
+
 
 	private void addRSU(Vector2D rsu_position) {
 		if(hasRSU(rsu_position))

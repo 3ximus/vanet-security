@@ -2,9 +2,7 @@ package gateway;
 
 import java.util.ArrayList;
 
-import gateway.exceptions.CertificateAlreadyInCacheException;
-import gateway.exceptions.CertificateNotInCacheException;
-
+import java.rmi.RemoteException;
 import java.rmi.registry.Registry;
 import java.rmi.registry.LocateRegistry;
 
@@ -67,18 +65,14 @@ public class RSU {
 
 	//////////////////
 
-	public void addCertificateToCache(Certificate certificate) throws CertificateAlreadyInCacheException {
+	public void addCertificateToCache(Certificate certificate) {
 		if(isCertInCache(certificate))
 			revokedCache.add(certificate);
-		else
-			throw new CertificateAlreadyInCacheException();
 	}
 
-	public void removeCertificateFromCache(Certificate certificate) throws CertificateNotInCacheException {
+	public void removeCertificateFromCache(Certificate certificate) {
 		if(isCertInCache(certificate))
 			revokedCache.remove(certificate);
-		else
-			throw new CertificateNotInCacheException();
 	}
 
 	public boolean isCertInCache(Certificate certificate) {

@@ -11,6 +11,10 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 
+import java.security.cert.CertificateExpiredException;
+import java.security.cert.CertificateNotYetValidException;
+
+
 public class RemoteRSUService implements RemoteRSUInterface {
 
 	private RSU rsu;
@@ -30,6 +34,18 @@ public class RemoteRSUService implements RemoteRSUInterface {
 		// Verify that sender is trustworthy
 		if(!authenticateSender(dto))
 			return false;
+
+		// verify if certificate has expired
+		try { dto.getCertificate().checkValidity(); 
+		} catch (CertificateExpiredException e) {
+			rsu.addCertificateToCache(dto.getCertificate()); //doesnt add duplicates. checks if certificate is in cache
+			return true;  // certificate has expired
+		} catch (CertificateNotYetValidException e) {
+			
+			// QUESTION: dont add to cache, so we dont have to remove it when it becomes valid?
+			//			 Or has same behaviour as CertificateExpiredException?
+			return true;
+		}
 
 		// verify if revoked certificate is in cache
 		if(rsu.isCertInCache(dto.getCertificate())) {
@@ -59,6 +75,15 @@ public class RemoteRSUService implements RemoteRSUInterface {
 		if(!authenticateSender(dto))
 			return false;
 
+		// verify if certificate has expired
+		try { dto.getCertificate().checkValidity(); 
+		} catch (CertificateExpiredException e) {
+			rsu.addCertificateToCache(dto.getCertificate()); //doesnt add duplicates. checks if certificate is in cache
+			return true;  // certificate has expired
+		} catch (CertificateNotYetValidException e) {
+			return true;
+		}
+
 		// verify if certificate is in cache
 		if(rsu.isCertInCache(dto.getCertificate()))
 			return true;
@@ -80,15 +105,16 @@ public class RemoteRSUService implements RemoteRSUInterface {
 
 	// Called by the CA
 	public void shareRevoked(SignedCertificateDTO dto) throws RemoteException {
-
+		// TODO:
 	}
 
 	// ------ INTERNAL METHODS --------
 
 	/**
 	 * Verifies if certificate was signed by the CA
-	 * Verifies if its not revoked (cached or contact CA)
-	 * Verfies Signature
+	 * Verifies if certificate has not expired
+	 * Verifies if certificate is not revoked (cached or contact CA)
+	 * Verifies if sender signed the dto
 	 * If no verification fails returns true
 	 */
 	private boolean authenticateSender(SignedCertificateDTO dto) throws RemoteException {
@@ -98,6 +124,17 @@ public class RemoteRSUService implements RemoteRSUInterface {
 			System.out.println(Resources.WARNING_MSG("Invalid CA Signature on isRevoked request: " + dto.toString()));
 			return false;  // certificate was not signed by CA, isRevoked  request is dropped
 		}
+
+		// verify if certificate has expired
+		try { dto.getSenderCertificate().checkValidity(); 
+		} catch (CertificateExpiredException e) {
+			System.out.println(Resources.WARNING_MSG("Sender's Certificate has expired: " + dto.toString()));
+			return false;  // certificate has expired, isRevoked  request is dropped
+
+		} catch (CertificateNotYetValidException e) {
+			System.out.println(Resources.WARNING_MSG("Sender's Certificate is not yet valid: " + dto.toString()));
+			return false;  // certificate was not yet valid, isRevoked  request is dropped
+		} 
 
 		// verify if certificate is revoked
 		if(rsu.isCertInCache(dto.getSenderCertificate())) {

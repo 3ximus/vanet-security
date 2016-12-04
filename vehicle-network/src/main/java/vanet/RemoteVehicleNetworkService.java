@@ -27,19 +27,25 @@ public class RemoteVehicleNetworkService implements RemoteVehicleNetworkInterfac
 
 	@Override
 	public void simulateBeaconBroadcast(String name, SignedBeaconDTO beacon) throws RemoteException {
-		Vector2D sendingVehiclePos = beacon.getPosition();
+		if(!vehicleNetwork.hasVehicle(name)) {
+			System.out.println(Resources.WARNING_MSG("Vehicle \"" + name + "\" tried to beacon but is not in the network."));
+			return;
+		}
+
+		Vector2D sendingVehiclePos = vehicleNetwork.getVehiclePos(name);
+
 		for(Map.Entry<String, RemoteVehicleInterface> entry: vehicleNetwork.getVehicleEntrySet()) {
 			if(entry.getKey().equals(name)) continue;
 
 			RemoteVehicleInterface remoteVehicle = entry.getValue();
 
-			try {
-				Vector2D remoteVehiclePos = remoteVehicle.simulateGetPosition(); // FIXME this looks weird, remotly simulation its position...
-				if(VehicleNetwork.inRange(sendingVehiclePos, remoteVehiclePos)) {
+			try { 
+				Vector2D remoteVehiclePos = vehicleNetwork.getVehiclePos(name);
+				if(VehicleNetwork.inRangeForBeacon(sendingVehiclePos, remoteVehiclePos)) {
 					remoteVehicle.receiveBeaconMessage(beacon);
 				}
 			} catch(RemoteException e) {
-				System.out.println(Resources.WARNING_MSG("Vehicle \"" + entry.getKey() + "\" seems to be dead."));
+				System.out.println(Resources.WARNING_MSG("Vehicle \"" + entry.getKey() + "\" seems to be dead. (Exception: " + e.getMessage()));
 				vehicleNetwork.removeVehicle(entry.getKey());
 			}
 		}
@@ -51,15 +57,17 @@ public class RemoteVehicleNetworkService implements RemoteVehicleNetworkInterfac
 			return false;
 
 		RemoteVehicleInterface vehicleToAdd;
+		Vector2D pos;
 		try {
 			Registry registry = LocateRegistry.getRegistry(Resources.REGISTRY_PORT); // @FIXME: only works for localhost
 			vehicleToAdd = (RemoteVehicleInterface) registry.lookup(name);
+			pos = vehicleToAdd.simulateGetPosition();
 		} catch(Exception e) {
 			System.err.println(Resources.ERROR_MSG("Failed to add vehicle \"" + name + "\" : " + e.getMessage()));
 			return false;
 		}
 
-		vehicleNetwork.addVehicle(name, vehicleToAdd);
+		vehicleNetwork.addVehicle(name, vehicleToAdd, pos);
 		return true;
 	}
 
@@ -79,9 +87,23 @@ public class RemoteVehicleNetworkService implements RemoteVehicleNetworkInterfac
 	}
 
 	@Override
-	public void informVehiclesOfRevocation(SignedCertificateDTO dto, Vector2D rsu_position) throws RemoteException {
-		this.vehicleNetwork.informVehiclesOfRevocation(dto, rsu_position);
+	public void informVehiclesOfRevocation(SignedCertificateDTO dto, Vector2D rsuPosition) throws RemoteException {
+		for(Map.Entry<String, RemoteVehicleInterface> entry: vehicleNetwork.getVehicleEntrySet()) {
+			String vehicleName = entry.getKey();
+			RemoteVehicleInterface remoteVehicle = entry.getValue();
+
+			try { 
+				Vector2D remoteVehiclePos = vehicleNetwork.getVehiclePos(vehicleName);
+				if(VehicleNetwork.inRangeForRsu(rsuPosition, remoteVehiclePos)) {
+					remoteVehicle.addRevokedCertificate(dto); // Each vehicle adds the revoked certificate
+				}
+			} catch(RemoteException e) {
+				System.out.println(Resources.WARNING_MSG("Vehicle \"" + entry.getKey() + "\" seems to be dead. (Exception: " + e.getMessage()));
+				vehicleNetwork.removeVehicle(entry.getKey());
+			}
+		}
 	}
+
 
 // ------ REGISTRY METHODS --------
 
