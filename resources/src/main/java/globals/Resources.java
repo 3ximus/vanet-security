@@ -38,6 +38,10 @@ public class Resources {
 	public static final int MAX_BEACON_RANGE = 100;
 	public static final int TOO_DANGEROUS_RANGE = 5;
 
+	public static final int MAX_RSU_RANGE = 5000;
+
+	public static final int NETWORK_POSITION_UPDATE_INTERVAL = BEACON_INTERVAL; // milisseconds
+	
 
 //  ------- PATHS ------------
 	public static final String CA_REVOKED = "cert/revoked/";

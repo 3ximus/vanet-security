@@ -51,7 +51,7 @@ public class Vehicle {
 		}
 	};
 
-	private Map<String, BeaconDTO> vicinity = new HashMap<>(); // String is the pseudonim certificate (is it?)
+	private Map<String, BeaconDTO> vicinity = new HashMap<>(); // String is the pseudonim certificate (is it? VAsco: I think it has to be)
 
 //  -----------------------------------
 
@@ -73,6 +73,7 @@ public class Vehicle {
 			System.out.println(Resources.ERROR_MSG("Exiting. Vehicle is useless without certificate"));
 			System.exit(1);
 		}
+
 		try {
 			this.myKeystore = Resources.readKeystoreFile(certsDir + certificateName + ".jks", Resources.STORE_PASS);
 			this.myPrKey = Resources.getPrivateKeyFromKeystore(this.myKeystore, certificateName, Resources.KEY_PASS); }
@@ -81,6 +82,7 @@ public class Vehicle {
 			System.out.println(Resources.ERROR_MSG("Exiting. Vehicle is useless without PrivateKey"));
 			System.exit(1);
 		}
+		
 		try {
 			this.caCert = (X509Certificate)Resources.getCertificateFromKeystore(this.myKeystore, Resources.CA_NAME); }
 		catch (Exception e) {
@@ -110,7 +112,7 @@ public class Vehicle {
 		timer.scheduleAtFixedRate(engineTask, 0, Resources.BEACON_INTERVAL);
 	}
 
-//  ------- MAIN METHODS  ------------
+//  ------- MAIN METHODS ------------
 
 	public void beacon() {
 		if(VANET == null || RSU == null) return;
@@ -121,7 +123,7 @@ public class Vehicle {
 			VANET.simulateBeaconBroadcast(nameInVANET, dto);
 		} catch(Exception e) {
 			// TODO maybe try to reconect??
-			System.out.println(Resources.ERROR_MSG("Unable to beacon message: " + e.getMessage()));
+			System.out.println(Resources.ERROR_MSG("Unable to beacon message. Cause: " + e));
 			System.out.println(Resources.ERROR_MSG("VANET seems dead... Exiting..."));
 			System.exit(-1);
 		}
@@ -147,14 +149,13 @@ public class Vehicle {
 			inDanger = true;
 			resetInDangerTimer = new Timer();
 			resetInDangerTimer.schedule(new ResetInDangerTask(), Resources.DANGER_RESET_INTERVAL);
-
 		}
 	}
 
 	private boolean isVehicleDangerous(SignedBeaconDTO vehicleInfo) {
 		double distance = vehicleInfo.getPosition().distance(getPosition());
 		if (distance <= Resources.TOO_DANGEROUS_RANGE) {
-			System.out.println(Resources.WARNING_MSG("Proximity Alert: Vehicle in " +distance + "m." ));
+			//System.out.println(Resources.WARNING_MSG("Proximity Alert: Vehicle in " + distance + "m." ));
 			return true;
 		}
 		return false;

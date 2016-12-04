@@ -30,7 +30,6 @@ public class RemoteVehicleService implements RemoteVehicleInterface {
 	@Override
 	public Vector2D simulateGetPosition() throws RemoteException {
 		return vehicle.getPosition();
-
 	}
 
 	@Override
