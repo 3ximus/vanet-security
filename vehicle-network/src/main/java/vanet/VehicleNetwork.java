@@ -10,6 +10,7 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.TreeMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.Set;
 
 import java.util.Timer;
@@ -19,8 +20,8 @@ import java.util.TimerTask;
 	Simulate physical wireless network
 */
 public class VehicleNetwork {
-	private Map<String, RemoteVehicleInterface> vehicleList = new TreeMap<>();
-	private Map<String, Vector2D> vehicleListPos = new TreeMap<>();
+	private Map<String, RemoteVehicleInterface> vehicleList = new ConcurrentHashMap<>();
+	private Map<String, Vector2D> vehicleListPos = new ConcurrentHashMap<>();
 	private ArrayList<Vector2D> rsuList = new ArrayList<Vector2D>();
 
 	private Timer timer = new Timer();
@@ -29,7 +30,7 @@ public class VehicleNetwork {
 		public void run() {
 			for (Map.Entry<String, RemoteVehicleInterface> entry : vehicleList.entrySet()) {
 				try {
-					vehicleListPos.put(entry.getKey(), entry.getValue().simulateGetPosition());
+					vehicleListPos.replace(entry.getKey(), entry.getValue().simulateGetPosition());
 				} catch(Exception e) {
 					System.out.println(Resources.WARNING_MSG("Unable to update position for vehicle \"" + entry.getKey() + "\"."));
 				}
