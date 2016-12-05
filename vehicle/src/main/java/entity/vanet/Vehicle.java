@@ -36,7 +36,7 @@ public class Vehicle {
 	private PrivateKey myPrKey;
 	private KeyStore myKeystore;
 
-	private Map<X509Certificate, BeaconDTO> vicinity = new HashMap<>(); // String is the pseudonim certificate (is it? Vasco: I think it has to be)
+	private Map<X509Certificate, BeaconDTO> vicinity = new HashMap<>(); 
 	private Set<X509Certificate> revokedCache = new HashSet<>();	
 
 	private boolean inDanger = false;
@@ -86,7 +86,7 @@ public class Vehicle {
 			System.out.println(Resources.ERROR_MSG("Exiting. Vehicle is useless without PrivateKey"));
 			System.exit(1);
 		}
-		
+
 		try {
 			this.caCert = (X509Certificate)Resources.getCertificateFromKeystore(this.myKeystore, Resources.CA_NAME); }
 		catch (Exception e) {
@@ -144,7 +144,7 @@ public class Vehicle {
 		X509Certificate beaconCert = dto.getSenderCertificate();
 		BeaconDTO oldBeacon = vicinity.get(beaconCert);
 		BeaconDTO newBeacon = dto.beaconDTO();
-		
+
 		// Check if received position is dangerous
 		if(isVehicleDangerous(newBeacon.getPosition()) == true) {
 			if(inDanger = true) {

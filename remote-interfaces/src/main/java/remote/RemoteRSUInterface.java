@@ -26,10 +26,9 @@ public interface RemoteRSUInterface extends Remote {
 	public boolean tryRevoke(SignedCertificateDTO dto) throws RemoteException;
 
 	/**
-	 * Share a new revoked certificate with RSU's in the vicinity
-	 * Simulates a sort of ranged broadcast through the network
+	 * Receives a new revoked certificate from the RSU's in the vicinity
 	 * @param	SignedCertificateDTO	DTO containing certificate to be shared
 	 */
-	public void shareRevoked(SignedCertificateDTO dto) throws RemoteException;
+	public void receiveRevoked(SignedCertificateDTO dto) throws RemoteException;
 
 }

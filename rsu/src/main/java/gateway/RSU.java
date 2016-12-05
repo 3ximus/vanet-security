@@ -73,14 +73,19 @@ public class RSU {
 	}
 	//////////////////
 
-	public void shareRevoked(SignedCertificateDTO dto) throws RemoteException {
-		this.addCertificateToCache(dto.getCertificate());
+	public void shareRevoked(SignedCertificateDTO dto) {
 
 		SignedCertificateDTO my_dto
 			= new SignedCertificateDTO(dto.getCertificate(), this.getCertificate(), this.getPrivateKey());
 
-		for(Map.Entry<Vector2D, RemoteRSUInterface> nearbyRSU : rsuVacinity.entrySet())
-			nearbyRSU.getValue().shareRevoked(my_dto);
+		for(Map.Entry<Vector2D, RemoteRSUInterface> nearbyRSU : rsuVacinity.entrySet()) {
+			try {
+				nearbyRSU.getValue().receiveRevoked(my_dto); 
+			} catch (RemoteException e) {
+				System.err.println(Resources.WARNING_MSG("Nearby RSU not reached."));
+			} 
+		}
+
 	}
 
 	//////////////////

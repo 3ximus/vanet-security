@@ -37,16 +37,30 @@ public interface RemoteVehicleNetworkInterface extends Remote {
 	public String getNextVehicleName() throws RemoteException;
 
 	/**
+	 * Gets the nearesr available rsu_name in the network
+	 * @return	String	nearest rsu name
+	 */
+	public String getNearestRSUName(Vector2D vehiclePosition) throws RemoteException;
+
+	/**
 	 * Adds a node (rsu) to the network
-	 * @param	String				vehicle name in the network
-	 * @param	RemoteRSUInterface	to connect with the rsu in question
+	 * @param	Vector2D			position of the rsu
+	 * @param	String				rsu name in the network
 	 * @return	boolean				true if node was added sucessfully
 	 */
-	public boolean addRSU(Vector2D rsu_position, RemoteRSUInterface rsu) throws RemoteException;
+	public boolean addRSU(Vector2D rsu_position, String rsu_name) throws RemoteException;
+
+	/**
+	 * Removes a node (rsu) from the network
+	 * @param	String	rsu name in the network
+	 * @return	boolean	true if node was removed sucessfully
+	 */
+	public boolean removeRSU(String name) throws RemoteException;	
 
 	/**
 	 * Propagate new revoked certificates to vehicles in range
 	 * @param	SignedCertificateDTO	DTO containing certificate to be shared
 	 */
 	public void informVehiclesOfRevocation(SignedCertificateDTO dto, Vector2D rsu_position) throws RemoteException;
+
 }

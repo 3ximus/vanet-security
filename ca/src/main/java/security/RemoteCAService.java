@@ -1,12 +1,19 @@
 package security;
 
+import globals.BeaconDTO;
 import globals.Resources;
 import globals.SignedCertificateDTO;
 import remote.RemoteCAInterface;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.security.cert.CertificateExpiredException;
+import java.security.cert.CertificateNotYetValidException;
 import java.security.cert.X509Certificate;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -29,6 +36,7 @@ import java.rmi.registry.Registry;
 public class RemoteCAService implements RemoteCAInterface {
 	private boolean isPublished = false;
 	private X509Certificate myCert;
+	private Map<X509Certificate, Set<X509Certificate>> revokeRating = new HashMap<>();
 
 	public RemoteCAService(X509Certificate myCert) {
 		this.myCert = myCert;
@@ -70,10 +78,8 @@ public class RemoteCAService implements RemoteCAInterface {
 			return true; // its already revoked
 		}
 
-		if (! this.ponderateRevokeRequest(dto.getSenderCertificate())) {
-			System.out.println(Resources.WARNING_MSG("Failed to revoke: "+hashedCert));
+		if (! this.ponderateRevokeRequest(dto.getCertificate(), dto.getSenderCertificate()))
 			return false; // sender not allowed to revoke or score not high enough
-		}
 
 		// all else fails so we revoke the certificate
 		FileOutputStream out = null;
@@ -112,6 +118,17 @@ public class RemoteCAService implements RemoteCAInterface {
 		}
 		*/
 
+		// verify if certificate has expired
+		try { dto.getSenderCertificate().checkValidity();
+		} catch (CertificateExpiredException e) {
+			System.out.println(Resources.WARNING_MSG("Sender's Certificate has expired: " + dto.toString()));
+			return false;  // certificate has expired, isRevoked  request is dropped
+
+		} catch (CertificateNotYetValidException e) {
+			System.out.println(Resources.WARNING_MSG("Sender's Certificate is not yet valid: " + dto.toString()));
+			return false;  // certificate was not yet valid, isRevoked  request is dropped
+		}
+
 		// verify if certificate is revoked
 		if(this.findCertificate(dto.getSenderCertificate()) != null) {
 			System.out.println(Resources.WARNING_MSG("Sender's Certificate is revoked"));
@@ -126,9 +143,16 @@ public class RemoteCAService implements RemoteCAInterface {
 
 		return true; // Sender is authenticated
 	}
-	private boolean ponderateRevokeRequest(X509Certificate senderCert) {
-		// TODO Debate over some ancient philosophical questions and eventually realize everything is binary
-		return true;
+	private boolean ponderateRevokeRequest(X509Certificate toRevoke, X509Certificate senderCert) {
+		if (!this.revokeRating.containsKey(toRevoke))
+			this.revokeRating.put(toRevoke, new HashSet<X509Certificate>());
+		this.revokeRating.get(toRevoke).add(senderCert);
+
+		//String hashedCert = Resources.genHashedName(Resources.convertToPemCertificate(senderCert));
+		System.out.println(Resources.WARNING_MSG("Request to revoke Certificate: " + senderCert.getSerialNumber()
+				+ "\n\tNow has a score of " + this.revokeRating.get(toRevoke).size()));
+
+		return this.revokeRating.get(toRevoke).size() >= Resources.MAX_REVOKE_SCORE;
 	}
 
 	/**

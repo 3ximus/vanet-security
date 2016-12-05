@@ -10,6 +10,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.net.ConnectException;
 
 import java.security.cert.CertificateExpiredException;
 import java.security.cert.CertificateNotYetValidException;
@@ -91,6 +92,7 @@ public class RemoteRSUService implements RemoteRSUInterface {
 		if(ca.tryRevoke(dto)) {
 			try {
 				rsu.addCertificateToCache(dto.getCertificate());
+				rsu.shareRevoked(dto);
 			} catch(Exception e) {
 				System.out.println(Resources.WARNING_MSG(e.getMessage()));
 			}
@@ -104,17 +106,16 @@ public class RemoteRSUService implements RemoteRSUInterface {
 	}
 
 	// TODO: 
-	// verificar que não existe propagacao infinita
 	// TESTING 
 	@Override
-	public void shareRevoked(SignedCertificateDTO dto) throws RemoteException {
+	public void receiveRevoked(SignedCertificateDTO dto) throws RemoteException {
 
 		// Verify that sender is trustworthy
 		if(!authenticateSender(dto))
 			return;
 
-		// Share revoked certificate with nearby rsu's
-		rsu.shareRevoked(dto);
+		// Add revoked certificate to cache
+		rsu.addCertificateToCache(dto.getCertificate());
 	}
 
 	// ------ INTERNAL METHODS --------
@@ -185,9 +186,17 @@ public class RemoteRSUService implements RemoteRSUInterface {
 			registry.rebind(rsu.getName(), stub);
 			isPublished = true;
 			System.out.println(Resources.OK_MSG(rsu.getName()+" published to registry."));
+
+			try { 
+				addRsuToNetwork(); 
+			}catch (Exception e) {
+				System.err.println(Resources.ERROR_MSG("VANET seems dead... "));
+			} 
+
 		} catch (Exception e) {
 			System.err.println(Resources.ERROR_MSG("Failed to publish remote RSU: " + e.getMessage()));
-		}
+		} 
+
 	}
 
 	public void unpublish() {
@@ -200,9 +209,31 @@ public class RemoteRSUService implements RemoteRSUInterface {
 			Registry registry = LocateRegistry.getRegistry(Resources.REGISTRY_PORT);
 			registry.unbind(rsu.getName());
 			UnicastRemoteObject.unexportObject(this, true);
+
+			try { 
+				removeRsuFromNetwork(); 
+			} catch (Exception e) {/* VANET is dead */} 
+
 		} catch (Exception e) {
 			System.err.println(Resources.ERROR_MSG("Unpublishing RSU: " + e.getMessage()));
 		}
+
+
+
+	}
+
+	private void addRsuToNetwork() throws RemoteException {
+		if(this.vehicle_network.addRSU(rsu.getPosition(), rsu.getName())) 
+            System.out.println(Resources.OK_MSG(rsu.getName()+" added to network."));
+        else 
+            System.err.println(Resources.ERROR_MSG("Failed to add "+rsu.getName()+" to network."));
+	}
+
+	private void removeRsuFromNetwork() throws RemoteException {
+		if(this.vehicle_network.removeRSU(rsu.getName()))
+			System.out.println(Resources.OK_MSG(rsu.getName()+" removed from network."));
+		else 
+            System.err.println(Resources.ERROR_MSG("Failed to remove "+rsu.getName()+" from network."));
 	}
 
 	public RemoteVehicleNetworkInterface getNetwork() {

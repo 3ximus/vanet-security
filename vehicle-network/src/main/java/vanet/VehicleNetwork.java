@@ -7,6 +7,8 @@ import globals.SignedCertificateDTO;
 import remote.RemoteVehicleInterface;
 import remote.RemoteRSUInterface;
 
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.TreeMap;
@@ -24,7 +26,9 @@ public class VehicleNetwork {
 	private Map<String, RemoteVehicleInterface> vehicleList = new ConcurrentHashMap<>();
 	private Map<String, Vector2D> vehicleListPos = new ConcurrentHashMap<>();
 	
-	private Map<Vector2D, RemoteRSUInterface> rsuList = new TreeMap<Vector2D, RemoteRSUInterface>();
+	private Map<String, Vector2D> rsuListPos = new TreeMap<>();
+	private Map<String, RemoteRSUInterface> rsuList = new TreeMap<>();
+
 
 	private Timer timer = new Timer();
 	private TimerTask vehiclePosUpdaterTask = new TimerTask() {
@@ -77,17 +81,65 @@ public class VehicleNetwork {
 	}
 
 	// package private
-	boolean addRSU(Vector2D rsu_position, RemoteRSUInterface rsu) {
-		if(!hasRSU(rsu_position)) {
-			rsuList.put(rsu_position, rsu);
-			System.out.println(Resources.NOTIFY_MSG(rsu_position + "added to network;"));
+	boolean addRSU(Vector2D rsu_position, String rsu_name) {
+		if(!hasRSU(rsu_name)) {
+			rsuListPos.put(rsu_name, rsu_position);
+			rsuList.put(rsu_name, getRemoteRSU(rsu_name));
+			System.out.println(Resources.NOTIFY_MSG(rsu_name + " added to network;"));
 			return true;
 		}
 
 		return false;
 	}
 
-	private boolean hasRSU(Vector2D rsu_position) {
-		return rsuList.containsKey(rsu_position);
+	boolean removeRSU(String name) {
+		if(!hasRSU(name))
+			return false;
+
+		rsuListPos.remove(name);
+		rsuList.remove(name);
+		System.out.println(Resources.NOTIFY_MSG(name + " removed from network;"));
+		return true;
 	}
+ 
+	private boolean hasRSU(String rsu_name) {
+		return rsuList.containsKey(rsu_name);
+	}
+
+	private RemoteRSUInterface getRemoteRSU (String rsu_name) {
+
+		RemoteRSUInterface rsu = null;
+
+		try {
+			Registry registry = LocateRegistry.getRegistry(Resources.REGISTRY_PORT);
+			rsu = (RemoteRSUInterface) registry.lookup(rsu_name);
+		} catch(Exception e) {
+			System.err.println(Resources.ERROR_MSG("Failed to connect to RSU: " +  e.getMessage()));
+			System.exit(0); // Return seems to not work for some reason	
+		}
+
+		return rsu;
+	}
+
+	public String getNearestRSUName(Vector2D vehiclePosition) {
+
+		String rsu_name = null;
+		double min_distance = Integer.MAX_VALUE;
+
+		for(Map.Entry<String, Vector2D> entry : rsuListPos.entrySet()) {
+			if(inRangeForRsu(entry.getValue(),vehiclePosition)) {
+
+				double candidate_distance 
+						= entry.getValue().distance(vehiclePosition);
+
+				if(candidate_distance < min_distance) {
+					min_distance = candidate_distance;
+					rsu_name = entry.getKey();
+				}
+			}
+		}
+
+		return rsu_name;
+	}
+
 }
