@@ -14,7 +14,7 @@ import java.rmi.registry.Registry;
  *
  */
 public class VehicleApp {
-	public static final String VEHICLE_ARGS_USAGE = "vehicle <VIN> <cert_name> <posX,posY> <velX,velY>";
+	public static final String VEHICLE_ARGS_USAGE = "vehicle <VIN> <cert_name> <posX,posY> <velX,velY> <attacker_type>";
 
 	/**
 	 * This works as follows:
@@ -28,6 +28,7 @@ public class VehicleApp {
 	 * - Wait loop
 	 */
 	public static void main(String[] args) {
+
 		System.out.println("\n");
 
 		// Vehicle creation arguments
@@ -35,13 +36,14 @@ public class VehicleApp {
 		Vector2D vel = new Vector2D(0, 0);
 		String vin = "VIN1"; // TODO GENERATE ONE RANDOM MAYBE?
 		String simulated_certName = "vehicle1"; // TODO select a diferent for each one
+		AttackerEnum attacker = AttackerEnum.NO_ATTACKER;
 
 		Vehicle vehicle;
 
 		// Parse args
 		if (args.length == 0)
 			System.out.println(Resources.NOTIFY_MSG( "Assuming random values for position, velocity and VIN.\n\tTo specify this values you could call with: " + VEHICLE_ARGS_USAGE + "."));
-		else if(args.length == 4) {
+		else if(args.length == 5) {
 			try {
 				String [] pos_args = args[2].split(",");
 				String [] vel_args = args[3].split(",");
@@ -49,6 +51,27 @@ public class VehicleApp {
 				vel = new Vector2D(Float.parseFloat(vel_args[0]), Float.parseFloat(vel_args[1]));
 				vin = args[0];
 				simulated_certName = args[1];
+
+				switch(args[4]) {
+					case "BAD_POSITIONS":
+						 attacker = AttackerEnum.BAD_POSITIONS;
+						 break;		
+    				case "BAD_SIGNATURES": 	
+						 attacker = AttackerEnum.BAD_SIGNATURES;
+						 break;		
+    				case "BAD_CERTIFICATE":	
+						 attacker = AttackerEnum.BAD_CERTIFICATE;		
+ 						 break;		
+   					case "BAD_TIMESTAMPS":		
+						 attacker = AttackerEnum.BAD_TIMESTAMPS;		
+						 break;		
+    				case "BEACON_DOS":
+						 attacker = AttackerEnum.BEACON_DOS;
+						 break;
+					default:
+						attacker = AttackerEnum.NO_ATTACKER;
+				}
+
 			} catch (NumberFormatException e) {
 				System.out.println( Resources.ERROR_MSG("Received the correct amount of arguments but couldn't convert to float."));
 				return;
@@ -59,7 +82,7 @@ public class VehicleApp {
 			return;
 		}
 
-		vehicle = new Vehicle(vin, simulated_certName, pos, vel);
+		vehicle = new Vehicle(vin, simulated_certName, pos, vel, attacker);
 
 		System.out.println(Resources.OK_MSG("Started: " + vehicle));
 
