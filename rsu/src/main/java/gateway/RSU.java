@@ -76,7 +76,7 @@ public class RSU {
 	public void shareRevoked(SignedCertificateDTO dto) throws RemoteException {
 		this.addCertificateToCache(dto.getCertificate());
 
-		SignedCertificateDTO my_dto 
+		SignedCertificateDTO my_dto
 			= new SignedCertificateDTO(dto.getCertificate(), this.getCertificate(), this.getPrivateKey());
 
 		for(Map.Entry<Vector2D, RemoteRSUInterface> nearbyRSU : rsuVacinity.entrySet())
