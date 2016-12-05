@@ -43,9 +43,9 @@ public class RemoteVehicleService implements RemoteVehicleInterface {
 		// Verify that sender is trustworthy		
 		if(!authenticateBeaconMessage(beacon))
 			return;
-			
+		
 		// Process beacon
-		vehicle.simulateBrain(beacon);
+		vehicle.simulateBrain(beacon);	
 	}
 
 	@Override
@@ -55,7 +55,6 @@ public class RemoteVehicleService implements RemoteVehicleInterface {
 			return;
 		
 		// TODO: Add revoked ceritificate to cache
-		
 	}
 
 // --------------------------------

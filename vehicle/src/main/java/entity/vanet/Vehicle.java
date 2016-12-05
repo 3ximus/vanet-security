@@ -17,6 +17,7 @@ import remote.RemoteRSUInterface;
 
 import java.rmi.RemoteException;
 import java.security.cert.X509Certificate;
+import java.sql.Timestamp;
 import java.security.PrivateKey;
 import java.security.KeyStore;
 
@@ -110,7 +111,7 @@ public class Vehicle {
 		this.nameInVANET = name;
 
 		// Run the engine and beaconing on a timer
-		timer.scheduleAtFixedRate(engineTask, 0, Resources.BEACON_INTERVAL);
+		timer.scheduleAtFixedRate(engineTask, 2000, Resources.BEACON_INTERVAL);
 	}
 
 //  ------- MAIN METHODS ------------
@@ -122,6 +123,7 @@ public class Vehicle {
 
 		try {
 			VANET.simulateBeaconBroadcast(nameInVANET, dto);
+
 		} catch(Exception e) {
 			// TODO maybe try to reconect??
 			System.out.println(Resources.ERROR_MSG("Unable to beacon message. Cause: " + e));
@@ -156,6 +158,7 @@ public class Vehicle {
 			if(isDataTrustworthy(oldBeacon, newBeacon) == false) {
 				SignedCertificateDTO certToRevoke = new SignedCertificateDTO(beaconCert, this.getCertificate(), this.getPrivateKey());
 				try {
+					System.out.println(Resources.WARNING_MSG("Received a beacon to which the data seems wrong. Trying to revoke!"));
 					RSU.tryRevoke(certToRevoke);
 				} catch(RemoteException e) {
 					System.out.println(Resources.ERROR_MSG("RSU seems dead... Cause: " + e.getMessage() + ". Exiting..."));
@@ -191,14 +194,36 @@ public class Vehicle {
 	// --- VICINITY FUNCTIONS ---
 	// --------------------------
 	public boolean vicinityContains(X509Certificate cert) {
-		return vicinity.containsKey(cert);
+		// TODO: This only removes from the cache if it is ever searched again, leaving trash in the cache, but oh well
+		BeaconDTO beacon = vicinity.get(cert); 
+		if(beacon == null) {
+			return false;
+		} else {
+			Timestamp ts = beacon.getTimestamp();
+			
+			if(Resources.timestampInRange(ts, Resources.MAX_INTERVAL_VICINITY_IN_CACHE) == false) {
+				vicinity.remove(cert);
+				return false;
+			}
+			return true;
+		}
 	}
 
 	public void updateVicinity(X509Certificate cert, BeaconDTO beacon) {
-		vicinity.put(cert, beacon);
+		if(!vicinityContains(cert)) {
+			System.out.println(Resources.NOTIFY_MSG("Adding a vehicle to the vicinity."));
+			vicinity.put(cert, beacon);
+			
+		} else {
+			BeaconDTO toUpdate = vicinity.get(cert);
+			toUpdate.getPosition().x = beacon.getPosition().x; 
+			toUpdate.getPosition().y = beacon.getPosition().y;
+			toUpdate.getVelocity().x = beacon.getVelocity().x;
+			toUpdate.getVelocity().y = beacon.getVelocity().y;
+		}
 	}
 
-	public void removeToVicinity(X509Certificate cert) {
+	public void removeFromVicinity(X509Certificate cert) {
 		vicinity.remove(cert);
 	}
 

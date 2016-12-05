@@ -15,6 +15,7 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.sql.Timestamp;
 import java.security.MessageDigest;
 import static javax.xml.bind.DatatypeConverter.printHexBinary;
 
@@ -38,6 +39,7 @@ public class Resources {
 	public static final int BEACON_INTERVAL = 1000; // miliseconds
 	public static final int BEACON_EXPIRATION = 800; // miliseconds
 	public static final int DANGER_RESET_INTERVAL = 1000; // miliseconds
+	public static final int MAX_INTERVAL_VICINITY_IN_CACHE = 60; // seconds
 	
 	public static final int MAX_BEACON_RANGE = 100;
 	public static final int TOO_DANGEROUS_RANGE = 5;
@@ -195,6 +197,9 @@ public class Resources {
 		return printHexBinary(digest.digest(valToHash.getBytes())).toLowerCase();
 	}
 
-//  -----------------------------------
+//  -------------- TIMESTAMPS ---------------------
+	public static boolean timestampInRange(Timestamp timestamp, int milisseconds) {
+		return (timestamp.getTime() + milisseconds) <= System.currentTimeMillis();
+	}
 
 }
