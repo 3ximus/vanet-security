@@ -2,10 +2,8 @@ package entity.vanet;
 
 import globals.Resources;
 import remote.RemoteVehicleNetworkInterface;
-import remote.RemoteRSUInterface;
 import globals.Vector2D;
 
-import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
@@ -55,16 +53,16 @@ public class VehicleApp {
 				switch(args[4]) {
 					case "BAD_POSITIONS":
 						 attacker = AttackerEnum.BAD_POSITIONS;
-						 break;		
-    				case "BAD_SIGNATURES": 	
+						 break;
+    				case "BAD_SIGNATURES":
 						 attacker = AttackerEnum.BAD_SIGNATURES;
-						 break;		
-    				case "BAD_CERTIFICATE":	
-						 attacker = AttackerEnum.BAD_CERTIFICATE;		
- 						 break;		
-   					case "BAD_TIMESTAMPS":		
-						 attacker = AttackerEnum.BAD_TIMESTAMPS;		
-						 break;		
+						 break;
+    				case "BAD_CERTIFICATE":
+						 attacker = AttackerEnum.BAD_CERTIFICATE;
+ 						 break;
+   					case "BAD_TIMESTAMPS":
+						 attacker = AttackerEnum.BAD_TIMESTAMPS;
+						 break;
     				case "BEACON_DOS":
 						 attacker = AttackerEnum.BEACON_DOS;
 						 break;

@@ -29,6 +29,7 @@ public class Vehicle {
 	private String VIN;
 	private Vector2D position;
 	private Vector2D velocity;
+	private long lastUpdateMs;
 	private RemoteVehicleNetworkInterface VANET;
 	private RemoteRSUInterface RSU;
 	private String rsuName;
@@ -41,6 +42,7 @@ public class Vehicle {
 	private KeyStore myKeystore;
 
 	private Map<X509Certificate, BeaconDTO> vicinity = new HashMap<>();
+	private Map<X509Certificate, Timestamp> firstEntryInVicinity = new HashMap<>();
 	private Set<X509Certificate> revokedCache = new HashSet<>();
 
 	private boolean inDanger = false;
@@ -156,9 +158,15 @@ public class Vehicle {
 	}
 
 	public void simulatePositionUpdate() {
+		long currentMs = System.currentTimeMillis();
+		long deltaMs = System.currentTimeMillis() - lastUpdateMs;
+		double deltaSeconds = deltaMs / 1000.0d;
+
 		if(inDanger == false) {
-			position.update(velocity, 1); //FIXME: delta
+			position.update(velocity, deltaSeconds);
 		}
+
+		lastUpdateMs = currentMs;
 	}
 
 	public void simulateBrain(SignedBeaconDTO dto) {
@@ -195,6 +203,7 @@ public class Vehicle {
 	}
 
 	private boolean isVehicleDangerous(Vector2D otherPos) {
+		// TODO: Probably we should use some more complex model. Use velocity and such to prevent false positives.
 		if (position.inRange(otherPos, Resources.TOO_DANGEROUS_RANGE)) {
 			//System.out.println(Resources.WARNING_MSG("Proximity Alert: Vehicle in " + distance + "m." ));
 			return true;
@@ -203,7 +212,8 @@ public class Vehicle {
 	}
 
 	private boolean isDataTrustworthy(BeaconDTO oldBeacon, BeaconDTO newBeacon) {
-		Vector2D predictedPosition = oldBeacon.getPosition().predictedNext(oldBeacon.getVelocity(), 1); // FIXME: delta (use time stamps to have a relative ideia)
+		double predictedDelta = (newBeacon.getTimestamp().getTime() - oldBeacon.getTimestamp().getTime()) / 1000.0d;
+		Vector2D predictedPosition = oldBeacon.getPosition().predictedNext(oldBeacon.getVelocity(), predictedDelta);
 		return predictedPosition.inRange(newBeacon.getPosition(), Resources.ACCEPTABLE_DATA_TRUST_VARIANCE);
 	}
 
@@ -261,10 +271,10 @@ public class Vehicle {
 		if(beacon == null) {
 			return false;
 		} else {
-			Timestamp ts = beacon.getTimestamp();
+			Timestamp ts = firstEntryInVicinity.get(cert);
 
 			if(Resources.timestampInRange(ts, Resources.MAX_INTERVAL_VICINITY_IN_CACHE) == false) {
-				vicinity.remove(cert);
+				removeFromVicinity(cert);
 				return false;
 			}
 			return true;
@@ -275,18 +285,16 @@ public class Vehicle {
 		if(!vicinityContains(cert)) {
 			System.out.println(Resources.NOTIFY_MSG("Adding a vehicle to the vicinity."));
 			vicinity.put(cert, beacon);
+			firstEntryInVicinity.put(cert, beacon.getTimestamp());
 
 		} else {
-			BeaconDTO toUpdate = vicinity.get(cert);
-			toUpdate.getPosition().x = beacon.getPosition().x;
-			toUpdate.getPosition().y = beacon.getPosition().y;
-			toUpdate.getVelocity().x = beacon.getVelocity().x;
-			toUpdate.getVelocity().y = beacon.getVelocity().y;
+			vicinity.replace(cert, beacon);
 		}
 	}
 
 	public void removeFromVicinity(X509Certificate cert) {
 		vicinity.remove(cert);
+		firstEntryInVicinity.remove(cert);
 	}
 
 	// -------------------------
