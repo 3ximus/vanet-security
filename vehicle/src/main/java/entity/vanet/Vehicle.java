@@ -1,7 +1,9 @@
 package entity.vanet;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -35,7 +37,7 @@ public class Vehicle {
 	private KeyStore myKeystore;
 
 	private Map<X509Certificate, BeaconDTO> vicinity = new HashMap<>(); // String is the pseudonim certificate (is it? Vasco: I think it has to be)
-
+	private Set<X509Certificate> revokedCache = new HashSet<>();	
 
 	private boolean inDanger = false;
 	private Timer resetInDangerTimer = new Timer();
@@ -184,10 +186,40 @@ public class Vehicle {
 		return predictedPosition.inRange(newBeacon.getPosition(), Resources.ACCEPTABLE_DATA_TRUST_VARIANCE);
 	}
 
-	public boolean isRevoked(SignedDTO beacon) throws RemoteException {
-		SignedCertificateDTO certToRevoke = new SignedCertificateDTO(beacon.getSenderCertificate(), this.getCertificate(), this.getPrivateKey());
-		return RSU.isRevoked(certToRevoke);
+	public boolean isRevoked(SignedDTO beacon) {
+		X509Certificate senderCert = beacon.getSenderCertificate();
+		if(revokedCacheContain(senderCert) == true) 
+			return true;
+
+		SignedCertificateDTO certToCheck = new SignedCertificateDTO(senderCert, this.getCertificate(), this.getPrivateKey());
+		
+		try {
+			if(RSU.isRevoked(certToCheck)) {
+				addRevokedCertToCache(senderCert);
+				return true;
+			}
+		} catch(RemoteException e) {
+			System.out.println(Resources.ERROR_MSG("Unable to contact RSU. Cause: " + e));
+			System.out.println(Resources.ERROR_MSG("Exiting..."));
+			System.exit(-1);
+		}
+
+		return false;
 	}
+
+
+
+	// -------------------------------
+	// --- REVOKED CACHE FUNCTIONS ---
+	// -------------------------------
+	public boolean revokedCacheContain(X509Certificate cert) {
+		return revokedCache.contains(cert);
+	}
+	
+	public void addRevokedCertToCache(X509Certificate cert) {
+		revokedCache.add(cert);
+	}
+	
 
 
 	// --------------------------

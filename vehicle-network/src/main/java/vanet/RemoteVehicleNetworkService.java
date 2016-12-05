@@ -28,28 +28,28 @@ public class RemoteVehicleNetworkService implements RemoteVehicleNetworkInterfac
 
 	@Override
 	public void simulateBeaconBroadcast(String name, SignedBeaconDTO beacon) throws RemoteException {
-			if(!vehicleNetwork.hasVehicle(name)) {
-				System.out.println(Resources.WARNING_MSG("Vehicle \"" + name + "\" tried to beacon but is not in the network."));
-				return;
-			}
+		if(!vehicleNetwork.hasVehicle(name)) {
+			System.out.println(Resources.WARNING_MSG("Vehicle \"" + name + "\" tried to beacon but is not in the network."));
+			return;
+		}
 
-			Vector2D sendingVehiclePos = vehicleNetwork.getVehiclePos(name);
+		Vector2D sendingVehiclePos = vehicleNetwork.getVehiclePos(name);
+		
+		for(Map.Entry<String, RemoteVehicleInterface> entry: vehicleNetwork.getVehicleEntrySet()) {
+			if(entry.getKey().equals(name)) continue;
+
+			RemoteVehicleInterface remoteVehicle = entry.getValue();
+			try {
+				Vector2D remoteVehiclePos = vehicleNetwork.getVehiclePos(name);
 			
-			for(Map.Entry<String, RemoteVehicleInterface> entry: vehicleNetwork.getVehicleEntrySet()) {
-				if(entry.getKey().equals(name)) continue;
-
-				RemoteVehicleInterface remoteVehicle = entry.getValue();
-				try {
-					Vector2D remoteVehiclePos = vehicleNetwork.getVehiclePos(name);
-				
-					if(VehicleNetwork.inRangeForBeacon(sendingVehiclePos, remoteVehiclePos)) {
-						remoteVehicle.receiveBeaconMessage(beacon);
-					}
-				} catch(RemoteException e) {
-					System.out.println(Resources.WARNING_MSG("Vehicle \"" + entry.getKey() + "\" seems to be dead. (Exception: " + e.getMessage()));
-					vehicleNetwork.removeVehicle(entry.getKey());
+				if(VehicleNetwork.inRangeForBeacon(sendingVehiclePos, remoteVehiclePos)) {
+					remoteVehicle.receiveBeaconMessage(beacon);
 				}
+			} catch(RemoteException e) {
+				System.out.println(Resources.WARNING_MSG("Vehicle \"" + entry.getKey() + "\" seems to be dead. (Exception: " + e.getMessage()));
+				vehicleNetwork.removeVehicle(entry.getKey());
 			}
+		}
 	}
 
 	@Override

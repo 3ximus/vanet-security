@@ -49,18 +49,19 @@ public class RemoteVehicleService implements RemoteVehicleInterface {
 	}
 
 	@Override
-	public void addRevokedCertificate(SignedCertificateDTO dto) {
+	public void addRevokedCertificate(SignedCertificateDTO dto) throws RemoteException {
 		// Verify that dto is from a trustworthy RSU
-		if(!authenticateAddRevokedCertificate(dto))
+		if(!authenticateAddRevokedCertificate(dto)) {
+			System.out.println(Resources.WARNING_MSG("Received a request to add a certificate to the revocation list, but it wasn't properly authenticated."));
 			return;
+		}
 		
-		// TODO: Add revoked ceritificate to cache
+		vehicle.addRevokedCertToCache(dto.getCertificate());
 	}
 
-// --------------------------------
-// ------ INTERNAL METHODS --------
-// --------------------------------
-	// Authenticate a beaconing message
+	//------------------------
+	//--- INTERNAL METHODS ---
+	//------------------------
 	private boolean authenticateBeaconMessage(SignedBeaconDTO dto) {
 		// If we have it in the cache: 
 		//    - We DO NOT need to check if the certificate is signed by the CA or if it is revoked
@@ -88,25 +89,16 @@ public class RemoteVehicleService implements RemoteVehicleInterface {
 	 * Verifies if its not revoked (cached or contact CA through rsu)
 	*/
 	private boolean authenticateSenderCert(SignedDTO dto) {
-		// TODO: Verify if it is in the revoked cache
-
-		
 		// Verify if certificate was signed by CA
 		if (!dto.verifyCertificate(this.vehicle.getCACertificate())) {
 			System.out.println(Resources.WARNING_MSG("Invalid CA Signature on beacon: " + dto.toString()));
 			return false;  // certificate was not signed by CA, beacon is dropped
 		}
 
-		// Contact RSU, to ensure it is not revoked
-		try {
-			if(vehicle.isRevoked(dto)) {
-				System.out.println(Resources.WARNING_MSG("Sender's Certificate is revoked"));
-				return false; // certificate was revoked, beacon is dropped
-			}
-		} catch(RemoteException e) {
-			System.out.println(Resources.ERROR_MSG("RSU seems dead... Cause: " + e.getMessage() + ". Exiting..."));
-			System.exit(-1);
-			return false;
+		// Check cache and or contact RSU, to ensure it is not revoked
+		if(vehicle.isRevoked(dto)) {
+			System.out.println(Resources.WARNING_MSG("Sender's Certificate is revoked"));
+			return false; // certificate was revoked, beacon is dropped
 		}
 
 		return true;
