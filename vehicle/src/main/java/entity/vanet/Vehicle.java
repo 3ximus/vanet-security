@@ -18,6 +18,8 @@ import remote.RemoteVehicleNetworkInterface;
 import remote.RemoteRSUInterface;
 
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.security.cert.X509Certificate;
 import java.sql.Timestamp;
 import java.security.PrivateKey;
@@ -29,6 +31,7 @@ public class Vehicle {
 	private Vector2D velocity;
 	private RemoteVehicleNetworkInterface VANET;
 	private RemoteRSUInterface RSU;
+	private String rsuName;
 	private String nameInVANET;
 
 	private X509Certificate myCert;
@@ -36,8 +39,8 @@ public class Vehicle {
 	private PrivateKey myPrKey;
 	private KeyStore myKeystore;
 
-	private Map<X509Certificate, BeaconDTO> vicinity = new HashMap<>(); 
-	private Set<X509Certificate> revokedCache = new HashSet<>();	
+	private Map<X509Certificate, BeaconDTO> vicinity = new HashMap<>();
+	private Set<X509Certificate> revokedCache = new HashSet<>();
 
 	private boolean inDanger = false;
 	private Timer resetInDangerTimer = new Timer();
@@ -48,12 +51,23 @@ public class Vehicle {
 		}
 	}
 
-	private Timer timer = new Timer();
+	private Timer engineTimer = new Timer();
 	private TimerTask engineTask = new TimerTask() {
 		@Override
 		public void run() {
 			simulatePositionUpdate();
 			beacon();
+		}
+	};
+
+	private Timer checkRsuInRangeTimer = new Timer();
+	private TimerTask checkRsuInRangeTask = new TimerTask() {
+		@Override
+		public void run() {
+			String newRsuName = getClosestRSUName();
+			if(newRsuName.equals(rsuName) == false) {
+				connectToRSU(rsuName);
+			}
 		}
 	};
 
@@ -107,13 +121,18 @@ public class Vehicle {
 
 
 	// Sets VANET, starts updating position and starts beaoning
-	public void start(RemoteVehicleNetworkInterface VANET, RemoteRSUInterface RSU, String name) {
+	public void start(RemoteVehicleNetworkInterface VANET, String name) {
 		this.VANET = VANET;
-		this.RSU = RSU;
 		this.nameInVANET = name;
 
+		this.rsuName = getClosestRSUName();
+		connectToRSU(rsuName);
+
 		// Run the engine and beaconing on a timer
-		timer.scheduleAtFixedRate(engineTask, 2000, Resources.BEACON_INTERVAL);
+		engineTimer.scheduleAtFixedRate(engineTask, 2000, Resources.BEACON_INTERVAL);
+
+		// Run closest rsu lookup
+		checkRsuInRangeTimer.scheduleAtFixedRate(checkRsuInRangeTask, 2000, Resources.CHECK_RSU_RANGE_INTERVAL);
 	}
 
 //  ------- MAIN METHODS ------------
@@ -188,11 +207,11 @@ public class Vehicle {
 
 	public boolean isRevoked(SignedDTO beacon) {
 		X509Certificate senderCert = beacon.getSenderCertificate();
-		if(revokedCacheContain(senderCert) == true) 
+		if(revokedCacheContain(senderCert) == true)
 			return true;
 
 		SignedCertificateDTO certToCheck = new SignedCertificateDTO(senderCert, this.getCertificate(), this.getPrivateKey());
-		
+
 		try {
 			if(RSU.isRevoked(certToCheck)) {
 				addRevokedCertToCache(senderCert);
@@ -215,11 +234,11 @@ public class Vehicle {
 	public boolean revokedCacheContain(X509Certificate cert) {
 		return revokedCache.contains(cert);
 	}
-	
+
 	public void addRevokedCertToCache(X509Certificate cert) {
 		revokedCache.add(cert);
 	}
-	
+
 
 
 	// --------------------------
@@ -227,12 +246,12 @@ public class Vehicle {
 	// --------------------------
 	public boolean vicinityContains(X509Certificate cert) {
 		// TODO: This only removes from the cache if it is ever searched again, leaving trash in the cache, but oh well
-		BeaconDTO beacon = vicinity.get(cert); 
+		BeaconDTO beacon = vicinity.get(cert);
 		if(beacon == null) {
 			return false;
 		} else {
 			Timestamp ts = beacon.getTimestamp();
-			
+
 			if(Resources.timestampInRange(ts, Resources.MAX_INTERVAL_VICINITY_IN_CACHE) == false) {
 				vicinity.remove(cert);
 				return false;
@@ -245,10 +264,10 @@ public class Vehicle {
 		if(!vicinityContains(cert)) {
 			System.out.println(Resources.NOTIFY_MSG("Adding a vehicle to the vicinity."));
 			vicinity.put(cert, beacon);
-			
+
 		} else {
 			BeaconDTO toUpdate = vicinity.get(cert);
-			toUpdate.getPosition().x = beacon.getPosition().x; 
+			toUpdate.getPosition().x = beacon.getPosition().x;
 			toUpdate.getPosition().y = beacon.getPosition().y;
 			toUpdate.getVelocity().x = beacon.getVelocity().x;
 			toUpdate.getVelocity().y = beacon.getVelocity().y;
@@ -258,7 +277,6 @@ public class Vehicle {
 	public void removeFromVicinity(X509Certificate cert) {
 		vicinity.remove(cert);
 	}
-
 
 	// -------------------------
 	// --- UTILITY FUNCTIONS ---
@@ -270,5 +288,35 @@ public class Vehicle {
 		res += "<pos>=(" + this.position.x + ", " + this.position.y + "); ";
 		res += "<vel>=(" + this.velocity.x + ", " + this.velocity.y + ");";
 		return res;
+	}
+
+	public void connectToRSU(String rsuName) {
+		// Connect to the RSU
+		try {
+			System.out.println(Resources.OK_MSG("Connecting to rsu: " + rsuName));
+			Registry registry = LocateRegistry.getRegistry(Resources.REGISTRY_PORT);
+			RSU = (RemoteRSUInterface) registry.lookup(rsuName);
+		} catch(Exception e) {
+			System.err.println(Resources.ERROR_MSG("Failed to connect to RSU called: " +  e.getMessage()));
+			System.exit(-1);
+			return;
+		}
+	}
+
+	private String getClosestRSUName() {
+		// Get RSU name
+		String newRsuName = null;
+		try {
+			newRsuName = VANET.getNearestRSUName(position);
+
+			if(newRsuName == null)
+				System.err.println(Resources.ERROR_MSG("Failed to find an RSU in range."));
+
+		} catch(RemoteException e) {
+			// VANET is Dead
+			System.err.println(Resources.ERROR_MSG("Failed to connect to VANET: " +  e.getMessage()));
+			System.exit(-1);
+		}
+		return newRsuName;
 	}
 }

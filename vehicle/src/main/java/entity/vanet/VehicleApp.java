@@ -80,38 +80,7 @@ public class VehicleApp {
 			vehicleUniqueName = VANET.getNextVehicleName();
 		} catch(Exception e) {
 			System.err.println(Resources.ERROR_MSG("Failed to connect to VANET: " +  e.getMessage()));
-			System.exit(0); // Return seems to not work for some reason
-			return;
-		}
-
-		
-		String rsu_name = null;
-
-		try { 
-			rsu_name = VANET.getNearestRSUName(vehicle.getPosition());
-			
-			if(rsu_name == null)
-				System.err.println(Resources.ERROR_MSG("Failed to find a RSU."));
-			else
-				System.out.println(Resources.OK_MSG("Found rsu: \"" + rsu_name + "\""));
-
-		}
-		catch(RemoteException e) {
-			/* VANET is Dead */
-		}
-		catch (Exception e) {
-			System.err.println(Resources.ERROR_MSG(e.getMessage()));
-		}
-
-		// Connect to the RSU
-		RemoteRSUInterface RSU;
-
-		try {
-			Registry registry = LocateRegistry.getRegistry(Resources.REGISTRY_PORT);
-			RSU = (RemoteRSUInterface) registry.lookup(rsu_name);
-		} catch(Exception e) {
-			System.err.println(Resources.ERROR_MSG("Failed to connect to RSU: " +  e.getMessage()));
-			System.exit(0); // Return seems to not work for some reason
+			System.exit(-1); // Return seems to not work for some reason
 			return;
 		}
 
@@ -120,7 +89,7 @@ public class VehicleApp {
 		remoteVehicle.publish();
 
 		// Start the vehicle
-		vehicle.start(VANET, RSU, vehicleUniqueName);
+		vehicle.start(VANET, vehicleUniqueName);
 
 		// Add vehicle to the VANET
 		try {

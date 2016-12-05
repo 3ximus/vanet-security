@@ -40,12 +40,12 @@ public class RemoteVehicleService implements RemoteVehicleInterface {
 		// TODO: Only do this security check periodically, not for every beacon
 		// TODO: Maybe here or just have a function that receives a normal beaconDTO
 
-		// Verify that sender is trustworthy		
+		// Verify that sender is trustworthy
 		if(!authenticateBeaconMessage(beacon))
 			return;
-		
+
 		// Process beacon
-		vehicle.simulateBrain(beacon);	
+		vehicle.simulateBrain(beacon);
 	}
 
 	@Override
@@ -55,7 +55,7 @@ public class RemoteVehicleService implements RemoteVehicleInterface {
 			System.out.println(Resources.WARNING_MSG("Received a request to add a certificate to the revocation list, but it wasn't properly authenticated."));
 			return;
 		}
-		
+
 		vehicle.addRevokedCertToCache(dto.getCertificate());
 	}
 
@@ -63,14 +63,14 @@ public class RemoteVehicleService implements RemoteVehicleInterface {
 	//--- INTERNAL METHODS ---
 	//------------------------
 	private boolean authenticateBeaconMessage(SignedBeaconDTO dto) {
-		// If we have it in the cache: 
+		// If we have it in the cache:
 		//    - We DO NOT need to check if the certificate is signed by the CA or if it is revoked
-		//    - We DO need to confirm the expiration date and if the message signature is correct 
+		//    - We DO need to confirm the expiration date and if the message signature is correct
 		X509Certificate senderCert = dto.getSenderCertificate();
 		if(!vehicle.vicinityContains(senderCert)) {
-			if(!authenticateSenderCert(dto)) 
+			if(!authenticateSenderCert(dto))
 				return false;
-			
+
 			vehicle.updateVicinity(senderCert, dto.beaconDTO());
 		}
 
@@ -110,8 +110,8 @@ public class RemoteVehicleService implements RemoteVehicleInterface {
 	 */
 	private boolean authenticateSenderSignature(SignedDTO dto) {
 		// Verify if certificate has expired
-		try { 
-			dto.getSenderCertificate().checkValidity(); 
+		try {
+			dto.getSenderCertificate().checkValidity();
 
 		} catch (CertificateExpiredException e) {
 			System.out.println(Resources.WARNING_MSG("Sender's Certificate has expired: " + dto.toString()));
@@ -120,8 +120,8 @@ public class RemoteVehicleService implements RemoteVehicleInterface {
 		} catch (CertificateNotYetValidException e) {
 			System.out.println(Resources.WARNING_MSG("Sender's Certificate is not yet valid: " + dto.toString()));
 			return false;  // certificate was not yet valid, isRevoked request is dropped
-		} 
-		
+		}
+
 		// Verify digital signature
 		if (!dto.verifySignature()) {
 			System.out.println(Resources.WARNING_MSG("Invalid digital signature on beacon: " + dto.toString()));
