@@ -103,7 +103,9 @@ public class RemoteRSUService implements RemoteRSUInterface {
 		return false;
 	}
 
-	// Called by the CA
+	// TODO: 
+	// verificar que não existe propagacao infinita
+	// TESTING 
 	@Override
 	public void shareRevoked(SignedCertificateDTO dto) throws RemoteException {
 
@@ -113,7 +115,6 @@ public class RemoteRSUService implements RemoteRSUInterface {
 
 		// Share revoked certificate with nearby rsu's
 		rsu.shareRevoked(dto);
-
 	}
 
 	// ------ INTERNAL METHODS --------
@@ -171,7 +172,7 @@ public class RemoteRSUService implements RemoteRSUInterface {
 
 	// ------ REGISTRY METHODS --------
 
-	public void publish() {
+	public void publish() throws RemoteException {
 		if(isPublished) {
 			System.out.println(Resources.WARNING_MSG(rsu.getName() + " already published."));
 			return;
@@ -204,4 +205,8 @@ public class RemoteRSUService implements RemoteRSUInterface {
 		}
 	}
 
+	public RemoteVehicleNetworkInterface getNetwork() {
+		return vehicle_network;
+	}
+	
 }

@@ -18,14 +18,14 @@ public interface RemoteVehicleNetworkInterface extends Remote {
 
 	/**
 	 * Adds a node (vehicle) to the network
-	 * @param	String	vehicle name in the netowork
+	 * @param	String	vehicle name in the network
 	 * @return	boolean	true if node was added sucessfully
 	 */
 	public boolean addVehicle(String name) throws RemoteException;
 
 	/**
 	 * Removes a node (vehicle) to the network
-	 * @param	String	vehicle name in the netowork
+	 * @param	String	vehicle name in the network
 	 * @return	boolean	true if node was removed sucessfully
 	 */
 	public boolean removeVehicle(String name) throws RemoteException;
@@ -35,6 +35,14 @@ public interface RemoteVehicleNetworkInterface extends Remote {
 	 * @return	String	next available name
 	 */
 	public String getNextVehicleName() throws RemoteException;
+
+	/**
+	 * Adds a node (rsu) to the network
+	 * @param	String				vehicle name in the network
+	 * @param	RemoteRSUInterface	to connect with the rsu in question
+	 * @return	boolean				true if node was added sucessfully
+	 */
+	public boolean addRSU(Vector2D rsu_position, RemoteRSUInterface rsu) throws RemoteException;
 
 	/**
 	 * Propagate new revoked certificates to vehicles in range

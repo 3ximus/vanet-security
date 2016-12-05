@@ -5,6 +5,7 @@ import globals.Vector2D;
 import globals.SignedCertificateDTO;
 
 import remote.RemoteVehicleInterface;
+import remote.RemoteRSUInterface;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -22,7 +23,8 @@ import java.util.TimerTask;
 public class VehicleNetwork {
 	private Map<String, RemoteVehicleInterface> vehicleList = new ConcurrentHashMap<>();
 	private Map<String, Vector2D> vehicleListPos = new ConcurrentHashMap<>();
-	private ArrayList<Vector2D> rsuList = new ArrayList<Vector2D>();
+	
+	private Map<Vector2D, RemoteRSUInterface> rsuList = new TreeMap<Vector2D, RemoteRSUInterface>();
 
 	private Timer timer = new Timer();
 	private TimerTask vehiclePosUpdaterTask = new TimerTask() {
@@ -74,13 +76,18 @@ public class VehicleNetwork {
 		return pos1.distance(pos2) <= Resources.MAX_RSU_RANGE;
 	}
 
+	// package private
+	boolean addRSU(Vector2D rsu_position, RemoteRSUInterface rsu) {
+		if(!hasRSU(rsu_position)) {
+			rsuList.put(rsu_position, rsu);
+			System.out.println(Resources.NOTIFY_MSG(rsu_position + "added to network;"));
+			return true;
+		}
 
-	private void addRSU(Vector2D rsu_position) {
-		if(hasRSU(rsu_position))
-			rsuList.add(rsu_position);
+		return false;
 	}
 
 	private boolean hasRSU(Vector2D rsu_position) {
-		return rsuList.contains(rsu_position);
+		return rsuList.containsKey(rsu_position);
 	}
 }

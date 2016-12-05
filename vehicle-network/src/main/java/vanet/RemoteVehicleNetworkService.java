@@ -2,6 +2,7 @@ package vanet;
 
 import remote.RemoteVehicleInterface;
 import remote.RemoteVehicleNetworkInterface;
+import remote.RemoteRSUInterface;
 
 import globals.Vector2D;
 import globals.Resources;
@@ -102,6 +103,11 @@ public class RemoteVehicleNetworkService implements RemoteVehicleNetworkInterfac
 				vehicleNetwork.removeVehicle(entry.getKey());
 			}
 		}
+	}
+
+	@Override
+	public boolean addRSU(Vector2D rsu_position, RemoteRSUInterface rsu) throws RemoteException {
+		return this.vehicleNetwork.addRSU(rsu_position, rsu);
 	}
 
 

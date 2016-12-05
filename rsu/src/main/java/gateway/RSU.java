@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
 
-import java.rmi.RemoteException;
 import java.rmi.registry.Registry;
+import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 
 import java.security.cert.Certificate;
@@ -18,6 +18,7 @@ import globals.Vector2D;
 import globals.SignedCertificateDTO;
 
 import remote.RemoteCAInterface;
+import remote.RemoteRSUInterface;
 import remote.RemoteVehicleNetworkInterface;
 
 

@@ -2,8 +2,11 @@ package gateway;
 
 import globals.Resources;
 import globals.Vector2D;
+import remote.RemoteRSUInterface;
 
 import java.rmi.registry.LocateRegistry;
+import java.rmi.RemoteException;
+
 
 public class RSUApp
 {
@@ -11,16 +14,20 @@ public class RSUApp
     public static void main(String[] args) {
 
         System.out.println("\n");
+
+        Vector2D pos = new Vector2D(0, 0);        
         
         // rsu's positions 
-        Vector2D pos_1 = new Vector2D(-100, 0);
-        Vector2D pos_2 = new Vector2D(0, 0);
-        Vector2D pos_3 = new Vector2D(Resources.MAX_RSU_RANGE-1, 0); // ja esta out-of-range de pos1
+        // Vector2D pos_1 = new Vector2D(-100, 0);
+        // Vector2D pos_2 = new Vector2D(0, 0);
+        // Vector2D pos_3 = new Vector2D(Resources.MAX_RSU_RANGE-1, 0); // ja esta out-of-range de pos1
 
         // Constroi RSU's
-        RSU rsu_1 = new RSU(Resources.RSU_NAME_1, pos_1);
-        RSU rsu_2 = new RSU(Resources.RSU_NAME_2, pos_2);
-        RSU rsu_3 = new RSU(Resources.RSU_NAME_3, pos_3);
+        // RSU rsu_1 = new RSU(Resources.RSU_NAME_1, pos_1);
+        // RSU rsu_2 = new RSU(Resources.RSU_NAME_2, pos_2);
+        // RSU rsu_3 = new RSU(Resources.RSU_NAME_3, pos_3);
+
+        RSU rsu = new RSU(Resources.RSU_NAME, pos);
 
          // Create registry if it doesn't exist
         try {
@@ -32,28 +39,47 @@ public class RSUApp
         try {
             // Constroi objetos remotos
             // lanca excecao caso nao encontre remoteCA/VANET no registry
-            RemoteRSUService rsu1_service = rsu_1.getRemoteRSUService(); 
-            RemoteRSUService rsu2_service = rsu_2.getRemoteRSUService(); 
-            RemoteRSUService rsu3_service = rsu_3.getRemoteRSUService(); 
+            // RemoteRSUService rsu1_service = rsu_1.getRemoteRSUService(); 
+            // RemoteRSUService rsu2_service = rsu_2.getRemoteRSUService(); 
+            // RemoteRSUService rsu3_service = rsu_3.getRemoteRSUService();
 
-            // Adiciona rsu's perto de 1
-            rsu_1.addRSU(rsu_2.getPosition(), rsu2_service);
+            RemoteRSUService rsu_service = rsu.getRemoteRSUService();
 
-            // Adiciona rsu's perto de 2
-            rsu_2.addRSU(rsu_1.getPosition(), rsu1_service); 
-            rsu_2.addRSU(rsu_3.getPosition(), rsu3_service);
+            // // Adiciona rsu's perto de 1
+            // rsu_1.addRSU(rsu_2.getPosition(), rsu2_service);
 
-            // Adiciona rsu's perto de 3
-            rsu_3.addRSU(rsu_2.getPosition(), rsu2_service);
+            // // Adiciona rsu's perto de 2
+            // rsu_2.addRSU(rsu_1.getPosition(), rsu1_service); 
+            // rsu_2.addRSU(rsu_3.getPosition(), rsu3_service);
 
-            // publica servico
-            rsu1_service.publish();
-            rsu2_service.publish();
-            rsu3_service.publish();
+            // // Adiciona rsu's perto de 3
+            // rsu_3.addRSU(rsu_2.getPosition(), rsu2_service);
 
-            System.out.println(Resources.OK_MSG("Started: " + rsu_1));
-            System.out.println(Resources.OK_MSG("Started: " + rsu_2));
-            System.out.println(Resources.OK_MSG("Started: " + rsu_3));
+            // // Envia rsu's para a network
+
+            // // add rsu to network;
+            // try {
+            //     if(rsu1_service.getNetwork().addRSU(rsu_1.getPosition(), (RemoteRSUInterface) rsu1_service))
+            //         System.out.println(Resources.OK_MSG(rsu_1.getName()+" added to network."));
+            //     else {
+            //         System.err.println(Resources.ERROR_MSG("Failed to add "+rsu_1.getName()+" to network."));
+            //     } 
+            // } catch (RemoteException e) {
+            //     System.out.println(Resources.ERROR_MSG(e.getMessage()));
+            // }
+
+            // // publica servico
+            // rsu1_service.publish();
+            // rsu2_service.publish();
+            // rsu3_service.publish();
+
+            rsu_service.publish();
+
+            // System.out.println(Resources.OK_MSG("Started: " + rsu_1));
+            // System.out.println(Resources.OK_MSG("Started: " + rsu_2));
+            // System.out.println(Resources.OK_MSG("Started: " + rsu_3));
+
+            System.out.println(Resources.OK_MSG("Started: " + rsu));
 
             try {
                 System.out.println("Press enter to kill the road side units...");
@@ -62,9 +88,10 @@ public class RSUApp
                 System.out.println(Resources.ERROR_MSG("Unable to read from input. Exiting."));
             } finally {
                 // remove servico do registry
-                rsu1_service.unpublish();
-                rsu2_service.unpublish();
-                rsu3_service.unpublish();
+                // rsu1_service.unpublish();
+                // rsu2_service.unpublish();
+                // rsu3_service.unpublish();
+                rsu_service.unpublish();
             }
 
         } catch (Exception e) {
