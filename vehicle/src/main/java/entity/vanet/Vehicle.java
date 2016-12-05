@@ -25,7 +25,7 @@ public class Vehicle {
 	private Vector2D position;
 	private Vector2D velocity;
 	private RemoteVehicleNetworkInterface VANET;
-	private RemoteRSUInterface	RSU;
+	private RemoteRSUInterface RSU;
 	private String nameInVANET;
 
 	private X509Certificate myCert;
@@ -33,7 +33,7 @@ public class Vehicle {
 	private PrivateKey myPrKey;
 	private KeyStore myKeystore;
 
-	private Map<X509Certificate, Vector2D> vicinity = new HashMap<>(); // String is the pseudonim certificate (is it? Vasco: I think it has to be)
+	private Map<X509Certificate, BeaconDTO> vicinity = new HashMap<>(); // String is the pseudonim certificate (is it? Vasco: I think it has to be)
 
 
 	private boolean inDanger = false;
@@ -137,13 +137,13 @@ public class Vehicle {
 		}
 	}
 
-	public void simulateBrain(SignedBeaconDTO beacon) {
-
-		// TODO: Register on the list if new, or update if not
-		// TODO: If was already registered use a data trust function that , according to previous records of the
-		// TODO: same vehicle, decides whether to believe it or not
-
-		if(isVehicleDangerous(beacon) == true) {
+	public void simulateBrain(SignedBeaconDTO dto) {
+		X509Certificate beaconCert = dto.getSenderCertificate();
+		BeaconDTO oldBeacon = vicinity.get(beaconCert);
+		BeaconDTO newBeacon = dto.beaconDTO();
+		
+		// Check if received position is dangerous
+		if(isVehicleDangerous(newBeacon.getPosition()) == true) {
 			if(inDanger = true) {
 				resetInDangerTimer.cancel();
 			}
@@ -151,10 +151,26 @@ public class Vehicle {
 			resetInDangerTimer = new Timer();
 			resetInDangerTimer.schedule(new ResetInDangerTask(), Resources.DANGER_RESET_INTERVAL);
 		}
+
+		// Data trust
+		if(oldBeacon != null) {
+			if(checkDataTrust(oldBeacon, newBeacon) == false) {
+				SignedCertificateDTO certToRevoke = new SignedCertificateDTO(beaconCert, this.getCertificate(), this.getPrivateKey());
+				try {
+					RSU.tryRevoke(certToRevoke);
+				} catch(RemoteException e) {
+					System.out.println(Resources.ERROR_MSG("RSU seems dead... Cause: " + e.getMessage() + ". Exiting..."));
+					System.exit(-1);
+				}
+
+			}
+		}
+
+		updateVicinity(beaconCert, dto.beaconDTO());
 	}
 
-	private boolean isVehicleDangerous(SignedBeaconDTO vehicleInfo) {
-		double distance = vehicleInfo.getPosition().distance(getPosition());
+	private boolean isVehicleDangerous(Vector2D otherPos) {
+		double distance = otherPos.distance(getPosition());
 		if (distance <= Resources.TOO_DANGEROUS_RANGE) {
 			//System.out.println(Resources.WARNING_MSG("Proximity Alert: Vehicle in " + distance + "m." ));
 			return true;
@@ -162,10 +178,14 @@ public class Vehicle {
 		return false;
 	}
 
+	private boolean checkDataTrust(BeaconDTO oldBeacon, BeaconDTO newBeacon) {
+		// TODO
+		return true;
+	}
+
 	public boolean isRevoked(SignedDTO beacon) throws RemoteException {
-		return RSU.isRevoked(new SignedCertificateDTO (	beacon.getSenderCertificate(), 
-									  					this.getCertificate(), 
-									  					this.getPrivateKey()));
+		SignedCertificateDTO certToRevoke = new SignedCertificateDTO(beacon.getSenderCertificate(), this.getCertificate(), this.getPrivateKey());
+		return RSU.isRevoked(certToRevoke);
 	}
 
 
@@ -176,8 +196,8 @@ public class Vehicle {
 		return vicinity.containsKey(cert);
 	}
 
-	public void updateVicinity(X509Certificate cert, Vector2D pos) {
-		vicinity.put(cert, pos);
+	public void updateVicinity(X509Certificate cert, BeaconDTO beacon) {
+		vicinity.put(cert, beacon);
 	}
 
 	public void removeToVicinity(X509Certificate cert) {

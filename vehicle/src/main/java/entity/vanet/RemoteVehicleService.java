@@ -43,20 +43,19 @@ public class RemoteVehicleService implements RemoteVehicleInterface {
 		// Verify that sender is trustworthy		
 		if(!authenticateBeaconMessage(beacon))
 			return;
-		
-		vehicle.updateVicinity(beacon.getSenderCertificate(), beacon.getPosition());
-		
+			
 		// Process beacon
 		vehicle.simulateBrain(beacon);
 	}
 
 	@Override
 	public void addRevokedCertificate(SignedCertificateDTO dto) {
-		// verify that dto is from a trustworthy RSU
+		// Verify that dto is from a trustworthy RSU
 		if(!authenticateAddRevokedCertificate(dto))
 			return;
 		
-		// TODO: Add revoked ceritificate to cache 
+		// TODO: Add revoked ceritificate to cache
+		
 	}
 
 // --------------------------------
@@ -72,7 +71,7 @@ public class RemoteVehicleService implements RemoteVehicleInterface {
 			if(!authenticateSenderCert(dto)) 
 				return false;
 			
-			vehicle.updateVicinity(senderCert, dto.getPosition());
+			vehicle.updateVicinity(senderCert, dto.beaconDTO());
 		}
 
 		return authenticateSenderSignature(dto);
