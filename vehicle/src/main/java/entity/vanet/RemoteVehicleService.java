@@ -92,6 +92,12 @@ public class RemoteVehicleService implements RemoteVehicleInterface {
 		// Verify if certificate was signed by CA
 		if (!dto.verifyCertificate(this.vehicle.getCACertificate())) {
 			System.out.println(Resources.WARNING_MSG("Invalid CA Signature on beacon: " + dto.toString()));
+
+			SignedCertificateDTO my_dto 
+					= new SignedCertificateDTO(dto.getSenderCertificate(), 
+											   this.vehicle.getCertificate(), 
+											   this.vehicle.getPrivateKey());
+			vehicle.reportCertificate(my_dto);
 			return false;  // certificate was not signed by CA, beacon is dropped
 		}
 

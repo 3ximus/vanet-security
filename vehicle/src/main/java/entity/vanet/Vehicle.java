@@ -33,6 +33,7 @@ public class Vehicle {
 	private RemoteRSUInterface RSU;
 	private String rsuName;
 	private String nameInVANET;
+	private AttackerEnum attackerType;
 
 	private X509Certificate myCert;
 	private X509Certificate caCert;
@@ -77,10 +78,11 @@ public class Vehicle {
 
 //  ------- CONSTRUCTOR  ------------
 
-	public Vehicle(String VIN, String certificateName, Vector2D position, Vector2D velocity) {
+	public Vehicle(String VIN, String certificateName, Vector2D position, Vector2D velocity, AttackerEnum attackerType) {
 		this.VIN = VIN;
 		this.position = position;
 		this.velocity = velocity;
+		this.attackerType = attackerType;
 
 		String certsDir = Resources.CERT_DIR+certificateName+"/";
 		// Read certificate file to a certificate object
@@ -226,6 +228,15 @@ public class Vehicle {
 		return false;
 	}
 
+	void reportCertificate(SignedCertificateDTO certToRevoke) {
+		try {
+			RSU.tryRevoke(certToRevoke);
+		} catch (RemoteException e) {
+			System.out.println(Resources.ERROR_MSG("Unable to contact RSU. Cause: " + e));
+			System.out.println(Resources.ERROR_MSG("Exiting..."));
+			System.exit(-1);
+		}
+	}
 
 
 	// -------------------------------
