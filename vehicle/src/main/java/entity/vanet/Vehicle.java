@@ -8,6 +8,7 @@ import java.util.TimerTask;
 import globals.Resources;
 import globals.Vector2D;
 import globals.BeaconDTO;
+import globals.SignedDTO;
 import globals.SignedBeaconDTO;
 import globals.SignedCertificateDTO;
 
@@ -32,6 +33,9 @@ public class Vehicle {
 	private PrivateKey myPrKey;
 	private KeyStore myKeystore;
 
+	private Map<X509Certificate, Vector2D> vicinity = new HashMap<>(); // String is the pseudonim certificate (is it? Vasco: I think it has to be)
+
+
 	private boolean inDanger = false;
 	private Timer resetInDangerTimer = new Timer();
 	class ResetInDangerTask extends TimerTask {
@@ -40,7 +44,6 @@ public class Vehicle {
 			inDanger = false;
 		}
 	}
-	private TimerTask resetInDangerTask = new ResetInDangerTask();
 
 	private Timer timer = new Timer();
 	private TimerTask engineTask = new TimerTask() {
@@ -50,8 +53,6 @@ public class Vehicle {
 			beacon();
 		}
 	};
-
-	private Map<String, BeaconDTO> vicinity = new HashMap<>(); // String is the pseudonim certificate (is it? VAsco: I think it has to be)
 
 //  -----------------------------------
 
@@ -161,12 +162,29 @@ public class Vehicle {
 		return false;
 	}
 
-	public boolean isRevoked(SignedBeaconDTO beacon) throws RemoteException {
+	public boolean isRevoked(SignedDTO beacon) throws RemoteException {
 		return RSU.isRevoked(new SignedCertificateDTO (	beacon.getSenderCertificate(), 
 									  					this.getCertificate(), 
 									  					this.getPrivateKey()));
 	}
 
+
+	// --------------------------
+	// --- VICINITY FUNCTIONS ---
+	// --------------------------
+	public boolean vicinityContains(X509Certificate cert) {
+		return vicinity.containsKey(cert);
+	}
+
+	public void updateVicinity(X509Certificate cert, Vector2D pos) {
+		vicinity.put(cert, pos);
+	}
+
+	public void removeToVicinity(X509Certificate cert) {
+		vicinity.remove(cert);
+	}
+
+	
 
 //  ------- UTILITY ------------
 
