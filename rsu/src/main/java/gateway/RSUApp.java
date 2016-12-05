@@ -25,8 +25,6 @@ public class RSUApp
         RSU rsu_2 = new RSU(Resources.RSU_NAME_2, pos_2);
         RSU rsu_3 = new RSU(Resources.RSU_NAME_3, pos_3);
 
-        // RSU rsu = new RSU(Resources.RSU_NAME, pos);
-
         // Create registry if it doesn't exist
         try {
             LocateRegistry.createRegistry(Resources.REGISTRY_PORT);

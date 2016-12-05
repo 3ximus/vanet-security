@@ -92,6 +92,7 @@ public class RemoteRSUService implements RemoteRSUInterface {
 		if(ca.tryRevoke(dto)) {
 			try {
 				rsu.addCertificateToCache(dto.getCertificate());
+				rsu.shareRevoked(dto);
 			} catch(Exception e) {
 				System.out.println(Resources.WARNING_MSG(e.getMessage()));
 			}
@@ -105,17 +106,16 @@ public class RemoteRSUService implements RemoteRSUInterface {
 	}
 
 	// TODO: 
-	// verificar que não existe propagacao infinita
 	// TESTING 
 	@Override
-	public void shareRevoked(SignedCertificateDTO dto) throws RemoteException {
+	public void receiveRevoked(SignedCertificateDTO dto) throws RemoteException {
 
 		// Verify that sender is trustworthy
 		if(!authenticateSender(dto))
 			return;
 
-		// Share revoked certificate with nearby rsu's
-		rsu.shareRevoked(dto);
+		// Add revoked certificate to cache
+		rsu.addCertificateToCache(dto.getCertificate());
 	}
 
 	// ------ INTERNAL METHODS --------
