@@ -91,7 +91,7 @@ public class RSU {
 	//////////////////
 
 	public void addCertificateToCache(Certificate certificate) {
-		if(isCertInCache(certificate))
+		if(!isCertInCache(certificate))
 			revokedCache.add(certificate);
 	}
 

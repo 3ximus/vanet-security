@@ -131,18 +131,18 @@ public class RemoteRSUService implements RemoteRSUInterface {
 
 		// verify if certificate was signed by CA
 		if (!dto.verifyCertificate(this.rsu.getCACertificate())) {
-			System.out.println(Resources.WARNING_MSG("Invalid CA Signature on isRevoked request: " + dto.toString()));
+			System.out.println(Resources.WARNING_MSG("Invalid CA Signature on isRevoked request: " + dto);
 			return false;  // certificate was not signed by CA, isRevoked  request is dropped
 		}
 
 		// verify if certificate has expired
 		try { dto.getSenderCertificate().checkValidity(); 
 		} catch (CertificateExpiredException e) {
-			System.out.println(Resources.WARNING_MSG("Sender's Certificate has expired: " + dto.toString()));
+			System.out.println(Resources.WARNING_MSG("Sender's Certificate has expired: " + dto);
 			return false;  // certificate has expired, isRevoked  request is dropped
 
 		} catch (CertificateNotYetValidException e) {
-			System.out.println(Resources.WARNING_MSG("Sender's Certificate is not yet valid: " + dto.toString()));
+			System.out.println(Resources.WARNING_MSG("Sender's Certificate is not yet valid: " + dto);
 			return false;  // certificate was not yet valid, isRevoked  request is dropped
 		} 
 
@@ -160,7 +160,7 @@ public class RemoteRSUService implements RemoteRSUInterface {
 
 		// verify signature sent
 		if (!dto.verifySignature()) {
-			System.out.println(Resources.WARNING_MSG("Invalid digital signature on isRevoked request: " + dto.toString()));
+			System.out.println(Resources.WARNING_MSG("Invalid digital signature on isRevoked request: " + dto);
 			return false;  // certificate was not signed by sender
 		}
 

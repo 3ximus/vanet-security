@@ -32,7 +32,7 @@ public class CertificateDTO extends DTO {
 
 	@Override
 	public String toString() {
-		return this.certificate.toString()+"\n"+this.timestamp.toString();
+		return Resources.genHashedName(Resources.convertToPemCertificate(this.certificate))+"\n"+this.timestamp.toString();
 	}
 
 	@Override
