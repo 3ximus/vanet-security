@@ -23,4 +23,5 @@ public class Vector2D implements Serializable {
     public String toString() {
         return "["+Double.toString(this.x)+","+Double.toString(this.y)+"]";
     }
+
 }

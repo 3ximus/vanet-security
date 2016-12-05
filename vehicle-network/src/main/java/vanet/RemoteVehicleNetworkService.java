@@ -106,8 +106,18 @@ public class RemoteVehicleNetworkService implements RemoteVehicleNetworkInterfac
 	}
 
 	@Override
-	public boolean addRSU(Vector2D rsu_position, RemoteRSUInterface rsu) throws RemoteException {
-		return this.vehicleNetwork.addRSU(rsu_position, rsu);
+	public boolean addRSU(Vector2D rsu_position, String rsu_name) throws RemoteException {
+		return this.vehicleNetwork.addRSU(rsu_position, rsu_name);
+	}
+
+	@Override
+	public boolean removeRSU(String name) throws RemoteException {
+		return this.vehicleNetwork.removeRSU(name);
+	}
+
+	@Override
+	public String getNearestRSUName(Vector2D vehiclePosition) throws RemoteException {
+		return this.vehicleNetwork.getNearestRSUName(vehiclePosition);
 	}
 
 
