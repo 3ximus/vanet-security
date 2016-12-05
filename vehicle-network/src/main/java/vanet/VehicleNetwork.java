@@ -69,11 +69,11 @@ public class VehicleNetwork {
 	}
 
 	public static boolean inRangeForBeacon(Vector2D pos1, Vector2D pos2) {
-		return pos1.distance(pos2) <= Resources.MAX_BEACON_RANGE;
+		return pos1.inRange(pos2, Resources.MAX_BEACON_RANGE);
 	}
 
 	public static boolean inRangeForRsu(Vector2D pos1, Vector2D pos2) {
-		return pos1.distance(pos2) <= Resources.MAX_RSU_RANGE;
+		return pos1.inRange(pos2, Resources.MAX_RSU_RANGE);
 	}
 
 	// package private

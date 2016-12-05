@@ -132,8 +132,7 @@ public class Vehicle {
 
 	public void simulatePositionUpdate() {
 		if(inDanger == false) {
-			position.x = position.x + velocity.x;
-			position.y = position.y + velocity.y;
+			position.update(velocity, 1); //FIXME: delta
 		}
 	}
 
@@ -154,7 +153,7 @@ public class Vehicle {
 
 		// Data trust
 		if(oldBeacon != null) {
-			if(checkDataTrust(oldBeacon, newBeacon) == false) {
+			if(isDataTrustworthy(oldBeacon, newBeacon) == false) {
 				SignedCertificateDTO certToRevoke = new SignedCertificateDTO(beaconCert, this.getCertificate(), this.getPrivateKey());
 				try {
 					RSU.tryRevoke(certToRevoke);
@@ -170,17 +169,16 @@ public class Vehicle {
 	}
 
 	private boolean isVehicleDangerous(Vector2D otherPos) {
-		double distance = otherPos.distance(getPosition());
-		if (distance <= Resources.TOO_DANGEROUS_RANGE) {
+		if (position.inRange(otherPos, Resources.TOO_DANGEROUS_RANGE)) {
 			//System.out.println(Resources.WARNING_MSG("Proximity Alert: Vehicle in " + distance + "m." ));
 			return true;
 		}
 		return false;
 	}
 
-	private boolean checkDataTrust(BeaconDTO oldBeacon, BeaconDTO newBeacon) {
-		// TODO
-		return true;
+	private boolean isDataTrustworthy(BeaconDTO oldBeacon, BeaconDTO newBeacon) {
+		Vector2D predictedPosition = oldBeacon.getPosition().predictedNext(oldBeacon.getVelocity(), 1); // FIXME: delta (use time stamps to have a relative ideia)
+		return predictedPosition.inRange(newBeacon.getPosition(), Resources.ACCEPTABLE_DATA_TRUST_VARIANCE);
 	}
 
 	public boolean isRevoked(SignedDTO beacon) throws RemoteException {
@@ -204,10 +202,10 @@ public class Vehicle {
 		vicinity.remove(cert);
 	}
 
-	
 
-//  ------- UTILITY ------------
-
+	// -------------------------
+	// --- UTILITY FUNCTIONS ---
+	// -------------------------
 	@Override
 	public String toString() {
 		String res;
