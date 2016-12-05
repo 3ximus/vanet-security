@@ -34,17 +34,20 @@ public class Resources {
 //  ------- PORTS ------------
 	public static final int REGISTRY_PORT = 1099;
 
-//  -------- VEHICLE-RANGES ---------
-	public static final int BEACON_INTERVAL = 1000; // miliseconds
-	public static final int BEACON_EXPIRATION = 800; // miliseconds
-	public static final int DANGER_RESET_INTERVAL = 1000; // miliseconds
+//  -------- RANGES ---------
 	public static final int MAX_BEACON_RANGE = 100;
 	public static final int TOO_DANGEROUS_RANGE = 5;
 
 	public static final int MAX_RSU_RANGE = 5000;
 
+//  -------- TIMERS ---------
+	public static final int BEACON_INTERVAL = 1000; // miliseconds
+	public static final int BEACON_EXPIRATION = 800; // miliseconds
+	public static final int DANGER_RESET_INTERVAL = 1000; // miliseconds
 	public static final int NETWORK_POSITION_UPDATE_INTERVAL = BEACON_INTERVAL; // milisseconds
-	
+
+//  ------- SCORE ------------
+	public static final int MAX_REVOKE_SCORE = 2;
 
 //  ------- PATHS ------------
 	public static final String CA_REVOKED = "cert/revoked/";
