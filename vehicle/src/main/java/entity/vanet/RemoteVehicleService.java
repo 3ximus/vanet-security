@@ -89,6 +89,13 @@ public class RemoteVehicleService implements RemoteVehicleInterface {
 	 * Verifies if its not revoked (cached or contact CA through rsu)
 	*/
 	private boolean authenticateSenderCert(SignedDTO dto) {
+
+		// verify Timestamp freshness
+		if(!dto.verifyFreshness(Resources.FRESHNESS_MAX_TIME)) {
+			System.out.println(Resources.WARNING_MSG("Sender's communication is not fresh: " + dto));
+			return false;  // certificate was not signed by CA, isRevoked  request is dropped			
+		}
+		
 		// Verify if certificate was signed by CA
 		if (!dto.verifyCertificate(this.vehicle.getCACertificate())) {
 			System.out.println(Resources.WARNING_MSG("Invalid CA Signature on beacon: " + dto.toString()));

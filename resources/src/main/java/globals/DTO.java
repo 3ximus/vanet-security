@@ -14,4 +14,11 @@ public abstract class DTO implements Serializable {
 	 */
 	public abstract byte[] serialize();
 
+	/**
+	 * Verifica a frescura do timestamp
+	 * @param	milisseconds	intervalo de tempo desde que chegou a msg
+	 */
+	public boolean verifyFreshness(int milisseconds) {
+		return Resources.timestampInRange(this.timestamp, milisseconds);
+	}
 }

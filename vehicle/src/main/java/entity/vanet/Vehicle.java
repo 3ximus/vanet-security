@@ -12,6 +12,7 @@ import globals.Vector2D;
 import globals.BeaconDTO;
 import globals.SignedDTO;
 import globals.SignedBeaconDTO;
+import globals.SignedBooleanDTO;
 import globals.SignedCertificateDTO;
 
 import remote.RemoteVehicleNetworkInterface;
@@ -20,6 +21,8 @@ import remote.RemoteRSUInterface;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.security.cert.CertificateExpiredException;
+import java.security.cert.CertificateNotYetValidException;
 import java.security.cert.X509Certificate;
 import java.sql.Timestamp;
 import java.security.PrivateKey;
@@ -225,7 +228,13 @@ public class Vehicle {
 		SignedCertificateDTO certToCheck = new SignedCertificateDTO(senderCert, this.getCertificate(), this.getPrivateKey());
 
 		try {
-			if(RSU.isRevoked(certToCheck)) {
+			SignedBooleanDTO rev = RSU.isRevoked(certToCheck);
+			if (!this.authenticateSender(rev)) {
+				System.out.println(Resources.WARNING_MSG("Cannot trust RSU."));
+				return false;
+			}
+
+			if(rev.getValue()) {
 				addRevokedCertToCache(senderCert);
 				return true;
 			}
@@ -238,6 +247,33 @@ public class Vehicle {
 		return false;
 	}
 
+	private boolean authenticateSender(SignedBooleanDTO dto) {
+
+		// verify if certificate was signed by CA
+		if (!dto.verifyCertificate(this.getCACertificate())) {
+			System.out.println(Resources.WARNING_MSG("Invalid CA Signature on RSU reply: " + dto));
+			return false;  // certificate was not signed by CA, isRevoked  request is dropped
+		}
+
+		// verify if certificate has expired
+		try { dto.getSenderCertificate().checkValidity();
+		} catch (CertificateExpiredException e) {
+			System.out.println(Resources.WARNING_MSG("Sender's Certificate has expired: " + dto));
+			return false;  // certificate has expired, isRevoked  request is dropped
+
+		} catch (CertificateNotYetValidException e) {
+			System.out.println(Resources.WARNING_MSG("Sender's Certificate is not yet valid: " + dto));
+			return false;  // certificate was not yet valid, isRevoked  request is dropped
+		}
+
+		// verify signature sent
+		if (!dto.verifySignature()) {
+			System.out.println(Resources.WARNING_MSG("Invalid digital signature on isRevoked request: " + dto));
+			return false;  // certificate was not signed by sender
+		}
+
+		return true; // Sender is authenticated
+	}
 	void reportCertificate(SignedCertificateDTO certToRevoke) {
 		try {
 			RSU.tryRevoke(certToRevoke);
@@ -268,17 +304,16 @@ public class Vehicle {
 	public boolean vicinityContains(X509Certificate cert) {
 		// TODO: This only removes from the cache if it is ever searched again, leaving trash in the cache, but oh well
 		BeaconDTO beacon = vicinity.get(cert);
-		if(beacon == null) {
+		if(beacon == null)
 			return false;
-		} else {
-			Timestamp ts = firstEntryInVicinity.get(cert);
 
-			if(Resources.timestampInRange(ts, Resources.MAX_INTERVAL_VICINITY_IN_CACHE) == false) {
-				removeFromVicinity(cert);
-				return false;
-			}
-			return true;
+		Timestamp ts = firstEntryInVicinity.get(cert);
+
+		if(!Resources.timestampInRange(ts, Resources.MAX_INTERVAL_VICINITY_IN_CACHE)) {
+			removeFromVicinity(cert);
+			return false;
 		}
+		return true;
 	}
 
 	public void updateVicinity(X509Certificate cert, BeaconDTO beacon) {

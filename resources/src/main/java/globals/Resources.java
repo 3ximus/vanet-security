@@ -48,8 +48,9 @@ public class Resources {
 	public static final int BEACON_EXPIRATION = 800; // miliseconds
 	public static final int DANGER_RESET_INTERVAL = 1000; // miliseconds
 	public static final int CHECK_RSU_RANGE_INTERVAL = 2000; // miliseconds
-	public static final int MAX_INTERVAL_VICINITY_IN_CACHE = 60; // seconds
+	public static final int MAX_INTERVAL_VICINITY_IN_CACHE = 60000; // miliseconds
 	public static final int NETWORK_POSITION_UPDATE_INTERVAL = BEACON_INTERVAL; // milisseconds
+	public static final int FRESHNESS_MAX_TIME = 1000; //miliseconds
 
 //  ------- SCORE ------------
 	public static final int MAX_REVOKE_SCORE = 2;
@@ -201,7 +202,7 @@ public class Resources {
 
 //  -------------- TIMESTAMPS ---------------------
 	public static boolean timestampInRange(Timestamp timestamp, int milisseconds) {
-		return (timestamp.getTime() + milisseconds) <= System.currentTimeMillis();
+		return (timestamp.getTime() + milisseconds) >= System.currentTimeMillis();
 	}
 
 }

@@ -5,6 +5,6 @@ public enum AttackerEnum {
     	BAD_POSITIONS, 		// manda posicoes erradas
     	BAD_SIGNATURES, 	// assinatura digital falsa
     	BAD_CERTIFICATE,	// certificado revogado, ou expirado.
-    	BAD_TIMESTAMPS,		// mensagens nao frescas
+    	BAD_TIMESTAMPS,		// mensagens nao frescas (replay attack)
     	BEACON_DOS			// the beacons are multiples and ever lastings
 }
