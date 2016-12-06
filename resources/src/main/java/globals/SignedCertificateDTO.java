@@ -54,5 +54,9 @@ public class SignedCertificateDTO extends SignedDTO {
 		System.arraycopy(serializedCert, 0, newSerialization, serializedDTO.length, serializedCert.length);
 		return newSerialization;
 	}
+
+	public boolean verifyFreshness(int miliseconds) {
+		return certDTO.verifyFreshness(miliseconds);
+	}
 }
 

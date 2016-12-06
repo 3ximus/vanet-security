@@ -50,6 +50,7 @@ public class Resources {
 	public static final int CHECK_RSU_RANGE_INTERVAL = 2000; // miliseconds
 	public static final int MAX_INTERVAL_VICINITY_IN_CACHE = 60; // seconds
 	public static final int NETWORK_POSITION_UPDATE_INTERVAL = BEACON_INTERVAL; // milisseconds
+	public static final int FRESHNESS_MAX_TIME = 200; //miliseconds
 
 //  ------- SCORE ------------
 	public static final int MAX_REVOKE_SCORE = 2;

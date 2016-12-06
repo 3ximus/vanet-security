@@ -85,6 +85,9 @@ public class RemoteRSUService implements RemoteRSUInterface {
 			return true;
 		}
 
+		// verificar que certificado foi assinado pelo CA
+
+
 		// verify if certificate is in cache
 		if(rsu.isCertInCache(dto.getCertificate()))
 			return true;
@@ -101,6 +104,8 @@ public class RemoteRSUService implements RemoteRSUInterface {
 						new SignedCertificateDTO(dto.getCertificate(), rsu.getCertificate(), rsu.getPrivateKey()));
 			return true;
 		}
+
+
 
 		return false;
 	}
@@ -128,6 +133,12 @@ public class RemoteRSUService implements RemoteRSUInterface {
 	 * If no verification fails returns true
 	 */
 	private boolean authenticateSender(SignedCertificateDTO dto) throws RemoteException {
+
+		// verify Timestamp freshness
+		if(!dto.verifyFreshness(Resources.FRESHNESS_MAX_TIME)) {
+			System.out.println(Resources.WARNING_MSG("Sender's communication is not fresh: " + dto));
+			return false;  // certificate was not signed by CA, isRevoked  request is dropped			
+		}
 
 		// verify if certificate was signed by CA
 		if (!dto.verifyCertificate(this.rsu.getCACertificate())) {
