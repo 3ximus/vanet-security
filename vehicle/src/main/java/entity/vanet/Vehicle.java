@@ -304,17 +304,16 @@ public class Vehicle {
 	public boolean vicinityContains(X509Certificate cert) {
 		// TODO: This only removes from the cache if it is ever searched again, leaving trash in the cache, but oh well
 		BeaconDTO beacon = vicinity.get(cert);
-		if(beacon == null) {
+		if(beacon == null)
 			return false;
-		} else {
-			Timestamp ts = firstEntryInVicinity.get(cert);
 
-			if(Resources.timestampInRange(ts, Resources.MAX_INTERVAL_VICINITY_IN_CACHE) == false) {
-				removeFromVicinity(cert);
-				return false;
-			}
-			return true;
+		Timestamp ts = firstEntryInVicinity.get(cert);
+
+		if(!Resources.timestampInRange(ts, Resources.MAX_INTERVAL_VICINITY_IN_CACHE)) {
+			removeFromVicinity(cert);
+			return false;
 		}
+		return true;
 	}
 
 	public void updateVicinity(X509Certificate cert, BeaconDTO beacon) {
