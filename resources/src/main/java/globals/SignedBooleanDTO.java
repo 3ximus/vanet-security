@@ -54,5 +54,10 @@ public class SignedBooleanDTO extends SignedDTO {
 		System.arraycopy(serializedCert, 0, newSerialization, serializedDTO.length, serializedCert.length);
 		return newSerialization;
 	}
+
+	@Override
+	public boolean verifyFreshness(int miliseconds) {
+		return bool.verifyFreshness(miliseconds);
+	}
 }
 

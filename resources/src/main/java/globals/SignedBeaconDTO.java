@@ -57,5 +57,10 @@ public class SignedBeaconDTO extends SignedDTO {
 		System.arraycopy(serializedCert, 0, newSerialization, serializedDTO.length, serializedCert.length);
 		return newSerialization;
 	}
+
+	@Override
+	public boolean verifyFreshness(int miliseconds) {
+		return beaconDTO.verifyFreshness(miliseconds);
+	}
 }
 

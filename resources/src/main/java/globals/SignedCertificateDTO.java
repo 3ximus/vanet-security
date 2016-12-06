@@ -55,6 +55,7 @@ public class SignedCertificateDTO extends SignedDTO {
 		return newSerialization;
 	}
 
+	@Override
 	public boolean verifyFreshness(int miliseconds) {
 		return certDTO.verifyFreshness(miliseconds);
 	}

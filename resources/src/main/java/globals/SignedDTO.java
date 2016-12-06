@@ -63,4 +63,8 @@ public abstract class SignedDTO implements Serializable {
 		catch (Exception e ) { return false; } // certificate was not signed by sender
 		return true;
 	}
+
+	public boolean verifyFreshness(int mil) {
+		return false;
+	}
 }
