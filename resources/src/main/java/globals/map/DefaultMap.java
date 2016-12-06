@@ -183,6 +183,154 @@ public class DefaultMap extends Map {
         Waypoint w = new Waypoint(bottomY, cross3Lane2X);
 
 
+        w0.addAdjancie(w6);
+        w1.addAdjancie(w0);
+        w2.addAdjancie(w8);
+        w3.addAdjancie(w2);
+        w4.addAdjancie(w10);
+        w5.addAdjancie(w4);
+
+        w6.addAdjancie(w13);
+        w6.addAdjancie(w28);
+        w7.addAdjancie(w1);
+        w8.addAdjancie(w15);
+        w8.addAdjancie(w30);
+        w9.addAdjancie(w3);
+        w10.addAdjancie(w17);
+        w10.addAdjancie(w32);
+        w11.addAdjancie(w5);
+
+        w12.addAdjancie(w20);
+        w13.addAdjancie(w12);
+        w14.addAdjancie(w7);
+        w14.addAdjancie(w13);
+        w15.addAdjancie(w14);
+        w16.addAdjancie(w15);
+        w16.addAdjancie(w9);
+        w17.addAdjancie(w16);
+        w18.addAdjancie(w11);
+        w18.addAdjancie(w17);
+        w19.addAdjancie(w18);
+
+        w20.addAdjancie(w21);
+        w21.addAdjancie(w28);
+        w21.addAdjancie(w22);
+        w22.addAdjancie(w23);
+        w23.addAdjancie(w30);
+        w23.addAdjancie(w24);
+        w24.addAdjancie(w25);
+        w25.addAdjancie(w32);
+        w25.addAdjancie(w26);
+        w26.addAdjancie(w27);
+        w27.addAdjancie(w19);
+
+        w28.addAdjancie(w34);
+        w29.addAdjancie(w12);
+        w29.addAdjancie(w7);
+        w30.addAdjancie(w36);
+        w31.addAdjancie(w24);
+        w31.addAdjancie(w9);
+        w32.addAdjancie(w38);
+        w33.addAdjancie(w36);
+        w33.addAdjancie(w11);
+
+        w34.addAdjancie(w41);
+        w34.addAdjancie(w56);
+        w35.addAdjancie(w29);
+        w36.addAdjancie(w43);
+        w36.addAdjancie(w58);
+        w37.addAdjancie(w31);
+        w38.addAdjancie(w45);
+        w38.addAdjancie(w60);
+        w39.addAdjancie(w33);
+
+        w40.addAdjancie(w48);
+        w41.addAdjancie(w40);
+        w42.addAdjancie(w35);
+        w42.addAdjancie(w41);
+        w43.addAdjancie(w42);
+        w44.addAdjancie(w43);
+        w44.addAdjancie(w37);
+        w45.addAdjancie(w44);
+        w46.addAdjancie(w39);
+        w46.addAdjancie(w45);
+        w47.addAdjancie(w46);
+
+        w48.addAdjancie(w49);
+        w49.addAdjancie(w56);
+        w49.addAdjancie(w50);
+        w50.addAdjancie(w51);
+        w51.addAdjancie(w52);
+        w51.addAdjancie(w57);
+        w52.addAdjancie(w53);
+        w53.addAdjancie(w54);
+        w53.addAdjancie(w60);
+        w54.addAdjancie(w55);
+        w55.addAdjancie(w47);
+
+        w56.addAdjancie(w62);
+        w57.addAdjancie(w35);
+        w57.addAdjancie(w50);
+        w58.addAdjancie(w64);
+        w59.addAdjancie(w37);
+        w59.addAdjancie(w52);
+        w60.addAdjancie(w66);
+        w61.addAdjancie(w39);
+        w61.addAdjancie(w54);
+
+        w62.addAdjancie(w69);
+        w62.addAdjancie(w84);
+        w63.addAdjancie(w57);
+        w64.addAdjancie(w71);
+        w64.addAdjancie(w86);
+        w65.addAdjancie(w59);
+        w66.addAdjancie(w73);
+        w66.addAdjancie(w88);
+        w67.addAdjancie(w61);
+
+        w68.addAdjancie(w76);
+        w69.addAdjancie(w68);
+        w70.addAdjancie(w63);
+        w70.addAdjancie(w69);
+        w71.addAdjancie(w70);
+        w72.addAdjancie(w65);
+        w72.addAdjancie(w71);
+        w73.addAdjancie(w72);
+        w74.addAdjancie(w67);
+        w74.addAdjancie(w73);
+        w75.addAdjancie(w74);
+
+        w76.addAdjancie(w77);
+        w77.addAdjancie(w78);
+        w77.addAdjancie(w84);
+        w78.addAdjancie(w79);
+        w79.addAdjancie(w80);
+        w79.addAdjancie(w86);
+        w80.addAdjancie(w81);
+        w81.addAdjancie(w82);
+        w81.addAdjancie(w88);
+        w82.addAdjancie(w83);
+        w83.addAdjancie(w85);
+
+        w84.addAdjancie(w90);
+        w85.addAdjancie(w63);
+        w85.addAdjancie(w78);
+        w86.addAdjancie(w92);
+        w87.addAdjancie(w65);
+        w87.addAdjancie(w80);
+        w88.addAdjancie(w94);
+        w89.addAdjancie(w67);
+        w89.addAdjancie(w82);
+
+        w90.addAdjancie(w91);
+        w91.addAdjancie(w95);
+        w92.addAdjancie(w93);
+        w93.addAdjancie(w87);
+        w94.addAdjancie(w95);
+        w95.addAdjancie(w89);
+
+
+
         r.add(w0);
         // ADD all ...
         return result;
