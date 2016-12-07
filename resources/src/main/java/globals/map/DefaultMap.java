@@ -328,8 +328,6 @@ public class DefaultMap extends Map {
         w94.addAdjancie(w95);
         w95.addAdjancie(w89);
 
-
-
         r.add(w0);
         r.add(w1);
         r.add(w2);
@@ -427,7 +425,6 @@ public class DefaultMap extends Map {
         r.add(w94);
         r.add(w95);
 
-
-        return result;
+        return r;
     }
 }
