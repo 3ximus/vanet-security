@@ -28,8 +28,12 @@ public class Waypoint {
     }
 
     public Waypoint getRandomAdjancie() {
-        Random randomGenerator = new Random();
-        int randomIndex = randomGenerator.nextInt(adjancies.size());
-        return adjancies.get(randomIndex);
+        if(adjancies.size() == 1) {
+            return adjancies.get(0);
+        } else {
+            Random randomGenerator = new Random();
+            int randomIndex = randomGenerator.nextInt(adjancies.size());
+            return adjancies.get(randomIndex);
+        }
     }
 }
