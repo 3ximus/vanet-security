@@ -1,9 +1,8 @@
-import java.awt.Window;
+package globals.map;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream.Builder;
-
-import javax.swing.plaf.ViewportUI;
 
 public class DefaultMap extends Map {
     private static DefaultMap instance;
