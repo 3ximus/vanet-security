@@ -92,11 +92,8 @@ public class RemoteVehicleService implements RemoteVehicleInterface {
 
 		// verify Timestamp freshness
 		if(!dto.verifyFreshness(Resources.FRESHNESS_MAX_TIME)) {
-			System.out.println(Resources.WARNING_MSG("Sender's communication is not fresh: " + dto + "\nReporting..."));
-			SignedCertificateDTO my_dto = new SignedCertificateDTO(dto.getSenderCertificate(),
-					this.vehicle.getCertificate(), this.vehicle.getPrivateKey());
-			vehicle.reportCertificate(my_dto);
-			return false;  // certificate was not signed by CA, isRevoked  request is dropped
+			System.out.println(Resources.WARNING_MSG("Sender's communication is not fresh: " + dto));
+			return false;  // beacon is not fresh, beacon is dropped
 		}
 
 		// Verify if certificate was signed by CA
@@ -129,20 +126,17 @@ public class RemoteVehicleService implements RemoteVehicleInterface {
 
 		} catch (CertificateExpiredException e) {
 			System.out.println(Resources.WARNING_MSG("Sender's Certificate has expired: " + dto.toString()));
-			return false;  // certificate has expired, isRevoked request is dropped
+			return false;  // certificate has expired, beacon is dropped
 
 		} catch (CertificateNotYetValidException e) {
 			System.out.println(Resources.WARNING_MSG("Sender's Certificate is not yet valid: " + dto.toString()));
-			return false;  // certificate was not yet valid, isRevoked request is dropped
+			return false;  // cender certificate is not yet valid, beacon request is dropped
 		}
 
 		// Verify digital signature
 		if (!dto.verifySignature()) {
-			System.out.println(Resources.WARNING_MSG("Invalid digital signature on beacon: " + dto.toString() + "\nReporting"));
-			SignedCertificateDTO my_dto = new SignedCertificateDTO(dto.getSenderCertificate(),
-					this.vehicle.getCertificate(), this.vehicle.getPrivateKey());
-			vehicle.reportCertificate(my_dto);
-			return false;  // certificate was not signed by sender, beacon is dropped
+			System.out.println(Resources.WARNING_MSG("Invalid digital signature on beacon: " + dto.toString()));
+			return false;  // message was not signed by sender, beacon is dropped
 		}
 
 		return true;

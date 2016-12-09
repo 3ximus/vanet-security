@@ -191,8 +191,9 @@ public class Resources {
 		Signature sig = Signature.getInstance("SHA1WithRSA");
 		sig.initVerify(publicKey);
 		sig.update(bytes);
-		try { return sig.verify(cipherDigest); }
-		catch (SignatureException se) {
+		try {
+			return sig.verify(cipherDigest);
+		} catch (SignatureException se) {
 			System.err.println(WARNING_MSG("Invalid Signature :" + se.getMessage()));
 			return false;
 		}

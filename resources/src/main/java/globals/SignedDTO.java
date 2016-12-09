@@ -32,7 +32,7 @@ public abstract class SignedDTO implements Serializable {
 	 * Generates the signature for the DTO + senderCertificate in the constructor with given PrivateKey
 	 * @param	PrivateKey	key used to signed this DTO
 	 * @return	returns the signature generated
-	 * <p><b>NOTE:</b> This also sets the internal atribute <b>signature</b> that can be acessed with <b>getSignature</b></p>
+	 * <p><b>NOTE:</b> This also sets the internal atribute <b>signature</b> that can be acessed with <b>getSignature</b> or <b>setSignature</b></p>
 	 */
 	public byte[] sign(PrivateKey pKey) {
 		byte[] serializedVal = this.serialize();
@@ -62,11 +62,11 @@ public abstract class SignedDTO implements Serializable {
 	 */
 	public boolean verifySignature() {
 		try { Resources.verifyDigitalSignature(this.signature, this.serialize(), this.senderCertificate.getPublicKey()); }
-		catch (Exception e ) { return false; } // certificate was not signed by sender
+		catch (Exception e ) { return false; } // message was not signed by sender
 		return true;
 	}
 
 	public boolean verifyFreshness(int mil) {
-		return false;
+		return false; // does nothing, is implemented in its subclasses
 	}
 }
