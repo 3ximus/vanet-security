@@ -7,22 +7,34 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScalingViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+
+import java.util.List;
+
+
+
+
+
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 
 public class VanetGUI implements ApplicationListener {
 	private Stage stage;
-	private ShapeRenderer renderer;
-	private VehicleActor v;
-	private VehicleActor v1;
-	private VehicleActor v2;
-	private VehicleActor v3;
+
+	public void addActor(Actor a) {
+		stage.addActor(a);
+	}
+
+	public void removeActor(Actor a) {
+		// @Check
+		a.remove();
+	}
 
 	@Override
 	public void create () {
@@ -31,16 +43,17 @@ public class VanetGUI implements ApplicationListener {
     	Gdx.input.setInputProcessor(stage);
 
 		// Corners
-		v = new VehicleActor(0, 0);
-		v1 = new VehicleActor(1780, 1780);
-		v2 = new VehicleActor(0, 1780);
-		v3 = new VehicleActor(1780, 0);
-		stage.addActor(v);
-		stage.addActor(v1);
-		stage.addActor(v2);
-		stage.addActor(v3);
+		//v = new VehicleActor(0, 0);
+		//stage.addActor(v);
 
-		renderer = new ShapeRenderer();
+		//v1 = new VehicleActor(1780, 1780);
+		//stage.addActor(v1);
+
+		//v2 = new VehicleActor(0, 1780);
+		//stage.addActor(v2);
+
+		//v3 = new VehicleActor(1780, 0);
+		//stage.addActor(v3);
 	}
 
 	@Override
