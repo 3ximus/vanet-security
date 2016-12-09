@@ -31,7 +31,7 @@ public class VehicleApp {
 
 		// Vehicle creation arguments
 		Vector2D pos = new Vector2D(70, 0);
-		Vector2D vel = new Vector2D(0, 0);
+		Vector2D vel = new Vector2D(1, 0);
 		String vin = "VIN1"; // TODO GENERATE ONE RANDOM MAYBE?
 		String simulated_certName = "vehicle1"; // TODO select a diferent for each one
 		AttackerEnum attacker = AttackerEnum.NO_ATTACKER;

@@ -22,9 +22,9 @@ public class Vector2D implements Serializable {
         return distance(other) <= range;
     }
 
-    public void update(Vector2D velocity, double delta) {
-        x += velocity.x * delta;
-	    y += velocity.y * delta;
+    public void update(Vector2D velocity, double deltaSeconds) {
+        x += velocity.x * deltaSeconds;
+	    y += velocity.y * deltaSeconds;
     }
 
     public Vector2D predictedNext(Vector2D velocity, double delta) {
