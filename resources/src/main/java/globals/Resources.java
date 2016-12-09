@@ -45,12 +45,11 @@ public class Resources {
 
 //  -------- TIMERS ---------
 	public static final int BEACON_INTERVAL = 1000; // miliseconds
-	public static final int BEACON_EXPIRATION = BEACON_INTERVAL; // miliseconds
 	public static final int DANGER_RESET_INTERVAL = 1000; // miliseconds
 	public static final int CHECK_RSU_RANGE_INTERVAL = 2000; // miliseconds
 	public static final int MAX_INTERVAL_VICINITY_IN_CACHE = 60000; // miliseconds
 	public static final int NETWORK_POSITION_UPDATE_INTERVAL = BEACON_INTERVAL; // milisseconds
-	public static final int FRESHNESS_MAX_TIME = 1000; //miliseconds
+	public static final int FRESHNESS_MAX_TIME = BEACON_INTERVAL; //miliseconds
 
 // --------  MAP  ------------
 	public static final int DEFAULT_MAP_WIDTH = 1800;
