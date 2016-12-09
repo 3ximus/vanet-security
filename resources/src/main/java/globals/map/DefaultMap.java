@@ -307,7 +307,7 @@ public class DefaultMap extends Map {
         w81.addAdjancie(w82);
         w81.addAdjancie(w88);
         w82.addAdjancie(w83);
-        w83.addAdjancie(w85);
+        w83.addAdjancie(w75);
 
         w84.addAdjancie(w90);
         w85.addAdjancie(w63);
