@@ -2,6 +2,7 @@ package vanet.gui;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -13,15 +14,24 @@ public class VehicleActor extends Actor {
     private ShapeRenderer renderer = new ShapeRenderer();
     private final int WIDTH = 35;
     private final int HEIGHT = 35;
+    private String name;
+	private BitmapFont font;
 
-    public VehicleActor(float x, float y) {
+    public VehicleActor(float x, float y, String name) {
         setWidth(WIDTH);
         setHeight(HEIGHT);
         updatePosition(x, y);
+        this.name = name;
+
+        font = new BitmapFont();
+		font.setColor(Color.BLACK);
+		font.scale(1);
     }
 
     @Override
     public void draw (Batch batch, float parentAlpha) {
+        font.draw(batch, name, getX(), getY());
+
         batch.end();
 
         renderer.setProjectionMatrix(batch.getProjectionMatrix());
