@@ -41,9 +41,10 @@ $vterm -e "./mvn_script.sh rsu" >/dev/null 2>&1 &
 echo "[*] Press enter when rsu is running"
 read
 
-while echo -n "[*] Write arguments to launch vehicle with: " && read args; do
+while echo -en "\r[*] Write arguments to launch vehicle with: " && read args; do
 	if [[ ! "${args:0:1}" == "#" ]] ; then
 		echo -e "\n[+] Launching vehicle with: $args"
 		$vterm -e "./mvn_script.sh vehicle $args" >/dev/null 2>&1 &
+		sleep 1 # maybe prevent some weirdness
 	fi
 done < <(cat $file -)
