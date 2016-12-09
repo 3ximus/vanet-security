@@ -3,6 +3,7 @@ package vanet.gui;
 import globals.AttackerEnum;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -15,16 +16,25 @@ public class VehicleActor extends Actor {
     private final int WIDTH = 35;
     private final int HEIGHT = 35;
     private AttackerEnum aType;
+    private String name;
+	private BitmapFont font;
 
-    public VehicleActor(float x, float y, AttackerEnum aType) {
+    public VehicleActor(float x, float y, String name, AttackerEnum aType) {
         setWidth(WIDTH);
         setHeight(HEIGHT);
         updatePosition(x, y);
-        aType = aType;
+        this.aType = aType;
+        this.name = name;
+
+        font = new BitmapFont();
+		font.setColor(Color.BLACK);
+		font.scale(1);
     }
 
     @Override
     public void draw (Batch batch, float parentAlpha) {
+        font.draw(batch, name, getX(), getY());
+
         batch.end();
 
         renderer.setProjectionMatrix(batch.getProjectionMatrix());

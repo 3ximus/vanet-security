@@ -82,7 +82,7 @@ public class VehicleNetwork {
 		Gdx.app.postRunnable(new Runnable() {
 			@Override
 			public void run(){
-				VehicleActor toAdd = new VehicleActor((float)position.x, (float)position.y, attackerType);
+				VehicleActor toAdd = new VehicleActor((float)position.x, (float)position.y, name, attackerType);
 				GUI.addActor(toAdd);
 				vehicleActorPos.put(name, toAdd);
 			}
