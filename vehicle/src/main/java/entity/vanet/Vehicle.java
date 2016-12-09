@@ -403,6 +403,7 @@ public class Vehicle {
 			System.out.println(Resources.OK_MSG("Connecting to rsu: " + rsuName));
 			Registry registry = LocateRegistry.getRegistry(Resources.REGISTRY_PORT);
 			RSU = (RemoteRSUInterface) registry.lookup(rsuName);
+			this.rsuName = rsuName;
 		} catch(Exception e) {
 			System.err.println(Resources.ERROR_MSG("Failed to connect to RSU called: " +  e.getMessage()));
 			System.exit(-1);
