@@ -1,5 +1,6 @@
 package remote;
 
+import globals.AttackerEnum;
 import globals.SignedBeaconDTO;
 import globals.SignedCertificateDTO;
 import globals.Vector2D;
@@ -21,7 +22,7 @@ public interface RemoteVehicleNetworkInterface extends Remote {
 	 * @param	String	vehicle name in the network
 	 * @return	boolean	true if node was added sucessfully
 	 */
-	public boolean addVehicle(String name) throws RemoteException;
+	public boolean addVehicle(String name, AttackerEnum attackerType) throws RemoteException;
 
 	/**
 	 * Removes a node (vehicle) to the network
@@ -55,7 +56,7 @@ public interface RemoteVehicleNetworkInterface extends Remote {
 	 * @param	String	rsu name in the network
 	 * @return	boolean	true if node was removed sucessfully
 	 */
-	public boolean removeRSU(String name) throws RemoteException;	
+	public boolean removeRSU(String name) throws RemoteException;
 
 	/**
 	 * Propagate new revoked certificates to vehicles in range

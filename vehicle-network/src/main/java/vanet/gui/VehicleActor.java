@@ -1,5 +1,6 @@
 package vanet.gui;
 
+import globals.AttackerEnum;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -13,11 +14,13 @@ public class VehicleActor extends Actor {
     private ShapeRenderer renderer = new ShapeRenderer();
     private final int WIDTH = 35;
     private final int HEIGHT = 35;
+    private AttackerEnum aType;
 
-    public VehicleActor(float x, float y) {
+    public VehicleActor(float x, float y, AttackerEnum aType) {
         setWidth(WIDTH);
         setHeight(HEIGHT);
         updatePosition(x, y);
+        aType = aType;
     }
 
     @Override
@@ -29,7 +32,10 @@ public class VehicleActor extends Actor {
         renderer.translate(getX(), getY(), 0);
 
         renderer.begin(ShapeType.Filled);
-        renderer.setColor(Color.BLUE);
+        if (aType == AttackerEnum.NO_ATTACKER)
+            renderer.setColor(Color.BLUE);
+        else
+            renderer.setColor(Color.RED);
         renderer.rect(0, 0, getWidth(), getHeight());
         renderer.end();
 

@@ -11,6 +11,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import globals.Resources;
+import globals.AttackerEnum;
 import globals.Vector2D;
 import globals.map.Waypoint;
 import globals.BeaconDTO;
@@ -176,7 +177,7 @@ public class Vehicle {
 			System.out.println("Generating atacker bad Timestamp.");
 			// replay attack
 			for (SignedBeaconDTO b : this.savedBeacons)
-				if ( ! Resources.timestampInRange(b.getTimestamp(), Resources.BEACON_EXPIRATION) ) {
+				if ( ! Resources.timestampInRange(b.getTimestamp(), Resources.FRESHNESS_MAX_TIME) ) {
 					dto = b; break;
 				}
 			dto = (dto == null ? new SignedBeaconDTO(this.position, this.velocity, this.myCert, this.myPrKey) : dto);

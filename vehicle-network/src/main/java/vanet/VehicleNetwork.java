@@ -1,5 +1,6 @@
 package vanet;
 
+import globals.AttackerEnum;
 import globals.Resources;
 import globals.Vector2D;
 
@@ -74,14 +75,14 @@ public class VehicleNetwork {
 		return vehicleList.containsKey(name);
 	}
 
-	public void addVehicle(String name, RemoteVehicleInterface vehicleToAdd, Vector2D position) {
+	public void addVehicle(String name, RemoteVehicleInterface vehicleToAdd, Vector2D position, AttackerEnum attackerType) {
 		System.out.println(Resources.OK_MSG("Adding vehicle \"" + name + "\" to the network."));
 		vehicleList.put(name, vehicleToAdd);
 
 		Gdx.app.postRunnable(new Runnable() {
 			@Override
 			public void run(){
-				VehicleActor toAdd = new VehicleActor((float)position.x, (float)position.y);
+				VehicleActor toAdd = new VehicleActor((float)position.x, (float)position.y, attackerType);
 				GUI.addActor(toAdd);
 				vehicleActorPos.put(name, toAdd);
 			}

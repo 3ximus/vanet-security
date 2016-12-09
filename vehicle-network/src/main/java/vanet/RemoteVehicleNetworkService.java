@@ -5,6 +5,7 @@ import remote.RemoteVehicleNetworkInterface;
 
 import globals.Vector2D;
 import globals.Resources;
+import globals.AttackerEnum;
 import globals.SignedBeaconDTO;
 import globals.SignedCertificateDTO;
 
@@ -52,7 +53,7 @@ public class RemoteVehicleNetworkService implements RemoteVehicleNetworkInterfac
 	}
 
 	@Override
-	public boolean addVehicle(String name) throws RemoteException {
+	public boolean addVehicle(String name, AttackerEnum attackerType) throws RemoteException {
 		if(vehicleNetwork.hasVehicle(name))
 			return false;
 
@@ -67,7 +68,7 @@ public class RemoteVehicleNetworkService implements RemoteVehicleNetworkInterfac
 			return false;
 		}
 
-		vehicleNetwork.addVehicle(name, vehicleToAdd, pos);
+		vehicleNetwork.addVehicle(name, vehicleToAdd, pos, attackerType);
 		return true;
 	}
 

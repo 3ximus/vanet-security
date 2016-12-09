@@ -1,4 +1,4 @@
-package entity.vanet;
+package globals;
 
 public enum AttackerEnum {
 		NO_ATTACKER,		// attacker no very good no bad person

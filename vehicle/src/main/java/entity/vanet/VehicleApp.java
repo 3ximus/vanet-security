@@ -1,6 +1,7 @@
 package entity.vanet;
 
 import globals.Resources;
+import globals.AttackerEnum;
 import remote.RemoteVehicleNetworkInterface;
 import globals.Vector2D;
 import globals.map.DefaultMap;
@@ -122,7 +123,7 @@ public class VehicleApp {
 
 		// Add vehicle to the VANET
 		try {
-			boolean result = VANET.addVehicle(vehicleUniqueName);
+			boolean result = VANET.addVehicle(vehicleUniqueName, attacker);
 			if(result == false) {
 				throw new Exception("Remote call to the VANET to add this vehicle failed.");
 			}
