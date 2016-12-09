@@ -12,7 +12,7 @@ public class DefaultMap extends Map {
     public static DefaultMap getInstance() {
         if(instance == null) {
             instance = new DefaultMap();
-            for(Waypoint w: allWaypoints(, "W95"))
+            for(Waypoint w: allWaypoints())
             {
                 instance.addWaypoint(w);
             }

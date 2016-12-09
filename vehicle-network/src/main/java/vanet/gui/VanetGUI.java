@@ -41,7 +41,7 @@ public class VanetGUI implements ApplicationListener {
 
 		font = new BitmapFont();
 		font.setColor(Color.BLACK);
-		font.scale(3);
+		font.scale(1);
 
 		// waypoints
 		for(Waypoint w: DefaultMap.getInstance().getWaypoints()) {
