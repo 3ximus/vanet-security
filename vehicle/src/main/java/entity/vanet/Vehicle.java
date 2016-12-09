@@ -224,8 +224,8 @@ public class Vehicle {
 				SignedCertificateDTO certToRevoke = new SignedCertificateDTO(beaconCert, this.getCertificate(), this.getPrivateKey());
 				try {
 					SignedBooleanDTO response = RSU.tryRevoke(certToRevoke);
-					if ( ! response.getValue()) System.out.println(Resources.WARNING_MSG("Received a beacon to which the data seems wrong. Trying to revoke!"));
-					else System.out.println(Resources.OK_MSG("Received a beacon to which the data seems wrong. Certificate was revoked!"));
+					if (! response.getValue()) // only log unsucessful attemps
+						System.out.println(Resources.WARNING_MSG("Reporting vehicle beaconing unplausible data!"));
 				} catch(RemoteException e) {
 					System.out.println(Resources.ERROR_MSG("RSU seems dead... Cause: " + e.getMessage() + ". Exiting..."));
 					System.exit(-1);

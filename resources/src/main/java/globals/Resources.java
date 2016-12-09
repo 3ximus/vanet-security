@@ -45,7 +45,7 @@ public class Resources {
 
 //  -------- TIMERS ---------
 	public static final int BEACON_INTERVAL = 1000; // miliseconds
-	public static final int BEACON_EXPIRATION = 600; // miliseconds
+	public static final int BEACON_EXPIRATION = BEACON_INTERVAL; // miliseconds
 	public static final int DANGER_RESET_INTERVAL = 1000; // miliseconds
 	public static final int CHECK_RSU_RANGE_INTERVAL = 2000; // miliseconds
 	public static final int MAX_INTERVAL_VICINITY_IN_CACHE = 60000; // miliseconds
