@@ -1,6 +1,5 @@
 package security;
 
-import globals.BeaconDTO;
 import globals.Resources;
 import globals.SignedCertificateDTO;
 import remote.RemoteCAInterface;

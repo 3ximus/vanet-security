@@ -11,7 +11,6 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.net.ConnectException;
 
 import java.security.cert.CertificateExpiredException;
 import java.security.cert.CertificateNotYetValidException;
@@ -136,7 +135,7 @@ public class RemoteRSUService implements RemoteRSUInterface {
 		// verify Timestamp freshness
 		if(!dto.verifyFreshness(Resources.FRESHNESS_MAX_TIME)) {
 			System.out.println(Resources.WARNING_MSG("Sender's communication is not fresh: " + dto));
-			return false;  // certificate was not signed by CA, isRevoked  request is dropped			
+			return false;  // certificate was not signed by CA, isRevoked  request is dropped
 		}
 
 		// verify if certificate was signed by CA

@@ -92,18 +92,19 @@ public class RemoteVehicleService implements RemoteVehicleInterface {
 
 		// verify Timestamp freshness
 		if(!dto.verifyFreshness(Resources.FRESHNESS_MAX_TIME)) {
-			System.out.println(Resources.WARNING_MSG("Sender's communication is not fresh: " + dto));
-			return false;  // certificate was not signed by CA, isRevoked  request is dropped			
+			System.out.println(Resources.WARNING_MSG("Sender's communication is not fresh: " + dto + "\nReporting..."));
+			SignedCertificateDTO my_dto = new SignedCertificateDTO(dto.getSenderCertificate(),
+					this.vehicle.getCertificate(), this.vehicle.getPrivateKey());
+			vehicle.reportCertificate(my_dto);
+			return false;  // certificate was not signed by CA, isRevoked  request is dropped
 		}
-		
+
 		// Verify if certificate was signed by CA
 		if (!dto.verifyCertificate(this.vehicle.getCACertificate())) {
-			System.out.println(Resources.WARNING_MSG("Invalid CA Signature on beacon: " + dto.toString()));
+			System.out.println(Resources.WARNING_MSG("Invalid CA Signature on beacon: " + dto.toString() + "\nReporting"));
 
-			SignedCertificateDTO my_dto
-					= new SignedCertificateDTO(dto.getSenderCertificate(),
-											   this.vehicle.getCertificate(),
-											   this.vehicle.getPrivateKey());
+			SignedCertificateDTO my_dto = new SignedCertificateDTO(dto.getSenderCertificate(),
+					this.vehicle.getCertificate(), this.vehicle.getPrivateKey());
 			vehicle.reportCertificate(my_dto);
 			return false;  // certificate was not signed by CA, beacon is dropped
 		}
@@ -137,7 +138,10 @@ public class RemoteVehicleService implements RemoteVehicleInterface {
 
 		// Verify digital signature
 		if (!dto.verifySignature()) {
-			System.out.println(Resources.WARNING_MSG("Invalid digital signature on beacon: " + dto.toString()));
+			System.out.println(Resources.WARNING_MSG("Invalid digital signature on beacon: " + dto.toString() + "\nReporting"));
+			SignedCertificateDTO my_dto = new SignedCertificateDTO(dto.getSenderCertificate(),
+					this.vehicle.getCertificate(), this.vehicle.getPrivateKey());
+			vehicle.reportCertificate(my_dto);
 			return false;  // certificate was not signed by sender, beacon is dropped
 		}
 

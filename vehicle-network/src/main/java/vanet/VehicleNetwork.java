@@ -2,15 +2,12 @@ package vanet;
 
 import globals.Resources;
 import globals.Vector2D;
-import globals.SignedCertificateDTO;
 
 import remote.RemoteVehicleInterface;
 import remote.RemoteRSUInterface;
 
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.TreeMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -25,7 +22,7 @@ import java.util.TimerTask;
 public class VehicleNetwork {
 	private Map<String, RemoteVehicleInterface> vehicleList = new ConcurrentHashMap<>();
 	private Map<String, Vector2D> vehicleListPos = new ConcurrentHashMap<>();
-	
+
 	private Map<String, Vector2D> rsuListPos = new TreeMap<>();
 	private Map<String, RemoteRSUInterface> rsuList = new TreeMap<>();
 
@@ -101,7 +98,7 @@ public class VehicleNetwork {
 		System.out.println(Resources.NOTIFY_MSG(name + " removed from network;"));
 		return true;
 	}
- 
+
 	private boolean hasRSU(String rsu_name) {
 		return rsuList.containsKey(rsu_name);
 	}
@@ -115,7 +112,7 @@ public class VehicleNetwork {
 			rsu = (RemoteRSUInterface) registry.lookup(rsu_name);
 		} catch(Exception e) {
 			System.err.println(Resources.ERROR_MSG("Failed to connect to RSU: " +  e.getMessage()));
-			System.exit(0); // Return seems to not work for some reason	
+			System.exit(0); // Return seems to not work for some reason
 		}
 
 		return rsu;
@@ -129,7 +126,7 @@ public class VehicleNetwork {
 		for(Map.Entry<String, Vector2D> entry : rsuListPos.entrySet()) {
 			if(inRangeForRsu(entry.getValue(),vehiclePosition)) {
 
-				double candidate_distance 
+				double candidate_distance
 						= entry.getValue().distance(vehiclePosition);
 
 				if(candidate_distance < min_distance) {

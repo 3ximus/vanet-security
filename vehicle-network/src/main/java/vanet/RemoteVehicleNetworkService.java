@@ -2,7 +2,6 @@ package vanet;
 
 import remote.RemoteVehicleInterface;
 import remote.RemoteVehicleNetworkInterface;
-import remote.RemoteRSUInterface;
 
 import globals.Vector2D;
 import globals.Resources;
@@ -34,14 +33,14 @@ public class RemoteVehicleNetworkService implements RemoteVehicleNetworkInterfac
 		}
 
 		Vector2D sendingVehiclePos = vehicleNetwork.getVehiclePos(name);
-		
+
 		for(Map.Entry<String, RemoteVehicleInterface> entry: vehicleNetwork.getVehicleEntrySet()) {
 			if(entry.getKey().equals(name)) continue;
 
 			RemoteVehicleInterface remoteVehicle = entry.getValue();
 			try {
 				Vector2D remoteVehiclePos = vehicleNetwork.getVehiclePos(name);
-			
+
 				if(VehicleNetwork.inRangeForBeacon(sendingVehiclePos, remoteVehiclePos)) {
 					remoteVehicle.receiveBeaconMessage(beacon);
 				}
@@ -93,7 +92,7 @@ public class RemoteVehicleNetworkService implements RemoteVehicleNetworkInterfac
 			String vehicleName = entry.getKey();
 			RemoteVehicleInterface remoteVehicle = entry.getValue();
 
-			try { 
+			try {
 				Vector2D remoteVehiclePos = vehicleNetwork.getVehiclePos(vehicleName);
 				if(VehicleNetwork.inRangeForRsu(rsuPosition, remoteVehiclePos)) {
 					remoteVehicle.addRevokedCertificate(dto); // Each vehicle adds the revoked certificate
