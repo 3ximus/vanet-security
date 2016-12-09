@@ -222,13 +222,13 @@ public class DefaultMap extends Map {
         w27.addAdjancie(w19);
 
         w28.addAdjancie(w34);
-        w29.addAdjancie(w12);
+        w29.addAdjancie(w22);
         w29.addAdjancie(w7);
         w30.addAdjancie(w36);
         w31.addAdjancie(w24);
         w31.addAdjancie(w9);
         w32.addAdjancie(w38);
-        w33.addAdjancie(w36);
+        w33.addAdjancie(w26);
         w33.addAdjancie(w11);
 
         w34.addAdjancie(w41);
@@ -258,7 +258,7 @@ public class DefaultMap extends Map {
         w49.addAdjancie(w50);
         w50.addAdjancie(w51);
         w51.addAdjancie(w52);
-        w51.addAdjancie(w57);
+        w51.addAdjancie(w58);
         w52.addAdjancie(w53);
         w53.addAdjancie(w54);
         w53.addAdjancie(w60);
@@ -320,7 +320,7 @@ public class DefaultMap extends Map {
         w89.addAdjancie(w82);
 
         w90.addAdjancie(w91);
-        w91.addAdjancie(w95);
+        w91.addAdjancie(w85);
         w92.addAdjancie(w93);
         w93.addAdjancie(w87);
         w94.addAdjancie(w95);
