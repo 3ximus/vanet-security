@@ -19,6 +19,7 @@ public class VehicleNetworkApp {
         RemoteVehicleNetworkService VANET = new RemoteVehicleNetworkService(vehicleNetwork);
         VANET.publish();
 
+        // Handle wait and unpublish
         try {
             System.out.println("Press enter to kill the network.");
             System.in.read();

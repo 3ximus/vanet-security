@@ -140,7 +140,9 @@ public class Vehicle {
 		this.rsuName = getClosestRSUName();
 		connectToRSU(rsuName);
 
+
 		// Run the engine and beaconing on a timer
+		lastUpdateMs = System.currentTimeMillis();
 		engineTimer.scheduleAtFixedRate(engineTask, 2000, Resources.BEACON_INTERVAL);
 
 		// Run closest rsu lookup
@@ -190,11 +192,15 @@ public class Vehicle {
 
 	public void simulatePositionUpdate() {
 		long currentMs = System.currentTimeMillis();
-		long deltaMs = System.currentTimeMillis() - lastUpdateMs;
+		long deltaMs = lastUpdateMs - currentMs;
 		double deltaSeconds = deltaMs / 1000.0d;
 
 		if(inDanger == false) {
+			System.out.println("current: " + currentMs + " last: " + lastUpdateMs);
+			System.out.println("current-last: " + (currentMs - lastUpdateMs));
+			System.out.println(position);
 			position.update(velocity, deltaSeconds);
+			System.out.println(position);
 		}
 
 		lastUpdateMs = currentMs;
@@ -307,6 +313,7 @@ public class Vehicle {
 
 		return true; // Sender is authenticated
 	}
+
 	void reportCertificate(SignedCertificateDTO certToRevoke) {
 		try {
 			RSU.tryRevoke(certToRevoke);

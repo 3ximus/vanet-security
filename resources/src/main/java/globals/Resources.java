@@ -52,6 +52,10 @@ public class Resources {
 	public static final int NETWORK_POSITION_UPDATE_INTERVAL = BEACON_INTERVAL; // milisseconds
 	public static final int FRESHNESS_MAX_TIME = 1000; //miliseconds
 
+// --------  MAP  ------------
+	public static final int DEFAULT_MAP_WIDTH = 1800;
+	public static final int DEFAULT_MAP_HEIGHT = 1800;
+
 //  ------- SCORE ------------
 	public static final int MAX_REVOKE_SCORE = 2;
 

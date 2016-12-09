@@ -4,7 +4,15 @@ import globals.Resources;
 import globals.Vector2D;
 
 import remote.RemoteVehicleInterface;
+import vanet.gui.VehicleActor;
 import remote.RemoteRSUInterface;
+
+import com.badlogic.gdx.Gdx;
+
+
+import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
+import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -20,8 +28,10 @@ import java.util.TimerTask;
 	Simulate physical wireless network
 */
 public class VehicleNetwork {
+	private vanet.gui.VanetGUI GUI;
+
 	private Map<String, RemoteVehicleInterface> vehicleList = new ConcurrentHashMap<>();
-	private Map<String, Vector2D> vehicleListPos = new ConcurrentHashMap<>();
+	private Map<String, VehicleActor> vehicleActorPos = new ConcurrentHashMap<>();
 
 	private Map<String, Vector2D> rsuListPos = new TreeMap<>();
 	private Map<String, RemoteRSUInterface> rsuList = new TreeMap<>();
@@ -33,7 +43,9 @@ public class VehicleNetwork {
 		public void run() {
 			for (Map.Entry<String, RemoteVehicleInterface> entry : vehicleList.entrySet()) {
 				try {
-					vehicleListPos.replace(entry.getKey(), entry.getValue().simulateGetPosition());
+					Vector2D pos = entry.getValue().simulateGetPosition();
+					vehicleActorPos.get(entry.getKey()).updatePosition((float)pos.x, (float)pos.y);
+
 				} catch(Exception e) {
 					System.out.println(Resources.WARNING_MSG("Unable to update position for vehicle \"" + entry.getKey() + "\"."));
 				}
@@ -43,6 +55,15 @@ public class VehicleNetwork {
 
 	public VehicleNetwork() {
 		timer.scheduleAtFixedRate(vehiclePosUpdaterTask, 0, Resources.NETWORK_POSITION_UPDATE_INTERVAL);
+
+		// Launch GUI
+        GUI = new vanet.gui.VanetGUI();
+		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
+		config.title = "VANET simulation";
+		config.height = 600;
+		config.width = 600;
+		//config.useGL30 = true;
+        new LwjglApplication(GUI, config);
 	}
 
 	public Set<Map.Entry<String, RemoteVehicleInterface>> getVehicleEntrySet() {
@@ -56,17 +77,29 @@ public class VehicleNetwork {
 	public void addVehicle(String name, RemoteVehicleInterface vehicleToAdd, Vector2D position) {
 		System.out.println(Resources.OK_MSG("Adding vehicle \"" + name + "\" to the network."));
 		vehicleList.put(name, vehicleToAdd);
-		vehicleListPos.put(name, position);
+
+		Gdx.app.postRunnable(new Runnable() {
+			@Override
+			public void run(){
+				VehicleActor toAdd = new VehicleActor((float)position.x, (float)position.y);
+				GUI.addActor(toAdd);
+				vehicleActorPos.put(name, toAdd);
+			}
+    	});
+
 	}
 
 	public void removeVehicle(String name) {
 		System.out.println(Resources.OK_MSG("Removing vehicle \"" + name + "\" from the network."));
 		vehicleList.remove(name);
-		vehicleListPos.remove(name);
+
+		GUI.removeActor(vehicleActorPos.get(name));
+		vehicleActorPos.remove(name);
 	}
 
 	public Vector2D getVehiclePos(String name) {
-		return vehicleListPos.get(name);
+		Actor a = vehicleActorPos.get(name);
+		return new Vector2D(a.getX(), a.getY());
 	}
 
 	public static boolean inRangeForBeacon(Vector2D pos1, Vector2D pos2) {
