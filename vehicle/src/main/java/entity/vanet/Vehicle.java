@@ -261,6 +261,8 @@ public class Vehicle {
 		// TODO: Probably we should use some more complex model. Use velocity and such to prevent false positives.
 		double predictedDelta = (System.currentTimeMillis() - otherBeacon.getTimestamp().getTime()) / 1000.0d;
 		Vector2D predictedPosition = otherBeacon.getPosition().predictedNext(otherBeacon.getVelocity(), predictedDelta);
+		System.out.println(otherBeacon.getPosition());
+		System.out.println(predictedPosition);
 		if (position.inRange(predictedPosition, Resources.TOO_DANGEROUS_RANGE)) {
 			System.out.println(Resources.WARNING_MSG("Proximity Alert!!"));
 			return true;
