@@ -30,7 +30,7 @@ public class WaypointActor extends Actor {
 
     @Override
     public void draw (Batch batch, float parentAlpha) {
-		font.draw(batch, w.getName(), getX(), getY());
+		font.draw(batch, w.getName(), getX()-10, getY());
 
         batch.end();
 
