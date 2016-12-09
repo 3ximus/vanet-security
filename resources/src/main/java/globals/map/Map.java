@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import globals.Vector2D;
+
 
 
 public class Map {
@@ -18,8 +20,22 @@ public class Map {
         int randomIndex = randomGenerator.nextInt(waypoints.size());
         return waypoints.get(randomIndex);
     }
+    public Waypoint getClosestWaypoint(Vector2D pos) {
+        Waypoint min = null;
+        double minDistance = Double.MAX_VALUE;
+
+        for(Waypoint w: waypoints) {
+            double currentDistance = pos.distance(w.getPosition());
+            if(currentDistance < minDistance) {
+                min = w;
+                minDistance = currentDistance;
+            }
+        }
+        return min;
+    }
 
     public void addWaypoint(Waypoint w) {
         waypoints.add(w);
     }
+
 }

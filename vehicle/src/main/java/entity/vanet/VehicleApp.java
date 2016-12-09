@@ -3,6 +3,8 @@ package entity.vanet;
 import globals.Resources;
 import remote.RemoteVehicleNetworkInterface;
 import globals.Vector2D;
+import globals.map.DefaultMap;
+import globals.map.Waypoint;
 
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -30,7 +32,7 @@ public class VehicleApp {
 		System.out.println("\n");
 
 		// Vehicle creation arguments
-		Vector2D pos = new Vector2D(70, 0);
+		Vector2D pos = null;
 		Vector2D vel = new Vector2D(1, 0);
 		String vin = "VIN1"; // TODO GENERATE ONE RANDOM MAYBE?
 		String simulated_certName = "vehicle1"; // TODO select a diferent for each one
@@ -80,7 +82,13 @@ public class VehicleApp {
 			return;
 		}
 
-		vehicle = new Vehicle(vin, simulated_certName, pos, vel, attacker);
+		Waypoint closestWaypoint;
+		if (pos == null) {
+			closestWaypoint = DefaultMap.getInstance().getRandomWaypoint();
+		} else {
+			closestWaypoint = DefaultMap.getInstance().getClosestWaypoint(pos);
+		}
+		vehicle = new Vehicle(vin, simulated_certName, closestWaypoint.getPosition(), closestWaypoint.getRandomAdjancie(), attacker);
 
 		System.out.println(Resources.OK_MSG("Started: " + vehicle));
 

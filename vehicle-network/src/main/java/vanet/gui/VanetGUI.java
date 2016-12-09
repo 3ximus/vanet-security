@@ -1,31 +1,25 @@
 package vanet.gui;
 
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Scaling;
-import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScalingViewport;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-
-import java.util.List;
-
-
-
-
-
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 
+import globals.map.DefaultMap;
+
+
+import globals.map.Waypoint;
+
+
 public class VanetGUI implements ApplicationListener {
 	private Stage stage;
+	private Texture bgImage;
 
 	public void addActor(Actor a) {
 		stage.addActor(a);
@@ -42,18 +36,13 @@ public class VanetGUI implements ApplicationListener {
 		stage = new Stage(viewport);
     	Gdx.input.setInputProcessor(stage);
 
-		// Corners
-		//v = new VehicleActor(0, 0);
-		//stage.addActor(v);
+		// waypoints
+		for(Waypoint w: DefaultMap.getInstance().getWaypoints()) {
+			addActor(new WaypointActor(w));
+		}
 
-		//v1 = new VehicleActor(1780, 1780);
-		//stage.addActor(v1);
-
-		//v2 = new VehicleActor(0, 1780);
-		//stage.addActor(v2);
-
-		//v3 = new VehicleActor(1780, 0);
-		//stage.addActor(v3);
+		// bgr image
+		bgImage = new Texture(Gdx.files.internal("bgImage.png"));
 	}
 
 	@Override
@@ -66,6 +55,9 @@ public class VanetGUI implements ApplicationListener {
 		Gdx.gl.glClearColor(0, 0, 0, 0);
 		Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
 
+		stage.getBatch().begin();
+		stage.getBatch().draw(bgImage, 0, 0);
+		stage.getBatch().end();
 		stage.draw();
 	}
 
