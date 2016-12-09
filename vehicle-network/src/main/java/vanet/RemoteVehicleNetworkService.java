@@ -40,7 +40,7 @@ public class RemoteVehicleNetworkService implements RemoteVehicleNetworkInterfac
 
 			RemoteVehicleInterface remoteVehicle = entry.getValue();
 			try {
-				Vector2D remoteVehiclePos = vehicleNetwork.getVehiclePos(name);
+				Vector2D remoteVehiclePos = vehicleNetwork.getVehiclePos(entry.getKey());
 
 				if(VehicleNetwork.inRangeForBeacon(sendingVehiclePos, remoteVehiclePos)) {
 					remoteVehicle.receiveBeaconMessage(beacon);

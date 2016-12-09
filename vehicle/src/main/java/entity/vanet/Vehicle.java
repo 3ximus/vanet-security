@@ -142,7 +142,7 @@ public class Vehicle {
 		velocity.x = position.x - nextWaypoint.getPosition().x;
 		velocity.y = position.y - nextWaypoint.getPosition().y;
 		velocity.scale(20);
-		System.out.println("Updating velocity!! New velocity: " + velocity);
+		//System.out.println("Updating velocity!! New velocity: " + velocity);
 	}
 
 	// Sets VANET, starts updating position and starts beaoning
