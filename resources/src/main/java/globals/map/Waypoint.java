@@ -9,10 +9,12 @@ import globals.Vector2D;
 
 
 public class Waypoint {
+    private String name;
     private Vector2D position;
     private List<Waypoint> adjancies = new ArrayList<Waypoint>();
 
-    public Waypoint(double x, double y) {
+    public Waypoint(double x, double y, String name) {
+        this.name = name;
         this.position = new Vector2D(x, y);
     }
 
@@ -25,6 +27,9 @@ public class Waypoint {
     }
     public Vector2D getPosition() {
         return position;
+    }
+    public String getName() {
+        return name;
     }
 
     public Waypoint getRandomAdjancie() {

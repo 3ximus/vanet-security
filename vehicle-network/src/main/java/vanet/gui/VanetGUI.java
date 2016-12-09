@@ -1,8 +1,10 @@
 package vanet.gui;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Scaling;
@@ -20,6 +22,7 @@ import globals.map.Waypoint;
 public class VanetGUI implements ApplicationListener {
 	private Stage stage;
 	private Texture bgImage;
+	private BitmapFont font;
 
 	public void addActor(Actor a) {
 		stage.addActor(a);
@@ -36,9 +39,13 @@ public class VanetGUI implements ApplicationListener {
 		stage = new Stage(viewport);
     	Gdx.input.setInputProcessor(stage);
 
+		font = new BitmapFont();
+		font.setColor(Color.BLACK);
+		font.scale(3);
+
 		// waypoints
 		for(Waypoint w: DefaultMap.getInstance().getWaypoints()) {
-			addActor(new WaypointActor(w));
+			addActor(new WaypointActor(w, font));
 		}
 
 		// bgr image
@@ -57,6 +64,8 @@ public class VanetGUI implements ApplicationListener {
 
 		stage.getBatch().begin();
 		stage.getBatch().draw(bgImage, 0, 0);
+
+
 		stage.getBatch().end();
 		stage.draw();
 	}
