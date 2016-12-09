@@ -170,13 +170,11 @@ public class Vehicle {
 				}
 			dto = (dto == null ? new SignedBeaconDTO(this.position, this.velocity, this.myCert, this.myPrKey) : dto);
 		} else if (attackerType == AttackerEnum.BAD_SIGNATURES) {
-			System.out.println("Generating atacker bad Signature.");
 			dto = new SignedBeaconDTO(this.position, this.velocity, this.myCert, this.myPrKey);
-			byte[] sig = dto.getSignature();
-			sig[4] = 0x69;
-			sig[5] = 0x69;
-			sig[6] = 0x69;
-			dto.setSignature(sig);
+			if (!this.savedBeacons.isEmpty()) {
+				byte[] sig = this.savedBeacons.get(0).getSignature(); // use another invalid signature
+				dto.setSignature(sig);
+			}
 		} else {
 			dto = new SignedBeaconDTO(this.position, this.velocity, this.myCert, this.myPrKey);
 		}
