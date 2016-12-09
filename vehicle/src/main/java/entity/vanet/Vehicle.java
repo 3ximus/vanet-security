@@ -183,6 +183,7 @@ public class Vehicle {
 		} else if (attackerType == AttackerEnum.BAD_SIGNATURES) {
 			dto = new SignedBeaconDTO(this.position, this.velocity, this.myCert, this.myPrKey);
 			if (!this.savedBeacons.isEmpty()) {
+				System.out.println("Generating atacker bad Signature.");
 				byte[] sig = this.savedBeacons.get(0).getSignature(); // use another invalid signature
 				dto.setSignature(sig);
 			}

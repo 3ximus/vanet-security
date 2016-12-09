@@ -134,6 +134,7 @@ public class RemoteVehicleService implements RemoteVehicleInterface {
 		}
 
 		// Verify digital signature
+		System.out.println(dto.getSignature());
 		if (!dto.verifySignature()) {
 			System.out.println(Resources.WARNING_MSG("Invalid digital signature on beacon: " + dto.toString()));
 			return false;  // message was not signed by sender, beacon is dropped
