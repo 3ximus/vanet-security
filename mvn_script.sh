@@ -61,7 +61,7 @@ else # specific commands for specified source dir with arguments
 	[[ ! -z $dir ]] && args="${@:$(($dir_pos+1)):$#}" || dir="${@: -1}"
 
 	if [ $dir_pos -eq 1 ] ; then
-		commands="clean compile exec:java"
+		commands="compile exec:java"
 		for key in "${!special_rules[@]}" ; do # apply special rules
 			[[ "$dir" == "$key" ]] && commands="${special_rules[$key]}" ;
 		done

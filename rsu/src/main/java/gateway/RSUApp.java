@@ -2,10 +2,8 @@ package gateway;
 
 import globals.Resources;
 import globals.Vector2D;
-import remote.RemoteRSUInterface;
 
 import java.rmi.registry.LocateRegistry;
-import java.rmi.RemoteException;
 
 
 public class RSUApp
@@ -14,8 +12,8 @@ public class RSUApp
     public static void main(String[] args) {
 
         System.out.println("\n");
-        
-        // rsu's positions 
+
+        // rsu's positions
         Vector2D pos_1 = new Vector2D(Resources.MAX_RSU_RANGE/2, 0);
         Vector2D pos_2 = new Vector2D(0, 0);
         Vector2D pos_3 = new Vector2D(Resources.MAX_RSU_RANGE, 0); // ja esta out-of-range de pos1
@@ -35,15 +33,15 @@ public class RSUApp
         try {
             // Constroi objetos remotos
             // lanca excecao caso nao encontre remoteCA/VANET no registry
-            RemoteRSUService rsu1_service = rsu_1.getRemoteRSUService(); 
-            RemoteRSUService rsu2_service = rsu_2.getRemoteRSUService(); 
+            RemoteRSUService rsu1_service = rsu_1.getRemoteRSUService();
+            RemoteRSUService rsu2_service = rsu_2.getRemoteRSUService();
             RemoteRSUService rsu3_service = rsu_3.getRemoteRSUService();
 
             // Adiciona rsu's perto de 1
             rsu_1.addRSU(rsu_2.getPosition(), rsu2_service);
 
             // Adiciona rsu's perto de 2
-            rsu_2.addRSU(rsu_1.getPosition(), rsu1_service); 
+            rsu_2.addRSU(rsu_1.getPosition(), rsu1_service);
             rsu_2.addRSU(rsu_3.getPosition(), rsu3_service);
 
             // Adiciona rsu's perto de 3

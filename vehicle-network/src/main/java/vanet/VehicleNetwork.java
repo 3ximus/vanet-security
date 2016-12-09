@@ -2,7 +2,6 @@ package vanet;
 
 import globals.Resources;
 import globals.Vector2D;
-import globals.SignedCertificateDTO;
 
 import remote.RemoteVehicleInterface;
 import vanet.gui.VehicleActor;
@@ -17,8 +16,6 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.TreeMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

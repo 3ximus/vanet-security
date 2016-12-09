@@ -1,7 +1,10 @@
 package entity.vanet;
 
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Timer;
@@ -50,6 +53,8 @@ public class Vehicle {
 	private Map<X509Certificate, BeaconDTO> vicinity = new HashMap<>();
 	private Map<X509Certificate, Timestamp> firstEntryInVicinity = new HashMap<>();
 	private Set<X509Certificate> revokedCache = new HashSet<>();
+
+	private List<SignedBeaconDTO> savedBeacons = new ArrayList<>();
 
 	private boolean inDanger = false;
 	private Timer resetInDangerTimer = new Timer();
@@ -161,13 +166,36 @@ public class Vehicle {
 	public void beacon() {
 		if(VANET == null || RSU == null) return;
 
-		SignedBeaconDTO dto = new SignedBeaconDTO(this.position, this.velocity, this.myCert, this.myPrKey);
+		SignedBeaconDTO dto = null;
+		if (attackerType == AttackerEnum.BAD_POSITIONS) {
+			System.out.println("Generating atacker bad position.");
+			Random randomgen = new Random();
+			Vector2D p = new Vector2D(randomgen.nextDouble()*Resources.ATACKER_POSITION_RANGE, randomgen.nextDouble()*Resources.ATACKER_POSITION_RANGE);
+			Vector2D v = new Vector2D(randomgen.nextDouble()*Resources.ATACKER_POSITION_RANGE, randomgen.nextDouble()*Resources.ATACKER_POSITION_RANGE);
+			dto = new SignedBeaconDTO(p, v, this.myCert, this.myPrKey);
+		} else if (attackerType == AttackerEnum.BAD_TIMESTAMPS) {
+			System.out.println("Generating atacker bad Timestamp.");
+			// replay attack
+			for (SignedBeaconDTO b : this.savedBeacons)
+				if ( ! Resources.timestampInRange(b.getTimestamp(), Resources.BEACON_EXPIRATION) ) {
+					dto = b; break;
+				}
+			dto = (dto == null ? new SignedBeaconDTO(this.position, this.velocity, this.myCert, this.myPrKey) : dto);
+		} else if (attackerType == AttackerEnum.BAD_SIGNATURES) {
+			System.out.println("Generating atacker bad Signature.");
+			dto = new SignedBeaconDTO(this.position, this.velocity, this.myCert, this.myPrKey);
+			byte[] sig = dto.getSignature();
+			sig[4] = 0x69;
+			sig[5] = 0x69;
+			sig[6] = 0x69;
+			dto.setSignature(sig);
+		} else {
+			dto = new SignedBeaconDTO(this.position, this.velocity, this.myCert, this.myPrKey);
+		}
 
 		try {
 			VANET.simulateBeaconBroadcast(nameInVANET, dto);
-
 		} catch(Exception e) {
-			// TODO maybe try to reconect??
 			System.out.println(Resources.ERROR_MSG("Unable to beacon message. Cause: " + e));
 			System.out.println(Resources.ERROR_MSG("VANET seems dead... Exiting..."));
 			System.exit(-1);
@@ -197,6 +225,10 @@ public class Vehicle {
 		BeaconDTO oldBeacon = vicinity.get(beaconCert);
 		BeaconDTO newBeacon = dto.beaconDTO();
 
+		// Save last 20 beacons for replay attacks
+		if (this.savedBeacons.size() > Resources.HELD_BEACONS_FOR_REPLAY_ATTACKS) this.savedBeacons.remove(0);
+		this.savedBeacons.add(dto);
+
 		// Check if received position is dangerous
 		if(isVehicleDangerous(newBeacon.getPosition()) == true) {
 			if(inDanger = true) {
@@ -212,8 +244,9 @@ public class Vehicle {
 			if(isDataTrustworthy(oldBeacon, newBeacon) == false) {
 				SignedCertificateDTO certToRevoke = new SignedCertificateDTO(beaconCert, this.getCertificate(), this.getPrivateKey());
 				try {
-					System.out.println(Resources.WARNING_MSG("Received a beacon to which the data seems wrong. Trying to revoke!"));
-					RSU.tryRevoke(certToRevoke);
+					SignedBooleanDTO response = RSU.tryRevoke(certToRevoke);
+					if (! response.getValue()) // only log unsucessful attemps
+						System.out.println(Resources.WARNING_MSG("Reporting vehicle beaconing unplausible data!"));
 				} catch(RemoteException e) {
 					System.out.println(Resources.ERROR_MSG("RSU seems dead... Cause: " + e.getMessage() + ". Exiting..."));
 					System.exit(-1);

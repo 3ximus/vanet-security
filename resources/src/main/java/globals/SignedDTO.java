@@ -17,6 +17,8 @@ public abstract class SignedDTO implements Serializable {
 	public X509Certificate getSenderCertificate() { return this.senderCertificate; }
 	public byte[] getSignature() { return this.signature; }
 
+	public void setSignature(byte[] sig) { this.signature = sig; }
+
 	public void setCertificate(X509Certificate cert) { this.senderCertificate = cert; }
 
 	/**

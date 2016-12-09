@@ -1,6 +1,5 @@
 package security;
 
-import globals.BeaconDTO;
 import globals.Resources;
 import globals.SignedCertificateDTO;
 import remote.RemoteCAInterface;
@@ -148,9 +147,9 @@ public class RemoteCAService implements RemoteCAInterface {
 			this.revokeRating.put(toRevoke, new HashSet<X509Certificate>());
 		this.revokeRating.get(toRevoke).add(senderCert);
 
-		//String hashedCert = Resources.genHashedName(Resources.convertToPemCertificate(senderCert));
-		System.out.println(Resources.WARNING_MSG("Request to revoke Certificate: " + senderCert.getSerialNumber()
-				+ "\n\tNow has a score of " + this.revokeRating.get(toRevoke).size()));
+		String hashedCert = Resources.genHashedName(Resources.convertToPemCertificate(senderCert));
+		System.out.println(Resources.WARNING_MSG("Request to revoke Certificate: " + hashedCert)
+				+ "\n\tNow has a score of " + this.revokeRating.get(toRevoke).size());
 
 		return this.revokeRating.get(toRevoke).size() >= Resources.MAX_REVOKE_SCORE;
 	}
