@@ -1,3 +1,3 @@
-VIN5 vehicle5 0,0 -20,0 asd
-VIN20 invalidCACert1 45,45 -10,0 BAD_MAN
-
+VIN5 vehicle5 100,100 0,0 asd
+VIN4 vehicle4 300,300 0,0 asd
+VIN3 vehicle3 500,500 0,0 asd

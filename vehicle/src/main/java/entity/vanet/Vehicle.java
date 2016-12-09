@@ -9,6 +9,7 @@ import java.util.TimerTask;
 
 import globals.Resources;
 import globals.Vector2D;
+import globals.map.Waypoint;
 import globals.BeaconDTO;
 import globals.SignedDTO;
 import globals.SignedBeaconDTO;
@@ -32,6 +33,8 @@ public class Vehicle {
 	private String VIN;
 	private Vector2D position;
 	private Vector2D velocity;
+	private Waypoint nextWaypoint;
+
 	private long lastUpdateMs;
 	private RemoteVehicleNetworkInterface VANET;
 	private RemoteRSUInterface RSU;
@@ -83,11 +86,14 @@ public class Vehicle {
 
 //  ------- CONSTRUCTOR  ------------
 
-	public Vehicle(String VIN, String certificateName, Vector2D position, Vector2D velocity, AttackerEnum attackerType) {
+	public Vehicle(String VIN, String certificateName, Vector2D position, Waypoint nextWaypoint, AttackerEnum attackerType) {
 		this.VIN = VIN;
 		this.position = position;
-		this.velocity = velocity;
 		this.attackerType = attackerType;
+
+		this.nextWaypoint = nextWaypoint;
+		this.velocity = new Vector2D(0, 0);
+		updateVelocity();
 
 		String certsDir = Resources.CERT_DIR+certificateName+"/";
 		// Read certificate file to a certificate object
@@ -126,6 +132,12 @@ public class Vehicle {
 	public PrivateKey getPrivateKey() { return this.myPrKey; }
 	public KeyStore getKeystore() { return this.myKeystore; }
 
+	public void updateVelocity() {
+		velocity.x = position.x - nextWaypoint.getPosition().x;
+		velocity.y = position.y - nextWaypoint.getPosition().y;
+		velocity.scale(20);
+		System.out.println("Updating velocity!! New velocity: " + velocity);
+	}
 
 	// Sets VANET, starts updating position and starts beaoning
 	public void start(RemoteVehicleNetworkInterface VANET, String name) {
@@ -168,14 +180,16 @@ public class Vehicle {
 		double deltaSeconds = deltaMs / 1000.0d;
 
 		if(inDanger == false) {
-			System.out.println("current: " + currentMs + " last: " + lastUpdateMs);
-			System.out.println("current-last: " + (currentMs - lastUpdateMs));
-			System.out.println(position);
 			position.update(velocity, deltaSeconds);
-			System.out.println(position);
 		}
-
 		lastUpdateMs = currentMs;
+
+		if(position.inRange(nextWaypoint.getPosition(), 20)) {
+			position.x = nextWaypoint.getPosition().x;
+			position.y = nextWaypoint.getPosition().y;
+			nextWaypoint = nextWaypoint.getRandomAdjancie();
+			updateVelocity();
+		}
 	}
 
 	public void simulateBrain(SignedBeaconDTO dto) {
