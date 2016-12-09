@@ -61,9 +61,11 @@ public abstract class SignedDTO implements Serializable {
 	 * @return	returns true if the signature is correct
 	 */
 	public boolean verifySignature() {
-		try { Resources.verifyDigitalSignature(this.signature, this.serialize(), this.senderCertificate.getPublicKey()); }
-		catch (Exception e ) { return false; } // message was not signed by sender
-		return true;
+		try {
+			return Resources.verifyDigitalSignature(this.signature, this.serialize(), this.senderCertificate.getPublicKey());
+		} catch (Exception e) {
+			return false;
+		} // message was not signed by sender
 	}
 
 	public boolean verifyFreshness(int mil) {
