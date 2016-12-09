@@ -37,7 +37,7 @@ public class Resources {
 
 //  -------- RANGES ---------
 	public static final int MAX_BEACON_RANGE = 500;
-	public static final int TOO_DANGEROUS_RANGE = 300;
+	public static final int TOO_DANGEROUS_RANGE = 200;
 	public static final int ACCEPTABLE_DATA_TRUST_VARIANCE = 300;
 
 //  -------- RSU-RANGE ---------

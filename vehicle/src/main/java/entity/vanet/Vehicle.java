@@ -229,7 +229,7 @@ public class Vehicle {
 		this.savedBeacons.add(dto);
 
 		// Check if received position is dangerous
-		if(isVehicleDangerous(newBeacon.getPosition()) == true) {
+		if(isVehicleDangerous(newBeacon) == true) {
 			if(inDanger = true) {
 				resetInDangerTimer.cancel();
 			}
@@ -257,10 +257,12 @@ public class Vehicle {
 		updateVicinity(beaconCert, dto.beaconDTO());
 	}
 
-	private boolean isVehicleDangerous(Vector2D otherPos) {
+	private boolean isVehicleDangerous(BeaconDTO otherBeacon) {
 		// TODO: Probably we should use some more complex model. Use velocity and such to prevent false positives.
-		if (position.inRange(otherPos, Resources.TOO_DANGEROUS_RANGE)) {
-			//System.out.println(Resources.WARNING_MSG("Proximity Alert: Vehicle in " + distance + "m." ));
+		double predictedDelta = (System.currentTimeMillis() - otherBeacon.getTimestamp().getTime()) / 1000.0d;
+		Vector2D predictedPosition = otherBeacon.getPosition().predictedNext(otherBeacon.getVelocity(), predictedDelta);
+		if (position.inRange(predictedPosition, Resources.TOO_DANGEROUS_RANGE)) {
+			System.out.println(Resources.WARNING_MSG("Proximity Alert!!"));
 			return true;
 		}
 		return false;
