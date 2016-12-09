@@ -152,7 +152,6 @@ public class Vehicle {
 		this.rsuName = getClosestRSUName();
 		connectToRSU(rsuName);
 
-
 		// Run the engine and beaconing on a timer
 		lastUpdateMs = System.currentTimeMillis();
 		engineTimer.scheduleAtFixedRate(engineTask, 2000, Resources.BEACON_INTERVAL);
