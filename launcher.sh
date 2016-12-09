@@ -13,7 +13,7 @@ fi
 if [[ ! -z "$1" ]] ; then
 	file="$1"
 else
-	file="default_profile.txt"
+	file="profile_default.txt"
 fi
 
 function ctrl_c() {

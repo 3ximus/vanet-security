@@ -154,20 +154,21 @@ public class Vehicle {
 
 		SignedBeaconDTO dto = null;
 		if (attackerType == AttackerEnum.BAD_POSITIONS) {
+			System.out.println("Generating atacker bad position.");
 			Random randomgen = new Random();
 			Vector2D p = new Vector2D(randomgen.nextDouble()*Resources.ATACKER_POSITION_RANGE, randomgen.nextDouble()*Resources.ATACKER_POSITION_RANGE);
 			Vector2D v = new Vector2D(randomgen.nextDouble()*Resources.ATACKER_POSITION_RANGE, randomgen.nextDouble()*Resources.ATACKER_POSITION_RANGE);
 			dto = new SignedBeaconDTO(p, v, this.myCert, this.myPrKey);
 		} else if (attackerType == AttackerEnum.BAD_TIMESTAMPS) {
+			System.out.println("Generating atacker bad Timestamp.");
 			// replay attack
-			for (SignedBeaconDTO b : this.savedBeacons) {
+			for (SignedBeaconDTO b : this.savedBeacons)
 				if ( ! Resources.timestampInRange(b.getTimestamp(), Resources.BEACON_EXPIRATION) ) {
-					dto = b;
-					break;
+					dto = b; break;
 				}
-			}
 			dto = (dto == null ? new SignedBeaconDTO(this.position, this.velocity, this.myCert, this.myPrKey) : dto);
 		} else if (attackerType == AttackerEnum.BAD_SIGNATURES) {
+			System.out.println("Generating atacker bad Signature.");
 			dto = new SignedBeaconDTO(this.position, this.velocity, this.myCert, this.myPrKey);
 			byte[] sig = dto.getSignature();
 			sig[4] = 0x69;
