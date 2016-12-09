@@ -222,13 +222,13 @@ public class DefaultMap extends Map {
         w27.addAdjancie(w19);
 
         w28.addAdjancie(w34);
-        w29.addAdjancie(w12);
+        w29.addAdjancie(w22);
         w29.addAdjancie(w7);
         w30.addAdjancie(w36);
         w31.addAdjancie(w24);
         w31.addAdjancie(w9);
         w32.addAdjancie(w38);
-        w33.addAdjancie(w36);
+        w33.addAdjancie(w26);
         w33.addAdjancie(w11);
 
         w34.addAdjancie(w41);
