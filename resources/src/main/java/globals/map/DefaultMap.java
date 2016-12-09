@@ -12,7 +12,7 @@ public class DefaultMap extends Map {
     public static DefaultMap getInstance() {
         if(instance == null) {
             instance = new DefaultMap();
-            for(Waypoint w: allWaypoints())
+            for(Waypoint w: allWaypoints(, "W95"))
             {
                 instance.addWaypoint(w);
             }
@@ -96,89 +96,89 @@ public class DefaultMap extends Map {
         Waypoint w28 = new Waypoint(cross1BottomY, cross1Lane1X, "W28");
         Waypoint w29 = new Waypoint(cross1BottomY, cross1Lane2X, "W29");
         Waypoint w30 = new Waypoint(cross1BottomY, cross2Lane1X, "W30");
-        Waypoint w31 = new Waypoint(cross1BottomY, cross2Lane2X, "W");
-        Waypoint w32 = new Waypoint(cross1BottomY, cross3Lane1X, "W");
-        Waypoint w33 = new Waypoint(cross1BottomY, cross3Lane2X, "W");
+        Waypoint w31 = new Waypoint(cross1BottomY, cross2Lane2X, "W31");
+        Waypoint w32 = new Waypoint(cross1BottomY, cross3Lane1X, "W32");
+        Waypoint w33 = new Waypoint(cross1BottomY, cross3Lane2X, "W33");
 
         // Sixth row
-        Waypoint w34 = new Waypoint(cross2TopY, cross1Lane1X, "W");
-        Waypoint w35 = new Waypoint(cross2TopY, cross1Lane2X, "W");
-        Waypoint w36 = new Waypoint(cross2TopY, cross2Lane1X, "W");
-        Waypoint w37 = new Waypoint(cross2TopY, cross2Lane2X, "W");
-        Waypoint w38 = new Waypoint(cross2TopY, cross3Lane1X, "W");
-        Waypoint w39 = new Waypoint(cross2TopY, cross3Lane2X, "W");
+        Waypoint w34 = new Waypoint(cross2TopY, cross1Lane1X, "W34");
+        Waypoint w35 = new Waypoint(cross2TopY, cross1Lane2X, "W35");
+        Waypoint w36 = new Waypoint(cross2TopY, cross2Lane1X, "W36");
+        Waypoint w37 = new Waypoint(cross2TopY, cross2Lane2X, "W37");
+        Waypoint w38 = new Waypoint(cross2TopY, cross3Lane1X, "W38");
+        Waypoint w39 = new Waypoint(cross2TopY, cross3Lane2X, "W39");
 
         // Seventh row
-        Waypoint w40 = new Waypoint(cross2Lane1Y, leftX);
-        Waypoint w41 = new Waypoint(cross2Lane1Y, cross1LeftX);
-        Waypoint w42 = new Waypoint(cross2Lane1Y, cross1RightX);
-        Waypoint w43 = new Waypoint(cross2Lane1Y, cross2LeftX);
-        Waypoint w44 = new Waypoint(cross2Lane1Y, cross2RightX);
-        Waypoint w45 = new Waypoint(cross2Lane1Y, cross3LeftX);
-        Waypoint w46 = new Waypoint(cross2Lane1Y, cross3RightX);
-        Waypoint w47 = new Waypoint(cross2Lane1Y, rightX);
+        Waypoint w40 = new Waypoint(cross2Lane1Y, leftX, "W40");
+        Waypoint w41 = new Waypoint(cross2Lane1Y, cross1LeftX, "W41");
+        Waypoint w42 = new Waypoint(cross2Lane1Y, cross1RightX, "W42");
+        Waypoint w43 = new Waypoint(cross2Lane1Y, cross2LeftX, "W43");
+        Waypoint w44 = new Waypoint(cross2Lane1Y, cross2RightX, "W44");
+        Waypoint w45 = new Waypoint(cross2Lane1Y, cross3LeftX, "W45");
+        Waypoint w46 = new Waypoint(cross2Lane1Y, cross3RightX, "W46");
+        Waypoint w47 = new Waypoint(cross2Lane1Y, rightX, "W47");
 
         // Eight row
-        Waypoint w48 = new Waypoint(cross2Lane2Y, leftX);
-        Waypoint w49 = new Waypoint(cross2Lane2Y, cross1LeftX);
-        Waypoint w50 = new Waypoint(cross2Lane2Y, cross1RightX);
-        Waypoint w51 = new Waypoint(cross2Lane2Y, cross2LeftX);
-        Waypoint w52 = new Waypoint(cross2Lane2Y, cross2RightX);
-        Waypoint w53 = new Waypoint(cross2Lane2Y, cross3LeftX);
-        Waypoint w54 = new Waypoint(cross2Lane2Y, cross3RightX);
-        Waypoint w55 = new Waypoint(cross2Lane2Y, rightX);
+        Waypoint w48 = new Waypoint(cross2Lane2Y, leftX, "W48");
+        Waypoint w49 = new Waypoint(cross2Lane2Y, cross1LeftX, "W49");
+        Waypoint w50 = new Waypoint(cross2Lane2Y, cross1RightX, "W50");
+        Waypoint w51 = new Waypoint(cross2Lane2Y, cross2LeftX, "W51");
+        Waypoint w52 = new Waypoint(cross2Lane2Y, cross2RightX, "W52");
+        Waypoint w53 = new Waypoint(cross2Lane2Y, cross3LeftX, "W53");
+        Waypoint w54 = new Waypoint(cross2Lane2Y, cross3RightX, "W54");
+        Waypoint w55 = new Waypoint(cross2Lane2Y, rightX, "W55");
 
         // Ninth row
-        Waypoint w56 = new Waypoint(cross2BottomY, cross1Lane1X);
-        Waypoint w57 = new Waypoint(cross2BottomY, cross1Lane2X);
-        Waypoint w58 = new Waypoint(cross2BottomY, cross2Lane1X);
-        Waypoint w59 = new Waypoint(cross2BottomY, cross2Lane2X);
-        Waypoint w60 = new Waypoint(cross2BottomY, cross3Lane1X);
-        Waypoint w61 = new Waypoint(cross2BottomY, cross3Lane2X);
+        Waypoint w56 = new Waypoint(cross2BottomY, cross1Lane1X, "W56");
+        Waypoint w57 = new Waypoint(cross2BottomY, cross1Lane2X, "W57");
+        Waypoint w58 = new Waypoint(cross2BottomY, cross2Lane1X, "W58");
+        Waypoint w59 = new Waypoint(cross2BottomY, cross2Lane2X, "W59");
+        Waypoint w60 = new Waypoint(cross2BottomY, cross3Lane1X, "W60");
+        Waypoint w61 = new Waypoint(cross2BottomY, cross3Lane2X, "W61");
 
         // Tenth row
-        Waypoint w62 = new Waypoint(cross3TopY, cross1Lane1X);
-        Waypoint w63 = new Waypoint(cross3TopY, cross1Lane2X);
-        Waypoint w64 = new Waypoint(cross3TopY, cross2Lane1X);
-        Waypoint w65 = new Waypoint(cross3TopY, cross2Lane2X);
-        Waypoint w66 = new Waypoint(cross3TopY, cross3Lane1X);
-        Waypoint w67 = new Waypoint(cross3TopY, cross3Lane2X);
+        Waypoint w62 = new Waypoint(cross3TopY, cross1Lane1X, "W62");
+        Waypoint w63 = new Waypoint(cross3TopY, cross1Lane2X, "W63");
+        Waypoint w64 = new Waypoint(cross3TopY, cross2Lane1X, "W64");
+        Waypoint w65 = new Waypoint(cross3TopY, cross2Lane2X, "W65");
+        Waypoint w66 = new Waypoint(cross3TopY, cross3Lane1X, "W66");
+        Waypoint w67 = new Waypoint(cross3TopY, cross3Lane2X, "W67");
 
         // 11 row
-        Waypoint w68 = new Waypoint(cross3Lane1Y, leftX);
-        Waypoint w69 = new Waypoint(cross3Lane1Y, cross1LeftX);
-        Waypoint w70 = new Waypoint(cross3Lane1Y, cross1RightX);
-        Waypoint w71 = new Waypoint(cross3Lane1Y, cross2LeftX);
-        Waypoint w72 = new Waypoint(cross3Lane1Y, cross2RightX);
-        Waypoint w73 = new Waypoint(cross3Lane1Y, cross3LeftX);
-        Waypoint w74 = new Waypoint(cross3Lane1Y, cross3RightX);
-        Waypoint w75 = new Waypoint(cross3Lane1Y, rightX);
+        Waypoint w68 = new Waypoint(cross3Lane1Y, leftX, "W68");
+        Waypoint w69 = new Waypoint(cross3Lane1Y, cross1LeftX, "W69");
+        Waypoint w70 = new Waypoint(cross3Lane1Y, cross1RightX, "W70");
+        Waypoint w71 = new Waypoint(cross3Lane1Y, cross2LeftX, "W71");
+        Waypoint w72 = new Waypoint(cross3Lane1Y, cross2RightX, "W72");
+        Waypoint w73 = new Waypoint(cross3Lane1Y, cross3LeftX, "W73");
+        Waypoint w74 = new Waypoint(cross3Lane1Y, cross3RightX, "W74");
+        Waypoint w75 = new Waypoint(cross3Lane1Y, rightX, "W75");
 
         // 12 row
-        Waypoint w76 = new Waypoint(cross3Lane2Y, leftX);
-        Waypoint w77 = new Waypoint(cross3Lane2Y, cross1LeftX);
-        Waypoint w78 = new Waypoint(cross3Lane2Y, cross1RightX);
-        Waypoint w79 = new Waypoint(cross3Lane2Y, cross2LeftX);
-        Waypoint w80 = new Waypoint(cross3Lane2Y, cross2RightX);
-        Waypoint w81 = new Waypoint(cross3Lane2Y, cross3LeftX);
-        Waypoint w82 = new Waypoint(cross3Lane2Y, cross3RightX);
-        Waypoint w83 = new Waypoint(cross3Lane2Y, rightX);
+        Waypoint w76 = new Waypoint(cross3Lane2Y, leftX, "W76");
+        Waypoint w77 = new Waypoint(cross3Lane2Y, cross1LeftX, "W77");
+        Waypoint w78 = new Waypoint(cross3Lane2Y, cross1RightX, "W78");
+        Waypoint w79 = new Waypoint(cross3Lane2Y, cross2LeftX, "W79");
+        Waypoint w80 = new Waypoint(cross3Lane2Y, cross2RightX, "W80");
+        Waypoint w81 = new Waypoint(cross3Lane2Y, cross3LeftX, "W81");
+        Waypoint w82 = new Waypoint(cross3Lane2Y, cross3RightX, "W82");
+        Waypoint w83 = new Waypoint(cross3Lane2Y, rightX, "W83");
 
         // 13 row
-        Waypoint w84 = new Waypoint(cross3BottomY, cross1Lane1X);
-        Waypoint w85 = new Waypoint(cross3BottomY, cross1Lane2X);
-        Waypoint w86 = new Waypoint(cross3BottomY, cross2Lane1X);
-        Waypoint w87 = new Waypoint(cross3BottomY, cross2Lane2X);
-        Waypoint w88 = new Waypoint(cross3BottomY, cross3Lane1X);
-        Waypoint w89 = new Waypoint(cross3BottomY, cross3Lane2X);
+        Waypoint w84 = new Waypoint(cross3BottomY, cross1Lane1X, "W84");
+        Waypoint w85 = new Waypoint(cross3BottomY, cross1Lane2X, "W85");
+        Waypoint w86 = new Waypoint(cross3BottomY, cross2Lane1X, "W86");
+        Waypoint w87 = new Waypoint(cross3BottomY, cross2Lane2X, "W87");
+        Waypoint w88 = new Waypoint(cross3BottomY, cross3Lane1X, "W88");
+        Waypoint w89 = new Waypoint(cross3BottomY, cross3Lane2X, "W89");
 
         // 14 row
-        Waypoint w90 = new Waypoint(bottomY, cross1Lane1X);
-        Waypoint w91 = new Waypoint(bottomY, cross1Lane2X);
-        Waypoint w92 = new Waypoint(bottomY, cross2Lane1X);
-        Waypoint w93 = new Waypoint(bottomY, cross2Lane2X);
-        Waypoint w94 = new Waypoint(bottomY, cross3Lane1X);
-        Waypoint w95 = new Waypoint(bottomY, cross3Lane2X);
+        Waypoint w90 = new Waypoint(bottomY, cross1Lane1X, "W90");
+        Waypoint w91 = new Waypoint(bottomY, cross1Lane2X, "W91");
+        Waypoint w92 = new Waypoint(bottomY, cross2Lane1X, "W92");
+        Waypoint w93 = new Waypoint(bottomY, cross2Lane2X, "W93");
+        Waypoint w94 = new Waypoint(bottomY, cross3Lane1X, "W94");
+        Waypoint w95 = new Waypoint(bottomY, cross3Lane2X, "W95");
 
         w0.addAdjancie(w6);
         w1.addAdjancie(w0);
