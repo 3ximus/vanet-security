@@ -36,9 +36,9 @@ public class Resources {
 	public static final int REGISTRY_PORT = 1099;
 
 //  -------- RANGES ---------
-	public static final int MAX_BEACON_RANGE = 250;
-	public static final int TOO_DANGEROUS_RANGE = 80;
-	public static final int ACCEPTABLE_DATA_TRUST_VARIANCE = 100;
+	public static final int MAX_BEACON_RANGE = 500;
+	public static final int TOO_DANGEROUS_RANGE = 300;
+	public static final int ACCEPTABLE_DATA_TRUST_VARIANCE = 300;
 
 //  -------- RSU-RANGE ---------
 	public static final int MAX_RSU_RANGE = 5000;
@@ -66,7 +66,7 @@ public class Resources {
 
 //  ------- ATTACKS ------------
 	public static final int HELD_BEACONS_FOR_REPLAY_ATTACKS = 20;
-	public static final double ATACKER_POSITION_RANGE = 400;
+	public static final double ATACKER_POSITION_RANGE = 1000;
 
 //  ------- OTHER ------------
 	public static final String CA_DIGEST = "SHA-256";
