@@ -40,6 +40,8 @@ public class RemoteVehicleService implements RemoteVehicleInterface {
 		// TODO: Only do this security check periodically, not for every beacon
 		// TODO: Maybe here or just have a function that receives a normal beaconDTO
 
+		System.out.println(Resources.NOTIFY_MSG("Received beacon at pos: " + beacon.getPosition()));
+
 		// Verify that sender is trustworthy
 		if(!authenticateBeaconMessage(beacon))
 			return;

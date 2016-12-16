@@ -38,13 +38,13 @@ public class Resources {
 //  -------- RANGES ---------
 	public static final int MAX_BEACON_RANGE = 500;
 	public static final int TOO_DANGEROUS_RANGE = 100;
-	public static final int ACCEPTABLE_DATA_TRUST_VARIANCE = 300;
+	public static final int ACCEPTABLE_DATA_TRUST_VARIANCE = 1000;
 
 //  -------- RSU-RANGE ---------
 	public static final int MAX_RSU_RANGE = 5000;
 
 //  -------- TIMERS ---------
-	public static final int BEACON_INTERVAL = 1000; // miliseconds
+	public static final int BEACON_INTERVAL = 2000; // miliseconds
 	public static final int DANGER_RESET_INTERVAL = 1000; // miliseconds
 	public static final int CHECK_RSU_RANGE_INTERVAL = 2000; // miliseconds
 	public static final int MAX_INTERVAL_VICINITY_IN_CACHE = 60000; // miliseconds
@@ -66,7 +66,7 @@ public class Resources {
 
 //  ------- ATTACKS ------------
 	public static final int HELD_BEACONS_FOR_REPLAY_ATTACKS = 20;
-	public static final double ATACKER_POSITION_RANGE = 1000;
+	public static final double ATACKER_POSITION_RANGE = 5000;
 
 //  ------- OTHER ------------
 	public static final String CA_DIGEST = "SHA-256";
