@@ -1,2 +1,0 @@
-VIN1 vehicle1 20,0 0,0 GOOD_MAN
-VIN2 vehicle2 25,5 0,0 ANOTHER_GOOD_MAN
